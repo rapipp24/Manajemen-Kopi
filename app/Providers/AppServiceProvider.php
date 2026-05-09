@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Share low stock count to all admin views
+        view()->composer('components.layouts.admin', function ($view) {
+            $count = \App\Models\RawMaterial::whereColumn('current_stock', '<=', 'minimum_stock')
+                ->where('is_active', true)
+                ->count();
+            $view->with('lowStockCount', $count);
+        });
     }
 }

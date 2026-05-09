@@ -6,15 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use App\Http\Requests\Admin\StoreSupplierRequest;
 use App\Http\Requests\Admin\UpdateSupplierRequest;
+use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::latest()->paginate(10);
+        $query = Supplier::latest();
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('contact_person', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $suppliers = $query->paginate(10);
         return view('admin.suppliers.index', compact('suppliers'));
     }
 

@@ -318,8 +318,8 @@
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="brand-logo">
-                <div class="brand-icon">☕</div>
-                <span class="brand-name">Kopi Nusantara</span>
+                <div class="brand-icon"></div>
+                <span class="brand-name">Kopi Elang Emas</span>
             </div>
             <span class="brand-tagline">Panel Manajemen</span>
         </div>
@@ -357,21 +357,37 @@
                     </svg>
                     Supplier
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.customers.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.customers*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     Customer
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.raw-materials.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.raw-materials*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
                     </svg>
-                    Bahan Baku
+                    <span>Bahan Baku</span>
+                    @if($lowStockCount > 0)
+                        <span style="background: #ef4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto;">
+                            {{ $lowStockCount }}
+                        </span>
+                    @endif
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.users.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    Manajemen Pelanggan
+                </a>
+                <a href="{{ route('admin.products.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.products*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/>
@@ -384,7 +400,8 @@
 
             <div class="nav-group">
                 <p class="nav-label">Operasional</p>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.raw-material-receipts.index') }}" 
+                   class="nav-item {{ request()->routeIs('admin.raw-material-receipts*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 4v16m8-8H4"/>
@@ -473,7 +490,9 @@
         <span class="topbar-title">{{ $title ?? 'Beranda' }}</span>
         <div class="topbar-right" style="display: flex; align-items: center; gap: 20px;">
             <span class="topbar-date" id="current-date"></span>
-            <span class="topbar-badge" style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Admin</span>
+            <span class="topbar-badge" style="background: {{ auth()->user()->isAdmin() ? '#fef3c7' : '#e0f2fe' }}; color: {{ auth()->user()->isAdmin() ? '#92400e' : '#0369a1' }}; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                {{ auth()->user()->isAdmin() ? 'Admin' : 'Customer' }}
+            </span>
             
             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                 @csrf
@@ -502,6 +521,38 @@
         const d = new Date();
         const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('current-date').textContent = d.toLocaleDateString('id-ID', opts);
+
+        // Currency Formatter
+        function formatRupiah(angka, prefix) {
+            var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
+        }
+
+        document.querySelectorAll('.currency-input').forEach(function(input) {
+            input.addEventListener('keyup', function(e) {
+                this.value = formatRupiah(this.value);
+            });
+        });
+
+        // Clean currency before submit
+        document.querySelectorAll('form').forEach(function(form) {
+            form.addEventListener('submit', function() {
+                form.querySelectorAll('.currency-input').forEach(function(input) {
+                    input.value = input.value.replace(/\./g, '');
+                });
+            });
+        });
     </script>
 </body>
 </html>

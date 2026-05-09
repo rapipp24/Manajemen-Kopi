@@ -16,6 +16,7 @@ class UpdateUnitRequest extends FormRequest
         return [
             'name' => 'required|string|min:2|max:50',
             'code' => 'required|string|min:1|max:10|unique:units,code,' . $this->unit->id,
+            'is_active' => 'boolean',
         ];
     }
 }

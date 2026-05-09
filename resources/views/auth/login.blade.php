@@ -1,47 +1,240 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <style>
+        .form-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .lock-icon-container {
+            width: 54px;
+            height: 54px;
+            background: #fdfae9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            color: #1a1512;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1a1512;
+            margin-bottom: 6px;
+            letter-spacing: -0.8px;
+        }
+
+        .header-sub {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .input-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1a1512;
+            margin-bottom: 10px;
+        }
+
+        .field-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9; /* Garis lebih tebal sedikit untuk kontras */
+            transition: all 0.3s ease;
+        }
+
+        .field-container:focus-within {
+            border-bottom-color: #1a1512;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 0;
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 10px 35px 10px 30px;
+            border: none !important;
+            outline: none !important; /* Mematikan stroke biru browser */
+            box-shadow: none !important; /* Mematikan shadow default */
+            font-size: 15px;
+            color: #1a1512;
+            background: transparent !important;
+        }
+
+        /* Fix Autofill background & stroke */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #1a1512;
+            -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0;
+            color: #94a3b8;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            transition: color 0.2s;
+        }
+        
+        .password-toggle:hover {
+            color: #1a1512;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: #1a1512;
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #2d2520;
+            transform: translateY(-1px);
+        }
+
+        .footer-help {
+            text-align: center;
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid #f8fafc;
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .help-link {
+            color: #1a1512;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .register-link {
+            color: #92400e;
+            font-weight: 800;
+            text-decoration: none;
+        }
+    </style>
+
+    <div class="form-header">
+        <div class="lock-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 22px; height: 22px;">
+                <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+            </svg>
+        </div>
+        <h2 class="header-title">Selamat Datang Kembali</h2>
+        <p class="header-sub">Silakan masuk ke akun Anda</p>
+    </div>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="input-wrapper">
+            <label class="input-label">Email atau Username</label>
+            <div class="field-container">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <input id="email" class="custom-input" type="email" name="email" :value="old('email')" placeholder="admin@manajemenkopi.test" required autofocus maxlength="50" />
+            </div>
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="input-wrapper">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+                <label class="input-label" style="margin-bottom: 0;">Kata Sandi</label>
+                <a href="{{ route('password.request') }}" style="font-size: 11px; font-weight: 700; color: #166534; text-decoration: none;">Lupa Password?</a>
+            </div>
+            <div class="field-container">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                </svg>
+                <input id="password" class="custom-input" type="password" name="password" placeholder="••••••••" required minlength="8" />
+                <div class="password-toggle" onclick="togglePassword()">
+                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+            </div>
+            <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+        <div class="block mt-5">
+            <label for="remember_me" class="inline-flex items-center" style="cursor: pointer;">
+                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-amber-800 shadow-sm focus:ring-amber-500" name="remember" style="width: 16px; height: 16px;">
+                <span class="ms-3 text-sm text-gray-500" style="font-weight: 500;">Ingat saya di perangkat ini</span>
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+        <button type="submit" class="login-btn">
+            Masuk
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+        </button>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <div class="footer-help">
+            <div class="help-text">
+                Butuh bantuan akses? 
+                <a href="https://wa.me/6281234567890" target="_blank" class="help-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-1.074-.765 5.99 5.99 0 01.123-1.006A8.274 8.274 0 013 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                    </svg>
+                    Hubungi Support
+                </a>
+            </div>
+            <p style="font-size: 13px; color: #94a3b8;">
+                Belum punya akun? <a href="{{ route('register') }}" class="register-link">Daftar Sekarang</a>
+            </p>
         </div>
     </form>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />';
+            }
+        }
+    </script>
 </x-guest-layout>

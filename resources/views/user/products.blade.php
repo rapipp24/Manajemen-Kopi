@@ -112,13 +112,12 @@
     </style>
 
     <div class="page-header">
-        <h1>☕ Produk Kopi Kami</h1>
+        <h1>Produk Kopi Kami</h1>
         <p>Pilih produk kopi pilihan dan buat pesanan Anda.</p>
     </div>
 
     {{-- Produk akan ditampilkan di sini setelah modul produk selesai --}}
     <div class="empty-state">
-        <span>☕</span>
         <p>Produk akan segera tersedia.<br>Hubungi admin untuk informasi lebih lanjut.</p>
     </div>
 </x-layouts.user>

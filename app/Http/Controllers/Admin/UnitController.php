@@ -6,15 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use App\Http\Requests\Admin\StoreUnitRequest;
 use App\Http\Requests\Admin\UpdateUnitRequest;
+use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $units = Unit::latest()->paginate(10);
+        $query = Unit::latest();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('code', 'like', '%' . $request->search . '%');
+        }
+
+        $units = $query->paginate(10);
         return view('admin.units.index', compact('units'));
     }
 
@@ -25,7 +33,7 @@ class UnitController extends Controller
     {
         Unit::create($request->validated());
 
-        return redirect()->back()->with('success', 'Satuan berhasil ditambahkan!');
+        return redirect()->route('admin.units.index')->with('success', 'Satuan berhasil ditambahkan!');
     }
 
     /**
@@ -43,7 +51,7 @@ class UnitController extends Controller
     {
         $unit->update($request->validated());
 
-        return redirect()->back()->with('success', 'Satuan berhasil diperbarui!');
+        return redirect()->route('admin.units.index')->with('success', 'Satuan berhasil diperbarui!');
     }
 
     /**
@@ -52,6 +60,6 @@ class UnitController extends Controller
     public function destroy(Unit $unit)
     {
         $unit->delete();
-        return redirect()->back()->with('success', 'Satuan berhasil dihapus!');
+        return redirect()->route('admin.units.index')->with('success', 'Satuan berhasil dihapus!');
     }
 }

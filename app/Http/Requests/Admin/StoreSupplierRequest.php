@@ -29,12 +29,13 @@ class StoreSupplierRequest extends FormRequest
             ],
             'address' => 'required|string|min:5|max:500', // Sekarang Wajib
             'contact_person' => [
-                'required', // Sekarang Wajib
+                'nullable', 
                 'string', 
                 'min:2', 
                 'max:50', 
                 'regex:/^[a-zA-Z\s\.]+$/'
             ],
+            'description' => 'nullable|string|max:1000',
         ];
     }
 }

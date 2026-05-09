@@ -10,12 +10,18 @@ class RawMaterialReceipt extends Model
 {
     protected $fillable = [
         'receipt_number',
+        'reference_number',
         'supplier_id',
         'receipt_date',
         'note',
         'total_amount',
         'created_by'
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'receipt_number';
+    }
 
     public function supplier(): BelongsTo
     {

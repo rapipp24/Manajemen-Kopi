@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model
 {
-    protected $fillable = ['name', 'code'];
+    use SoftDeletes;
+    protected $fillable = ['name', 'code', 'is_active'];
 
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

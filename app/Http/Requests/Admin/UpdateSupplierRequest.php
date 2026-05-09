@@ -29,12 +29,14 @@ class UpdateSupplierRequest extends FormRequest
             ],
             'address' => 'required|string|min:5|max:500',
             'contact_person' => [
-                'required', 
+                'nullable', 
                 'string', 
                 'min:2', 
                 'max:50', 
                 'regex:/^[a-zA-Z\s\.]+$/'
             ],
+            'description' => 'nullable|string|max:1000',
+            'is_active' => 'boolean',
         ];
     }
 }
