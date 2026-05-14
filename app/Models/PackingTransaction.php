@@ -11,7 +11,7 @@ class PackingTransaction extends Model
     protected $fillable = [
         'packing_number',
         'packing_date',
-        'production_batch_id',
+        'curah_type',
         'note',
         'created_by'
     ];

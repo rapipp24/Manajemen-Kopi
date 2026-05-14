@@ -24,7 +24,13 @@ class AppServiceProvider extends ServiceProvider
             $count = \App\Models\RawMaterial::whereColumn('current_stock', '<=', 'minimum_stock')
                 ->where('is_active', true)
                 ->count();
-            $view->with('lowStockCount', $count);
+            
+            $pendingSalesCount = \App\Models\SalesOrder::where('status', 'menunggu')->count();
+            
+            $view->with([
+                'lowStockCount' => $count,
+                'pendingSalesOrderCount' => $pendingSalesCount
+            ]);
         });
     }
 }

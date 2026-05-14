@@ -24,13 +24,13 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Akun User / Customer
+        // Akun Sales (Demo)
         User::updateOrCreate(
-            ['email' => 'user@manajemenkopi.test'],
+            ['email' => 'sales@manajemenkopi.test'],
             [
-                'name'              => 'Customer Demo',
+                'name'              => 'Sales Demo',
                 'password'          => Hash::make('password'),
-                'role'              => User::ROLE_USER,
+                'role'              => User::ROLE_SALES,
                 'email_verified_at' => now(),
             ]
         );

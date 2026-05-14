@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('user.products');
+        return redirect()->route('sales.products');
     }
 
     /**

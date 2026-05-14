@@ -5,7 +5,7 @@
         <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
             <div>
                 <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0;">Daftar Pengguna Sistem</h3>
-                <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Kelola akun Admin dan Staff di sini.</p>
+                <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Kelola akun Admin dan Sales di sini.</p>
             </div>
             <div style="display: flex; gap: 12px;">
                 <form action="{{ route('admin.users.index') }}" method="GET" style="display: flex; gap: 8px;">
@@ -49,7 +49,7 @@
                         @if($user->isAdmin())
                             <span style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid #fde68a;">Admin</span>
                         @else
-                            <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid #bae6fd;">Customer</span>
+                            <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid #bbf7d0;">Sales</span>
                         @endif
                     </td>
                     <td style="padding: 15px 20px; font-size: 13px; color: #475569;">

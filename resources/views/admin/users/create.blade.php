@@ -21,7 +21,7 @@
                     <div>
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Role / Hak Akses</label>
                         <select name="role" required style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('role') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px; background: white;">
-                            <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Customer</option>
+                            <option value="sales" {{ old('role') == 'sales' ? 'selected' : '' }}>Sales</option>
                             <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                         </select>
                         @error('role') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror

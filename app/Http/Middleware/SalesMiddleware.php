@@ -6,19 +6,19 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class StaffMiddleware
+class SalesMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  Closure(Request): (Response)  $next
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
 
-        if (! $user || $user->role !== 'user') {
-            abort(403, 'Akses ditolak. Halaman ini hanya untuk User.');
+        if (! $user || (! $user->isSales() && ! $user->isAdmin())) {
+            abort(403, 'Akses ditolak. Halaman ini hanya untuk Sales.');
         }
 
         return $next($request);

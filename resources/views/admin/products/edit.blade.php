@@ -39,13 +39,13 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                     <div>
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Jenis Produk</label>
-                        <select name="category" required 
-                                style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('category') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px; background-color: white;">
+                        <select name="product_category_id" required 
+                                style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('product_category_id') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px; background-color: white;">
                             @foreach($categories as $category)
-                                <option value="{{ $category }}" {{ old('category', $product->category) == $category ? 'selected' : '' }}>{{ $category }}</option>
+                                <option value="{{ $category->id }}" {{ old('product_category_id', $product->product_category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
-                        @error('category') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
+                        @error('product_category_id') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Berat Bersih</label>

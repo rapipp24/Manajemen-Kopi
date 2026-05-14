@@ -6,6 +6,12 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\RawMaterialController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\ProductionController;
+use App\Http\Controllers\Admin\PackingController;
+use App\Http\Controllers\Admin\SaleController;
+use App\Http\Controllers\Admin\SalesOrderController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\User\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +27,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Master Data
     Route::resource('units', UnitController::class);
     Route::resource('suppliers', SupplierController::class);
+    Route::resource('product-categories', ProductCategoryController::class);
     Route::get('/raw-materials/{raw_material}/movements', [RawMaterialController::class, 'movements'])->name('raw-materials.movements');
     Route::resource('raw-materials', RawMaterialController::class);
     Route::resource('products', AdminProductController::class);
@@ -31,31 +38,39 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('raw-material-receipts', \App\Http\Controllers\RawMaterialReceiptController::class)
         ->only(['index', 'create', 'store', 'show'])
         ->parameters(['raw-material-receipts' => 'raw_material_receipt:receipt_number']);
-    Route::get('/production', function () {
-        return "Halaman Produksi";
-    })->name('production');
-    Route::get('/packing', function () {
-        return "Halaman Packing";
-    })->name('packing');
-    Route::get('/sales', function () {
-        return "Halaman Penjualan";
-    })->name('sales');
+    Route::resource('productions', ProductionController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('packings', PackingController::class)->only(['index', 'create', 'store', 'show']);
+    Route::get('/sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
+    Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('/orders', function () {
         return "Halaman Pesanan Admin";
     })->name('orders');
     Route::get('/reports', function () {
         return "Halaman Laporan";
     })->name('reports');
+
+    // Sales Orders (Pesanan dari Sales)
+    Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');
+    Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
+    Route::patch('/sales-orders/{salesOrder}/status', [SalesOrderController::class, 'updateStatus'])->name('sales-orders.update-status');
+
+    // Pengaturan
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
 
-// ─── AREA USER / STAFF (Khusus Staff) ─────────────────────────────────────────
-Route::middleware(['auth', 'staff', 'verified'])->name('user.')->group(function () {
+// ─── AREA SALES (Khusus Sales) ────────────────────────────────────────────────
+Route::middleware(['auth', 'sales', 'verified'])->name('sales.')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products');
-    Route::get('/orders', function () {
-        return "Halaman Buat Pesanan Staff";
-    })->name('orders');
+    
+    // Pesanan Sales
+    Route::resource('orders', \App\Http\Controllers\Sales\OrderController::class)->only(['index', 'create', 'store', 'show']);
+
+    Route::get('/orders-placeholder', function () {
+        return "Halaman Buat Pesanan Sales";
+    })->name('orders-placeholder');
     Route::get('/orders/history', function () {
-        return "Halaman Riwayat Pesanan Staff";
+        return "Halaman Riwayat Pesanan Sales";
     })->name('orders.history');
 });
 
@@ -76,7 +91,7 @@ Route::middleware('auth')->get('/home', function () {
     if (request()->user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
     }
-    return redirect()->route('user.products');
+    return redirect()->route('sales.products');
 })->name('home');
 
 // ─── Google Auth ─────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Unit;
+use App\Models\ProductCategory;
 use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ class ProductController extends Controller
     public function create()
     {
         $units = Unit::where('is_active', true)->get();
-        $categories = ['Kopi Standar', 'Kopi Premium'];
+        $categories = ProductCategory::where('is_active', true)->get();
         return view('admin.products.create', compact('units', 'categories'));
     }
 
@@ -51,7 +52,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $units = Unit::where('is_active', true)->get();
-        $categories = ['Kopi Standar', 'Kopi Premium'];
+        $categories = ProductCategory::where('is_active', true)->get();
         return view('admin.products.edit', compact('product', 'units', 'categories'));
     }
 

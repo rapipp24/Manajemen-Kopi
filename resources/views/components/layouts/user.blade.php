@@ -102,16 +102,16 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="{{ route('user.products') }}" class="navbar-brand">
+        <a href="{{ route('sales.products') }}" class="navbar-brand">
            Kopi Elang Emas
         </a>
         <div class="navbar-menu">
-            <a href="{{ route('user.products') }}"
-               class="nav-link {{ request()->routeIs('user.products') ? 'active' : '' }}">
+            <a href="{{ route('sales.products') }}"
+               class="nav-link {{ request()->routeIs('sales.products') ? 'active' : '' }}">
                 Produk
             </a>
-            <a href="#" class="nav-link {{ request()->routeIs('user.orders*') ? 'active' : '' }}">
-                Pesanan Saya
+            <a href="{{ route('sales.orders.index') }}" class="nav-link {{ request()->routeIs('sales.orders*') ? 'active' : '' }}">
+                Pengajuan Barang
             </a>
         </div>
         <div class="navbar-user">

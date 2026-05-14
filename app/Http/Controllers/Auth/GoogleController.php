@@ -42,13 +42,13 @@ class GoogleController extends Controller
                 
                 Auth::login($user);
             } else {
-                // Jika user belum ada, buat akun baru sebagai Customer
+                // Jika user belum ada, buat akun baru sebagai Sales
                 $newUser = User::create([
                     'name' => $googleUser->name,
                     'email' => $googleUser->email,
                     'google_id' => $googleUser->id,
                     'google_token' => $googleUser->token,
-                    'role' => 'user', // Otomatis jadi Customer
+                    'role' => 'sales', // Otomatis jadi Sales
                     'email_verified_at' => now(), // Google sudah verifikasi emailnya
                     'password' => null, // Tidak butuh password manual
                 ]);
@@ -61,7 +61,7 @@ class GoogleController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-            return redirect()->route('user.products');
+            return redirect()->route('sales.products');
 
         } catch (Exception $e) {
             return redirect()->route('login')->with('error', 'Gagal login dengan Google. Silakan coba lagi.');

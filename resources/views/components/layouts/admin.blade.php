@@ -8,7 +8,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -39,7 +39,7 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--cream-50);
             color: var(--text-main);
             display: flex;
@@ -47,156 +47,176 @@
         }
 
         /* ═══════════════ SIDEBAR ═══════════════ */
+        /* ═══════════════ SIDEBAR ═══════════════ */
         .sidebar {
             width: var(--sidebar-w);
-            min-height: 100vh;
-            background: var(--brown-900);
+            height: 100vh;
+            background: #110c08; /* Deep Coffee Black */
             display: flex;
             flex-direction: column;
             position: fixed;
             top: 0; left: 0;
             z-index: 200;
-            border-right: 1px solid var(--brown-800);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
         }
 
         .sidebar-brand {
-            padding: 22px 18px 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 24px 20px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 2px;
+            gap: 12px;
         }
 
         .brand-icon {
-            width: 34px;
-            height: 34px;
-            background: linear-gradient(135deg, var(--brown-500), var(--brown-400));
-            border-radius: 9px;
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #92400e, #78350f);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 17px;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(146, 64, 14, 0.3);
             flex-shrink: 0;
         }
 
         .brand-name {
-            font-family: 'Lora', serif;
             font-size: 16px;
-            font-weight: 600;
-            color: var(--cream-100);
-            line-height: 1.2;
+            font-weight: 800;
+            color: #f3f4f6;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
         }
 
         .brand-tagline {
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.3px;
-            padding-left: 44px;
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            padding-left: 50px;
         }
 
         /* Nav */
         .sidebar-nav {
             flex: 1;
-            padding: 14px 10px;
+            padding: 20px 12px;
             overflow-y: auto;
-            scrollbar-width: none;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
         }
 
-        .sidebar-nav::-webkit-scrollbar { display: none; }
+        /* Custom Scrollbar for Webkit */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
 
         .nav-group {
-            margin-bottom: 4px;
+            margin-bottom: 24px;
         }
 
         .nav-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: #6b5242;
-            letter-spacing: 1.1px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #4b5563;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            padding: 10px 10px 4px;
+            padding: 0 12px 10px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 9px;
-            padding: 8px 10px;
-            border-radius: 7px;
-            color: #c4a882;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #9ca3af;
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 500;
-            transition: background 0.15s, color 0.15s;
-            margin-bottom: 1px;
-            position: relative;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 4px;
+            border: 1px solid transparent;
         }
 
         .nav-item:hover {
             background: rgba(255,255,255,0.05);
-            color: var(--cream-100);
+            color: #f3f4f6;
+            transform: translateX(4px);
         }
 
         .nav-item.active {
-            background: rgba(180, 83, 9, 0.18);
-            color: #f5d9a8;
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: -10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 18px;
-            background: var(--brown-400);
-            border-radius: 0 2px 2px 0;
+            background: rgba(146, 64, 14, 0.1);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.1);
+            font-weight: 600;
         }
 
         .nav-item svg {
-            width: 15px;
-            height: 15px;
+            width: 18px;
+            height: 18px;
             flex-shrink: 0;
-            opacity: 0.8;
+            opacity: 0.7;
+            transition: all 0.2s;
         }
 
-        .nav-item.active svg { opacity: 1; }
+        .nav-item:hover svg, .nav-item.active svg {
+            opacity: 1;
+            color: #fbbf24;
+        }
 
         .nav-divider {
             height: 1px;
-            background: rgba(255,255,255,0.05);
-            margin: 10px 10px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            margin: 16px 0;
         }
 
         /* Sidebar Footer */
         .sidebar-footer {
-            padding: 14px 18px;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .sidebar-user {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .sidebar-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--brown-500), var(--brown-700));
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #92400e;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fef3c7;
-            font-size: 13px;
+            color: white;
+            font-size: 14px;
             font-weight: 700;
             flex-shrink: 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         .sidebar-user-info {
@@ -206,8 +226,8 @@
 
         .sidebar-user-name {
             font-size: 13px;
-            font-weight: 600;
-            color: #e5c9a8;
+            font-weight: 700;
+            color: #f3f4f6;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -215,7 +235,8 @@
 
         .sidebar-user-role {
             font-size: 11px;
-            color: var(--text-muted);
+            color: #6b7280;
+            font-weight: 500;
         }
 
         .btn-logout-small {
@@ -250,9 +271,9 @@
         }
 
         .topbar-title {
-            font-family: 'Lora', serif;
-            font-size: 18px;
-            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
             color: var(--text-main);
         }
 
@@ -357,6 +378,14 @@
                     </svg>
                     Supplier
                 </a>
+                <a href="{{ route('admin.product-categories.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.product-categories*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    Jenis Produk
+                </a>
                 <a href="{{ route('admin.customers.index') }}"
                    class="nav-item {{ request()->routeIs('admin.customers*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -408,14 +437,16 @@
                     </svg>
                     Terima Bahan
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.productions.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.productions*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
                     </svg>
                     Produksi
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.packings.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.packings*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
@@ -428,12 +459,23 @@
 
             <div class="nav-group">
                 <p class="nav-label">Penjualan</p>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.sales.index') }}" class="nav-item {{ request()->routeIs('admin.sales.*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
-                    Catat Penjualan
+                    Catat Penjualan (Direct)
+                </a>
+                <a href="{{ route('admin.sales-orders.index') }}" class="nav-item {{ request()->routeIs('admin.sales-orders*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <span>Pengajuan Barang Sales</span>
+                    @if($pendingSalesOrderCount > 0)
+                        <span style="background: #ef4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto;">
+                            {{ $pendingSalesOrderCount }}
+                        </span>
+                    @endif
                 </a>
                 <a href="#" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -470,6 +512,17 @@
                     Absensi
                 </a>
             </div>
+
+            <div class="nav-divider"></div>
+
+            <div class="nav-group">
+                <p class="nav-label">Sistem</p>
+                <a href="{{ route('admin.settings.index') }}" class="nav-item {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Pengaturan Nota
+                </a>
+            </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -481,6 +534,18 @@
                     <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
                     <div class="sidebar-user-role">Administrator</div>
                 </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn-logout-small confirm-action" 
+                            data-confirm-title="Keluar dari Sistem?" 
+                            data-confirm-text="Anda harus login kembali untuk mengakses panel manajemen."
+                            data-confirm-icon="question"
+                            title="Logout">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
     </aside>
@@ -496,7 +561,11 @@
             
             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                 @csrf
-                <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <button type="submit" class="confirm-action" 
+                        data-confirm-title="Keluar dari Sistem?" 
+                        data-confirm-text="Anda harus login kembali untuk mengakses panel manajemen."
+                        data-confirm-icon="question"
+                        style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
                     <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Logout
                 </button>
@@ -517,12 +586,136 @@
     </main>
 
     <script>
-        // Isi tanggal di topbar
-        const d = new Date();
-        const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').textContent = d.toLocaleDateString('id-ID', opts);
+        // Persistence Sidebar Scroll
+        const sidebarNav = document.querySelector('.sidebar-nav');
+        if (sidebarNav) {
+            // Restore scroll position
+            const savedScroll = localStorage.getItem('sidebar-scroll');
+            if (savedScroll) {
+                sidebarNav.scrollTop = savedScroll;
+            }
 
-        // Currency Formatter
+            // Save scroll position on click
+            sidebarNav.addEventListener('click', function(e) {
+                if (e.target.closest('.nav-item')) {
+                    localStorage.setItem('sidebar-scroll', sidebarNav.scrollTop);
+                }
+            });
+        }
+
+        // Real-time Digital Clock
+        function updateClock() {
+            const d = new Date();
+            const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            
+            const dateString = d.toLocaleDateString('id-ID', dateOpts);
+            const timeString = d.toLocaleTimeString('id-ID', timeOpts);
+            
+            const clockElement = document.getElementById('current-date');
+            if (clockElement) {
+                clockElement.textContent = `${dateString} • ${timeString}`;
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // SweetAlert Configuration for Global Theme
+        const SwalCustom = Swal.mixin({
+            customClass: {
+                confirmButton: 'swal-confirm-btn',
+                cancelButton: 'swal-cancel-btn'
+            },
+            buttonsStyling: false
+        });
+
+        // Inject global styles for SweetAlert
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .swal-confirm-btn {
+                background: #92400e !important;
+                color: white !important;
+                padding: 10px 24px !important;
+                border-radius: 10px !important;
+                font-weight: 700 !important;
+                font-family: 'Inter', sans-serif !important;
+                margin: 0 8px !important;
+                border: none !important;
+                cursor: pointer !important;
+            }
+            .swal-cancel-btn {
+                background: #f5f5f4 !important;
+                color: #78716c !important;
+                padding: 10px 24px !important;
+                border-radius: 10px !important;
+                font-weight: 600 !important;
+                font-family: 'Inter', sans-serif !important;
+                margin: 0 8px !important;
+                border: 1px solid #e7e5e4 !important;
+                cursor: pointer !important;
+            }
+            .swal2-popup {
+                border-radius: 20px !important;
+                padding: 2em !important;
+            }
+            .swal2-title {
+                color: #1c1917 !important;
+                font-weight: 800 !important;
+            }
+            .swal2-html-container {
+                color: #44403c !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Global Confirmation Handler
+        document.addEventListener('click', function(e) {
+            const confirmBtn = e.target.closest('.confirm-action');
+            if (confirmBtn) {
+                e.preventDefault();
+                const form = confirmBtn.closest('form');
+                const message = confirmBtn.getAttribute('data-confirm-text') || 'Apakah Anda yakin?';
+                const title = confirmBtn.getAttribute('data-confirm-title') || 'Konfirmasi';
+                const icon = confirmBtn.getAttribute('data-confirm-icon') || 'warning';
+
+                Swal.fire({
+                    title: title,
+                    text: message,
+                    icon: icon,
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Lanjutkan',
+                    cancelButtonText: 'Batal',
+                    customClass: {
+                        confirmButton: 'swal-confirm-btn',
+                        cancelButton: 'swal-cancel-btn'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If it's a submit button inside a form
+                        if (form) {
+                            // Add a hidden input to preserve the button value if it has a name
+                            if (confirmBtn.name && confirmBtn.value) {
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = confirmBtn.name;
+                                hiddenInput.value = confirmBtn.value;
+                                form.appendChild(hiddenInput);
+                            }
+                            form.submit();
+                        } else if (confirmBtn.tagName === 'A') {
+                            window.location.href = confirmBtn.href;
+                        }
+                    }
+                });
+            }
+        });
+
         function formatRupiah(angka, prefix) {
             var number_string = angka.replace(/[^,\d]/g, '').toString(),
                 split = number_string.split(','),

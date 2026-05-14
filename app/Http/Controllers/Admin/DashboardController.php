@@ -8,7 +8,6 @@ use App\Models\RawMaterial;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Sale;
-
 use App\Models\Supplier;
 use App\Models\Unit;
 

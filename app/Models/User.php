@@ -12,7 +12,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     const ROLE_ADMIN = 'admin';
-    const ROLE_USER  = 'user';
+    const ROLE_SALES = 'sales';
 
     protected $fillable = [
         'name',
@@ -43,5 +43,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
+    }
+
+    // Helper: cek apakah user adalah sales
+    public function isSales(): bool
+    {
+        return $this->role === self::ROLE_SALES;
     }
 }

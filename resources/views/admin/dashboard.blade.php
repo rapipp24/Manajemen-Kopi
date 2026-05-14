@@ -8,9 +8,9 @@
         }
 
         .greeting-text {
-            font-family: 'Lora', serif;
+            font-family: 'Inter', sans-serif;
             font-size: 22px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-main);
             margin-bottom: 4px;
         }

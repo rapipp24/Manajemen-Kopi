@@ -37,8 +37,8 @@
                         <div style="font-size: 12px; color: #64748b;">{{ $product->code }} - {{ $product->weight }}gr</div>
                     </td>
                     <td style="padding: 16px 20px;">
-                        <span style="background: {{ $product->category == 'Kopi Premium' ? '#fef3c7' : '#f1f5f9' }}; color: {{ $product->category == 'Kopi Premium' ? '#92400e' : '#475569' }}; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
-                            {{ $product->category }}
+                        <span style="background: {{ ($product->category->name ?? '') == 'Kopi Premium' ? '#fef3c7' : '#f1f5f9' }}; color: {{ ($product->category->name ?? '') == 'Kopi Premium' ? '#92400e' : '#475569' }}; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                            {{ $product->category->name ?? 'Tanpa Kategori' }}
                         </span>
                     </td>
                     <td style="padding: 16px 20px; font-size: 14px; font-weight: 600; color: #1e293b;">
@@ -57,9 +57,12 @@
                     <td style="padding: 16px 20px; text-align: right;">
                         <div style="display: flex; gap: 12px; justify-content: flex-end;">
                             <a href="{{ route('admin.products.edit', $product->id) }}" style="color: #0284c7; text-decoration: none; font-size: 13px; font-weight: 500;">Edit</a>
-                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Hapus produk ini?')">
+                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
                                 @csrf @method('DELETE')
-                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; font-weight: 500;">Hapus</button>
+                                <button type="submit" class="confirm-action" 
+                                        data-confirm-title="Hapus Produk?" 
+                                        data-confirm-text="Produk yang dihapus tidak dapat dipulihkan."
+                                        style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; font-weight: 500;">Hapus</button>
                             </form>
                         </div>
                     </td>

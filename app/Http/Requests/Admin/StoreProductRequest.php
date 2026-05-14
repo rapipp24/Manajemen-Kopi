@@ -22,9 +22,9 @@ class StoreProductRequest extends FormRequest
                 'max:50', 
                 'regex:/^[a-zA-Z\s\.]+$/'
             ],
-            'category' => [
+            'product_category_id' => [
                 'required',
-                Rule::in(['Kopi Standar', 'Kopi Premium']),
+                'exists:product_categories,id',
             ],
             'variant' => 'nullable|string|max:50',
             'weight' => 'required|integer|min:1',

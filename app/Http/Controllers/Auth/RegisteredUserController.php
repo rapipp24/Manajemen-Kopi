@@ -40,13 +40,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user', // Otomatis menjadi Customer
+            'role' => 'sales', // Otomatis menjadi Sales
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->route('user.products');
+        return redirect()->route('sales.products');
     }
 }

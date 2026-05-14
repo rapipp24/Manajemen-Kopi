@@ -1,0 +1,4 @@
+untuk print kertas yang digunakan bukan A4 melainkan Kertas Continuous Form (Kertas Komputer/NCR)
+printer Epson lx 310 
+
+Ukuran nota jangan terlalu banyak makan tempat karna nota ini otomatis dipotong dari printernya

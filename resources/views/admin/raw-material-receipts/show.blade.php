@@ -71,7 +71,7 @@
     <div class="card" id="printArea">
         <!-- Header Khusus Cetak -->
         <div class="print-header">
-            <h1 style="font-size: 24px; font-family: 'Lora', serif; font-weight: 700; color: #000;">LAPORAN PENERIMAAN BARANG</h1>
+            <h1 style="font-size: 24px; font-family: 'Inter', sans-serif; font-weight: 700; color: #000;">LAPORAN PENERIMAAN BARANG</h1>
             <p style="font-size: 14px; color: #000;">KOPI ELANG EMAS - PANEL MANAJEMEN</p>
             <p style="font-size: 12px; margin-top: 5px;">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
         </div>
