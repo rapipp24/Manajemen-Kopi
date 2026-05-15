@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Unit extends Model
 {
     use SoftDeletes;
-    protected $fillable = ['name', 'code', 'is_active'];
+    
+    protected $fillable = ['name', 'code', 'type', 'is_active'];
 
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

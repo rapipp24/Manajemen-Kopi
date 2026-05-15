@@ -27,7 +27,7 @@
                 <tr style="background:#f1f5f9;border-bottom:1px solid #e2e8f0;">
                     <th style="padding:14px 20px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">No. Invoice</th>
                     <th style="padding:14px 20px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">Tanggal</th>
-                    <th style="padding:14px 20px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">Customer</th>
+                    <th style="padding:14px 20px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">Member</th>
                     <th style="padding:14px 20px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">Total</th>
                     <th style="padding:14px 20px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">Status</th>
                     <th style="padding:14px 20px;text-align:right;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;">Aksi</th>

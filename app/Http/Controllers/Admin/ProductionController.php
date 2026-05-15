@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductionBatch;
 use App\Models\ProductionBatchItem;
 use App\Models\RawMaterial;
+use App\Models\ProductCategory;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,9 @@ class ProductionController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.productions.create', compact('materials'));
+        $categories = ProductCategory::orderBy('name')->get();
+
+        return view('admin.productions.create', compact('materials', 'categories'));
     }
 
     /**

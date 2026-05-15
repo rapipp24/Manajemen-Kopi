@@ -20,9 +20,15 @@
                     </div>
                     <div>
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Jenis Produksi *</label>
-                        <input type="text" name="product_type" value="{{ old('product_type') }}" required
-                               placeholder="Contoh: Kopi Bubuk Robusta"
-                               style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                        <select name="product_type" required
+                                style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
+                            <option value="">-- Pilih Jenis Produk --</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->name }}" {{ old('product_type') == $category->name ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
                         @error('product_type') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
                     </div>
                 </div>
@@ -51,8 +57,8 @@
                     <thead>
                         <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
                             <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left;">Bahan Baku</th>
-                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 150px;">Stok Tersedia</th>
-                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 150px;">Qty Digunakan</th>
+                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 220px;">Stok Tersedia</th>
+                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 180px;">Qty Digunakan</th>
                             <th style="padding: 10px 12px; width: 50px;"></th>
                         </tr>
                     </thead>
@@ -74,10 +80,13 @@
                                 <span class="info-stok" style="font-size:13px;color:#64748b;display:block;padding:9px 10px;">-</span>
                             </td>
                             <td style="padding: 8px 6px;">
-                                <input type="number" name="items[0][qty_used]" required min="0.01" step="0.01" placeholder="0"
-                                       class="input-qty"
-                                       style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;"
-                                       oninput="hitungTotal()">
+                                <div style="position: relative;">
+                                    <input type="text" name="items[0][qty_used]" required placeholder="0"
+                                           class="input-qty"
+                                           style="width:100%;padding:9px 35px 9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;text-align:right;font-weight:700;"
+                                           oninput="formatQtyInput(this); hitungTotal()">
+                                    <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #94a3b8; pointer-events: none; font-weight: 700;">kg</span>
+                                </div>
                             </td>
                             <td style="padding: 8px 6px; text-align: center;">
                                 <button type="button" onclick="hapusBaris(this)"
@@ -89,7 +98,7 @@
 
                 <div style="margin-top:14px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;display:flex;justify-content:flex-end;align-items:center;gap:16px;">
                     <span style="font-size:13px;font-weight:600;color:#475569;">Total Bahan Digunakan:</span>
-                    <span id="total-bahan" style="font-size:16px;font-weight:700;color:#92400e;">0.00 kg</span>
+                    <span id="total-bahan" style="font-size:16px;font-weight:700;color:#92400e;">0 kg</span>
                 </div>
             </div>
 
@@ -102,19 +111,22 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                     <div>
                         <label style="display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:8px;">Total Bahan Digunakan</label>
-                        <div id="display-total-bahan" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#64748b;">0.00 kg</div>
+                        <div id="display-total-bahan" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#64748b;font-weight:700;">0 kg</div>
                     </div>
                     <div>
                         <label style="display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:8px;">Total Hasil Produksi (kg) *</label>
-                        <input type="number" name="total_output" id="input-total-output" required min="0.01" step="0.01" placeholder="0"
-                               value="{{ old('total_output') }}"
-                               style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;"
-                               oninput="hitungSusut()">
+                        <div style="position: relative;">
+                            <input type="text" name="total_output" id="input-total-output" required placeholder="0"
+                                   value="{{ old('total_output') }}"
+                                   style="width:100%;padding:10px 35px 10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-weight:700;text-align:right;"
+                                   oninput="formatQtyInput(this); hitungSusut()">
+                            <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #94a3b8; pointer-events: none; font-weight: 700;">kg</span>
+                        </div>
                         @error('total_output') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label style="display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:8px;">Susut (Otomatis)</label>
-                        <div id="display-susut" style="padding:10px 12px;background:#fff5f5;border:1px solid #fecaca;border-radius:8px;font-size:14px;font-weight:700;color:#dc2626;">0.00 kg</div>
+                        <div id="display-susut" style="padding:10px 12px;background:#fff5f5;border:1px solid #fecaca;border-radius:8px;font-size:14px;font-weight:700;color:#dc2626;">0 kg</div>
                     </div>
                 </div>
             </div>
@@ -136,6 +148,40 @@
         const dataBahan = @json($materials->keyBy('id'));
         let barisIndex = 1;
 
+        // --- Formatting Helpers ---
+        function formatQtyInput(el) {
+            let val = el.value.replace(/[^0-9,]/g, "");
+            let parts = val.split(",");
+            parts[0] = parts[0].replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            if (parts.length > 2) el.value = parts[0] + "," + parts[1];
+            else el.value = parts.join(",");
+        }
+
+        function parseQty(str) {
+            if (!str) return 0;
+            return parseFloat(str.toString().replace(/\./g, "").replace(/,/g, ".")) || 0;
+        }
+
+        function formatIDRNumber(num) {
+            return num.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        function formatVisualStock(stock, unit) {
+            stock = parseFloat(stock);
+            if (!unit) return stock;
+
+            const unitLower = unit.toLowerCase();
+            if (unitLower === 'kilogram' || unitLower === 'kg') {
+                if (stock >= 1000) {
+                    let tonVal = stock / 1000;
+                    return `<strong>${formatIDRNumber(tonVal)}</strong> <span style="font-size:11px;color:#92400e;font-weight:700;">Ton</span> / <strong>${formatIDRNumber(stock)}</strong> <span style="font-size:11px;color:#64748b;">kg</span>`;
+                }
+                return `<strong>${formatIDRNumber(stock)}</strong> <span style="font-size:11px;color:#64748b;">kg</span>`;
+            }
+            return `<strong>${formatIDRNumber(stock)}</strong> <span style="font-size:11px;color:#64748b;">${unit}</span>`;
+        }
+
+        // --- Core Logic ---
         function tambahBaris() {
             const tbody = document.getElementById('tbody-bahan');
             const idx = barisIndex++;
@@ -157,11 +203,14 @@
                 <td style="padding:8px 6px;">
                     <span class="info-stok" style="font-size:13px;color:#64748b;display:block;padding:9px 10px;">-</span>
                 </td>
-                <td style="padding:8px 6px;">
-                    <input type="number" name="items[${idx}][qty_used]" required min="0.01" step="0.01" placeholder="0"
-                           class="input-qty"
-                           style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;"
-                           oninput="hitungTotal()">
+                <td style="padding: 8px 6px;">
+                    <div style="position: relative;">
+                        <input type="text" name="items[${idx}][qty_used]" required placeholder="0"
+                               class="input-qty"
+                               style="width:100%;padding:9px 35px 9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;text-align:right;font-weight:700;"
+                               oninput="formatQtyInput(this); hitungTotal()">
+                        <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #94a3b8; pointer-events: none; font-weight: 700;">kg</span>
+                    </div>
                 </td>
                 <td style="padding:8px 6px;text-align:center;">
                     <button type="button" onclick="hapusBaris(this)"
@@ -182,27 +231,55 @@
         function updateInfoStok(select) {
             const opt = select.options[select.selectedIndex];
             const span = select.closest('tr').querySelector('.info-stok');
-            span.textContent = opt.value
-                ? `${parseFloat(opt.dataset.stock).toFixed(2)} ${opt.dataset.unit}`
-                : '-';
+            if (opt.value) {
+                span.innerHTML = formatVisualStock(opt.dataset.stock, opt.dataset.unit);
+            } else {
+                span.textContent = '-';
+            }
             hitungTotal();
         }
 
         function hitungTotal() {
             let total = 0;
-            document.querySelectorAll('.input-qty').forEach(i => { total += parseFloat(i.value) || 0; });
-            document.getElementById('total-bahan').textContent = total.toFixed(2) + ' kg';
-            document.getElementById('display-total-bahan').textContent = total.toFixed(2) + ' kg';
+            document.querySelectorAll('.input-qty').forEach(i => { total += parseQty(i.value); });
+            
+            let totalDisplay = formatIDRNumber(total) + ' kg';
+            if (total >= 1000) {
+                totalDisplay = formatIDRNumber(total/1000) + ' Ton / ' + formatIDRNumber(total) + ' kg';
+            }
+
+            document.getElementById('total-bahan').innerHTML = totalDisplay;
+            document.getElementById('display-total-bahan').innerHTML = totalDisplay;
             hitungSusut();
         }
 
         function hitungSusut() {
-            const totalBahan = parseFloat(document.getElementById('total-bahan').textContent) || 0;
-            const totalHasil = parseFloat(document.getElementById('input-total-output').value) || 0;
+            let totalBahan = 0;
+            document.querySelectorAll('.input-qty').forEach(i => { totalBahan += parseQty(i.value); });
+            
+            const totalHasil = parseQty(document.getElementById('input-total-output').value);
             const susut = totalBahan - totalHasil;
             const el = document.getElementById('display-susut');
-            el.textContent = susut.toFixed(2) + ' kg';
+            
+            el.textContent = formatIDRNumber(susut) + ' kg';
             el.style.color = susut > 0 ? '#dc2626' : '#166534';
         }
+
+        // --- Prevent accidental changes ---
+        document.getElementById('form-produksi').addEventListener('submit', function(e) {
+            // Clean dots before submit for backend
+            document.querySelectorAll('.input-qty').forEach(input => {
+                input.value = parseQty(input.value);
+            });
+            const output = document.getElementById('input-total-output');
+            output.value = parseQty(output.value);
+        });
+
+        // Disable scroll on number inputs globally (if any left)
+        window.addEventListener('wheel', function(e) {
+            if (document.activeElement.type === 'number') {
+                document.activeElement.blur();
+            }
+        });
     </script>
 </x-layouts.admin>

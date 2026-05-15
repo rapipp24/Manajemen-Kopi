@@ -1,123 +1,161 @@
 <x-layouts.user>
-    <x-slot name="title">Produk Kopi</x-slot>
+    <x-slot name="title">Katalog Produk</x-slot>
 
     <style>
-        .page-header {
-            margin-bottom: 28px;
-        }
-
-        .page-header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: #1c1917;
-            margin-bottom: 6px;
-        }
-
-        .page-header p {
-            color: #78716c;
-            font-size: 14px;
-        }
-
+        .page-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .page-title { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px; letter-spacing: -0.02em; }
+        .page-desc { color: #64748b; font-size: 14px; }
+        
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 24px;
         }
 
         .product-card {
             background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid #e7e5e4;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: all 0.25s ease;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
         .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+            border-color: #92400e;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
 
-        .product-img {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, #1c1917, #44403c);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-        }
-
-        .product-body {
-            padding: 18px;
-        }
-
-        .product-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
+        .product-code {
+            font-family: monospace;
             font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-weight: 700;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            width: fit-content;
         }
-
-        .badge-standard  { background: #fef3c7; color: #92400e; }
-        .badge-premium   { background: #fce7f3; color: #9d174d; }
 
         .product-name {
             font-size: 16px;
-            font-weight: 600;
-            color: #1c1917;
-            margin-bottom: 6px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
         }
 
-        .product-desc {
+        .product-meta {
             font-size: 13px;
-            color: #78716c;
-            line-height: 1.5;
-            margin-bottom: 14px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .product-price {
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 800;
             color: #92400e;
-            margin-bottom: 14px;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
         }
-
-        .btn-order {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #92400e, #b45309);
-            color: white;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: opacity 0.2s;
-        }
-
-        .btn-order:hover { opacity: 0.9; }
 
         .empty-state {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 80px 24px;
             text-align: center;
-            padding: 64px 24px;
-            color: #78716c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            grid-column: 1 / -1;
+        }
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            background: #f8fafc;
+            color: #94a3b8;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
         }
 
-        .empty-state span { font-size: 48px; display: block; margin-bottom: 12px; }
-        .empty-state p { font-size: 15px; }
+        .btn-action {
+            background: #92400e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-action:hover { background: #78350f; }
     </style>
 
     <div class="page-header">
-        <h1>Produk Kopi Kami</h1>
-        <p>Pilih produk kopi pilihan dan buat pesanan Anda.</p>
+        <div>
+            <h1 class="page-title">Katalog Produk</h1>
+            <p class="page-desc">Daftar produk tersedia yang dapat diajukan ke gudang.</p>
+        </div>
+        <a href="{{ route('sales.orders.create') }}" class="btn-action">
+            <i data-lucide="plus-circle" style="width: 18px; height: 18px;"></i>
+            Buat Pengajuan
+        </a>
     </div>
 
-    {{-- Produk akan ditampilkan di sini setelah modul produk selesai --}}
-    <div class="empty-state">
-        <p>Produk akan segera tersedia.<br>Hubungi admin untuk informasi lebih lanjut.</p>
+    <div class="products-grid">
+        @forelse($products as $product)
+        <div class="product-card">
+            <div class="product-code">{{ $product->code }}</div>
+            <div>
+                <h3 class="product-name">{{ $product->name }}</h3>
+                <div class="product-meta">
+                    <i data-lucide="tag" style="width: 14px; height: 14px;"></i>
+                    {{ $product->productCategory->name ?? 'Tanpa Kategori' }} 
+                    @if($product->variant) • {{ $product->variant }} @endif
+                </div>
+                @if($product->weight)
+                <div class="product-meta" style="margin-top: 4px;">
+                    <i data-lucide="scale" style="width: 14px; height: 14px;"></i>
+                    <span style="font-size: 12px; color: #475569;">Isi/Berat: <b>{{ $product->weight }} gr</b></span>
+                </div>
+                @endif
+                
+                <div class="product-meta" style="margin-top: 10px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; width: fit-content;">
+                    <i data-lucide="package" style="width: 14px; height: 14px;"></i>
+                    @php
+                        $stock = (float) $product->current_stock;
+                        $stockColor = $stock > 10 ? '#166534' : ($stock > 0 ? '#92400e' : '#991b1b');
+                        $stockLabel = $stock > 0 ? 'Stok Gudang: ' . number_format($stock, 0) : 'Stok Habis';
+                    @endphp
+                    <span style="color: {{ $stockColor }}; font-size: 13px; font-weight: 800;">
+                        {{ $stockLabel }} {{ $product->unit->code ?? '' }}
+                    </span>
+                </div>
+            </div>
+            <div class="product-price">
+                Rp {{ number_format($product->price, 0, ',', '.') }}
+            </div>
+        </div>
+        @empty
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i data-lucide="package-search" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Katalog Produk Belum Tersedia</h3>
+            <p style="color: #64748b; font-size: 14px; max-width: 400px; line-height: 1.6; margin-bottom: 24px;">
+                Saat ini belum ada daftar produk yang dapat ditampilkan. Silakan hubungi admin gudang untuk memperbarui ketersediaan stok produk.
+            </p>
+        </div>
+        @endforelse
     </div>
 </x-layouts.user>

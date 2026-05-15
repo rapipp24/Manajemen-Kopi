@@ -20,7 +20,8 @@ class UpdateRawMaterialRequest extends FormRequest
                 'string', 
                 'min:3', 
                 'max:50', 
-                'regex:/^[a-zA-Z\s\.]+$/'
+                'unique:raw_materials,name,' . $rawMaterialId . ',id,deleted_at,NULL',
+                'regex:/^[a-zA-Z0-9\s\.\(\)\-]+$/'
             ],
             'unit_id' => 'required|exists:units,id',
             'minimum_stock' => 'required|numeric|min:0',

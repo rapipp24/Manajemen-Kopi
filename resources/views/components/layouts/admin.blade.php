@@ -392,7 +392,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
-                    Customer
+                    Member
                 </a>
                 <a href="{{ route('admin.raw-materials.index') }}"
                    class="nav-item {{ request()->routeIs('admin.raw-materials*') ? 'active' : '' }}">
@@ -556,70 +556,78 @@
         <div class="topbar-right" style="display: flex; align-items: center; gap: 20px;">
             <span class="topbar-date" id="current-date"></span>
             <span class="topbar-badge" style="background: {{ auth()->user()->isAdmin() ? '#fef3c7' : '#e0f2fe' }}; color: {{ auth()->user()->isAdmin() ? '#92400e' : '#0369a1' }}; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                {{ auth()->user()->isAdmin() ? 'Admin' : 'Customer' }}
+                {{ auth()->user()->isAdmin() ? 'Admin' : 'Member' }}
             </span>
-            
-            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                @csrf
-                <button type="submit" class="confirm-action" 
-                        data-confirm-title="Keluar dari Sistem?" 
-                        data-confirm-text="Anda harus login kembali untuk mengakses panel manajemen."
-                        data-confirm-icon="question"
-                        style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                    <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    Logout
-                </button>
-            </form>
         </div>
     </header>
 
     <!-- ═══ MAIN CONTENT ═══ -->
     <main class="main-wrapper">
         @if (session('success'))
-            <div class="flash-success">✓ {{ session('success') }}</div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: "{{ session('success') }}",
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                        timerProgressBar: true,
+                    });
+                });
+            </script>
         @endif
+
         @if (session('error'))
-            <div class="flash-error">⚠ {{ session('error') }}</div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: "{{ session('error') }}",
+                        confirmButtonText: 'Tutup',
+                        customClass: {
+                            confirmButton: 'swal-confirm-btn'
+                        },
+                        buttonsStyling: false
+                    });
+                });
+            </script>
         @endif
 
         {{ $slot }}
     </main>
 
     <script>
-        // Persistence Sidebar Scroll
+        // Persistence Sidebar Scroll (Ubah ke sessionStorage agar reset saat tab tutup)
         const sidebarNav = document.querySelector('.sidebar-nav');
         if (sidebarNav) {
-            // Restore scroll position
-            const savedScroll = localStorage.getItem('sidebar-scroll');
+            // Jika di halaman dashboard, pastikan scroll di atas
+            if (window.location.pathname.endsWith('/admin/dashboard')) {
+                sessionStorage.removeItem('sidebar-scroll');
+            }
+
+            const savedScroll = sessionStorage.getItem('sidebar-scroll');
             if (savedScroll) {
                 sidebarNav.scrollTop = savedScroll;
             }
 
-            // Save scroll position on click
             sidebarNav.addEventListener('click', function(e) {
                 if (e.target.closest('.nav-item')) {
-                    localStorage.setItem('sidebar-scroll', sidebarNav.scrollTop);
+                    sessionStorage.setItem('sidebar-scroll', sidebarNav.scrollTop);
                 }
             });
         }
 
-        // Real-time Digital Clock
-        function updateClock() {
-            const d = new Date();
-            const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            
-            const dateString = d.toLocaleDateString('id-ID', dateOpts);
-            const timeString = d.toLocaleTimeString('id-ID', timeOpts);
-            
-            const clockElement = document.getElementById('current-date');
-            if (clockElement) {
-                clockElement.textContent = `${dateString} • ${timeString}`;
-            }
+        // Tampilan Tanggal Statis
+        const d = new Date();
+        const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const clockElement = document.getElementById('current-date');
+        if (clockElement) {
+            clockElement.textContent = d.toLocaleDateString('id-ID', dateOpts);
         }
-
-        setInterval(updateClock, 1000);
-        updateClock();
 
     </script>
 
@@ -697,6 +705,12 @@
                     buttonsStyling: false
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Reset sidebar scroll jika ini adalah form logout
+                        if (form && form.action.includes('logout')) {
+                            sessionStorage.removeItem('sidebar-scroll');
+                            localStorage.removeItem('sidebar-scroll'); // Bersihkan sisa localStorage lama juga
+                        }
+
                         // If it's a submit button inside a form
                         if (form) {
                             // Add a hidden input to preserve the button value if it has a name

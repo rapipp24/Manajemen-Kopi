@@ -23,7 +23,7 @@
                         <h3 style="font-size: 15px; font-weight: 700; color: #1c1917; margin-bottom: 16px;">1. Informasi Utama</h3>
                         
                         <div style="margin-bottom: 12px;">
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #44403c; margin-bottom: 6px;">Tujuan Toko (Opsional)</label>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #44403c; margin-bottom: 6px;">Tujuan Member (Opsional)</label>
                             <select name="customer_id" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px;">
                                 <option value="">-- Stok Pribadi / Keliling --</option>
                                 @foreach($customers as $customer)

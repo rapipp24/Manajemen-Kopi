@@ -70,9 +70,8 @@
                     <thead>
                         <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
                             <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left;">Produk</th>
-                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 130px;">Jumlah Kemasan</th>
-                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 150px;">Berat/Kemasan (gr)</th>
-                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 120px;">Total Berat</th>
+                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 150px;">Jumlah Kemasan</th>
+                            <th style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-align: left; width: 180px;">Total Berat</th>
                             <th style="padding: 10px 12px; width: 50px;"></th>
                         </tr>
                     </thead>
@@ -80,7 +79,8 @@
                         <tr class="baris-item">
                             <td style="padding: 8px 6px;">
                                 <select name="items[0][product_id]" required class="select-produk"
-                                        style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;background:white;">
+                                        style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;background:white;"
+                                        onchange="hitungBaris(this); hitungTotalCurah()">
                                     <option value="">-- Pilih Produk --</option>
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}"
@@ -96,12 +96,6 @@
                             <td style="padding: 8px 6px;">
                                 <input type="number" name="items[0][qty_pack]" required min="1" step="1" placeholder="0"
                                        class="input-qty"
-                                       style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;"
-                                       oninput="hitungBaris(this); hitungTotalCurah()">
-                            </td>
-                            <td style="padding: 8px 6px;">
-                                <input type="number" name="items[0][weight_per_pack]" required min="0.001" step="0.001" placeholder="0"
-                                       class="input-berat"
                                        style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;"
                                        oninput="hitungBaris(this); hitungTotalCurah()">
                             </td>
@@ -179,19 +173,14 @@
             tr.innerHTML = `
                 <td style="padding:8px 6px;">
                     <select name="items[${idx}][product_id]" required class="select-produk"
-                            style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;background:white;">
+                            style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;background:white;"
+                            onchange="hitungBaris(this); hitungTotalCurah()">
                         <option value="">-- Pilih Produk --</option>${opts}
                     </select>
                 </td>
                 <td style="padding:8px 6px;">
                     <input type="number" name="items[${idx}][qty_pack]" required min="1" step="1" placeholder="0"
                            class="input-qty"
-                           style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;"
-                           oninput="hitungBaris(this); hitungTotalCurah()">
-                </td>
-                <td style="padding:8px 6px;">
-                    <input type="number" name="items[${idx}][weight_per_pack]" required min="0.001" step="0.001" placeholder="0"
-                           class="input-berat"
                            style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;"
                            oninput="hitungBaris(this); hitungTotalCurah()">
                 </td>
@@ -214,23 +203,46 @@
             hitungTotalCurah();
         }
 
+        function formatKgKeUnit(kg) {
+            if (kg >= 1000) {
+                const ton = kg / 1000;
+                return ton.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }) + ' Ton';
+            }
+            return kg.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }) + ' kg';
+        }
+
         function hitungBaris(el) {
-            const tr    = el.closest('tr');
-            const qty   = parseFloat(tr.querySelector('.input-qty').value) || 0;
-            const berat = parseFloat(tr.querySelector('.input-berat').value) || 0;
-            const total = qty * berat; // gram
-            const span  = tr.querySelector('.display-total-berat');
-            span.textContent = total > 0 ? total.toFixed(0) + ' gr (' + (total / 1000).toFixed(3) + ' kg)' : '-';
+            const tr      = el.closest('tr');
+            const select  = tr.querySelector('.select-produk');
+            const opt     = select.options[select.selectedIndex];
+            
+            const qty     = parseFloat(tr.querySelector('.input-qty').value) || 0;
+            const berat   = opt && opt.value ? (parseFloat(opt.dataset.weight) || 0) : 0;
+            
+            const total   = qty * berat; // gram
+            const span    = tr.querySelector('.display-total-berat');
+            
+            if (total > 0) {
+                const totalKg = total / 1000;
+                const fmtGr = total.toLocaleString('id-ID');
+                const fmtUnit = formatKgKeUnit(totalKg);
+                span.textContent = `${fmtGr} gr (${fmtUnit})`;
+            } else {
+                span.textContent = '-';
+            }
         }
 
         function hitungTotalCurah() {
             let totalKg = 0;
             document.querySelectorAll('.baris-item').forEach(tr => {
-                const qty   = parseFloat(tr.querySelector('.input-qty').value) || 0;
-                const berat = parseFloat(tr.querySelector('.input-berat').value) || 0;
+                const select = tr.querySelector('.select-produk');
+                const opt    = select.options[select.selectedIndex];
+                const qty    = parseFloat(tr.querySelector('.input-qty').value) || 0;
+                const berat  = opt && opt.value ? (parseFloat(opt.dataset.weight) || 0) : 0;
                 totalKg += (qty * berat) / 1000;
             });
-            document.getElementById('total-curah-pakai').textContent = totalKg.toFixed(3) + ' kg';
+            
+            document.getElementById('total-curah-pakai').textContent = formatKgKeUnit(totalKg);
             
             const warning = document.getElementById('warning-curah');
             const btnSubmit = document.getElementById('btn-submit');
@@ -241,7 +253,8 @@
                 if (!document.getElementById('curah_type').value) {
                      warning.textContent = '⚠ Pilih jenis produksi terlebih dahulu!';
                 } else {
-                     warning.textContent = `⚠ Melebihi stok curah tersedia (${currentCurahStock.toFixed(2)} kg)!`;
+                     const fmtStock = formatKgKeUnit(currentCurahStock);
+                     warning.textContent = `⚠ Melebihi stok curah tersedia (${fmtStock})!`;
                 }
             } else {
                 warning.style.display = 'none';

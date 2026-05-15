@@ -56,6 +56,6 @@ class CustomerController extends Controller
         $customer->delete();
 
         return redirect()->route('admin.customers.index')
-            ->with('success', 'Customer berhasil dihapus!');
+            ->with('success', 'Member berhasil dihapus!');
     }
 }

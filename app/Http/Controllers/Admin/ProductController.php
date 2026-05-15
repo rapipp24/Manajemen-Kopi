@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('unit')->latest();
+        $query = Product::with(['productCategory', 'unit'])->latest();
 
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
@@ -29,7 +29,9 @@ class ProductController extends Controller
 
     public function create()
     {
-        $units = Unit::where('is_active', true)->get();
+        $units = Unit::where('is_active', true)
+            ->whereIn('type', ['produk', 'semua'])
+            ->get();
         $categories = ProductCategory::where('is_active', true)->get();
         return view('admin.products.create', compact('units', 'categories'));
     }
@@ -51,7 +53,9 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $units = Unit::where('is_active', true)->get();
+        $units = Unit::where('is_active', true)
+            ->whereIn('type', ['produk', 'semua'])
+            ->get();
         $categories = ProductCategory::where('is_active', true)->get();
         return view('admin.products.edit', compact('product', 'units', 'categories'));
     }

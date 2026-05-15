@@ -37,15 +37,15 @@
                         <div style="font-size: 12px; color: #64748b;">{{ $product->code }} - {{ $product->weight }}gr</div>
                     </td>
                     <td style="padding: 16px 20px;">
-                        <span style="background: {{ ($product->category->name ?? '') == 'Kopi Premium' ? '#fef3c7' : '#f1f5f9' }}; color: {{ ($product->category->name ?? '') == 'Kopi Premium' ? '#92400e' : '#475569' }}; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
-                            {{ $product->category->name ?? 'Tanpa Kategori' }}
+                        <span style="background: {{ ($product->productCategory->name ?? '') == 'Kopi Premium' ? '#fef3c7' : '#f1f5f9' }}; color: {{ ($product->productCategory->name ?? '') == 'Kopi Premium' ? '#92400e' : '#475569' }}; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                            {{ $product->productCategory->name ?? 'Tanpa Kategori' }}
                         </span>
                     </td>
                     <td style="padding: 16px 20px; font-size: 14px; font-weight: 600; color: #1e293b;">
                         Rp {{ number_format($product->price, 0, ',', '.') }}
                     </td>
                     <td style="padding: 16px 20px; font-size: 14px; color: #475569;">
-                        {{ number_format($product->current_stock, 0) }} <span style="font-size: 12px; color: #94a3b8;">{{ $product->unit->code }}</span>
+                        {{ number_format($product->current_stock, 0) }} <span style="font-size: 12px; color: #94a3b8;">{{ $product->unit->code ?? '-' }}</span>
                     </td>
                     <td style="padding: 16px 20px; font-size: 14px;">
                         @if($product->is_active)

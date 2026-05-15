@@ -1,5 +1,5 @@
 <x-layouts.admin>
-    <x-slot name="title">Edit Pelanggan</x-slot>
+    <x-slot name="title">Edit Member</x-slot>
 
     <div style="max-width: 600px; margin-bottom: 50px;">
         <form action="{{ route('admin.customers.update', $customer->id) }}" method="POST">
@@ -9,7 +9,7 @@
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; margin-bottom: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <h3 style="font-size: 16px; font-weight: 700; color: #92400e; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                     <span style="width: 8px; height: 18px; background: #92400e; border-radius: 2px;"></span>
-                    Profil Pelanggan
+                    Profil Member
                 </h3>
 
                 <div style="margin-bottom: 20px;">
@@ -39,8 +39,8 @@
                         <input type="checkbox" name="is_active" value="1" {{ old('is_active', $customer->is_active) ? 'checked' : '' }}
                                style="width: 20px; height: 20px; accent-color: #92400e; cursor: pointer;">
                         <div>
-                            <span style="font-size: 14px; font-weight: 600; color: #1e293b; display: block;">Pelanggan Aktif</span>
-                            <span style="font-size: 12px; color: #64748b;">Hilangkan centang jika pelanggan ini diblokir/tidak aktif.</span>
+                            <span style="font-size: 14px; font-weight: 600; color: #1e293b; display: block;">Member Aktif</span>
+<span style="font-size: 12px; color: #64748b;">Hilangkan centang jika member ini diblokir/tidak aktif.</span>
                         </div>
                     </label>
                 </div>

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\StockMovement;
+use App\Models\SalePayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,7 @@ class SaleController extends Controller
     {
         $customers = Customer::orderBy('name')->get();
         // Hanya tampilkan produk yang aktif dan stoknya > 0
-        $products = Product::where('is_active', true)->where('current_stock', '>', 0)->orderBy('name')->get();
+        $products = Product::with('unit')->where('is_active', true)->where('current_stock', '>', 0)->orderBy('name')->get();
 
         return view('admin.sales.create', compact('customers', 'products'));
     }
@@ -48,9 +49,11 @@ class SaleController extends Controller
         // 1. Validasi input
         $request->validate([
             'sale_date'          => 'required|date',
-            'customer_id'        => 'required|exists:customers,id',
+            'customer_id'        => 'nullable|exists:customers,id',
+            'customer_name'      => 'nullable|string|max:255',
             'payment_status'     => 'required|in:lunas,belum_bayar,sebagian',
             'payment_method'     => 'required|in:cash,transfer,qris,cod',
+            'paid_amount'        => 'required|numeric|min:0',
             'note'               => 'nullable|string',
             'items'              => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
@@ -69,6 +72,7 @@ class SaleController extends Controller
             $sale = Sale::create([
                 'invoice_number' => $invoiceNumber,
                 'customer_id'    => $request->customer_id,
+                'customer_name'  => $request->customer_name ?: ($request->customer_id ? Customer::find($request->customer_id)->name : 'Pelanggan Umum'),
                 'sale_date'      => $request->sale_date,
                 'payment_status' => $request->payment_status,
                 'payment_method' => $request->payment_method,
@@ -128,6 +132,18 @@ class SaleController extends Controller
                 'total_amount' => $totalAmount
             ]);
 
+            // 6. Simpan Pembayaran Awal (jika ada)
+            if ($request->paid_amount > 0) {
+                SalePayment::create([
+                    'sale_id'        => $sale->id,
+                    'amount'         => $request->paid_amount,
+                    'payment_date'   => $request->sale_date,
+                    'payment_method' => $request->payment_method,
+                    'note'           => 'Pembayaran awal / DP',
+                    'created_by'     => Auth::id(),
+                ]);
+            }
+
             DB::commit();
 
             return redirect()->route('admin.sales.show', $sale)->with('success', "Transaksi {$invoiceNumber} berhasil disimpan.");
@@ -139,11 +155,56 @@ class SaleController extends Controller
     }
 
     /**
+     * Simpan pembayaran baru (pelunasan/cicilan)
+     */
+    public function storePayment(Request $request, Sale $sale)
+    {
+        $request->validate([
+            'amount'         => 'required|numeric|min:1',
+            'payment_date'   => 'required|date',
+            'payment_method' => 'required|in:cash,transfer,qris,cod',
+            'note'           => 'nullable|string',
+        ]);
+
+        // Cek sisa hutang
+        $remaining = $sale->remaining_balance;
+        if ($request->amount > $remaining) {
+            return back()->with('error', "Jumlah bayar (Rp " . number_format($request->amount) . ") melebihi sisa hutang (Rp " . number_format($remaining) . ").");
+        }
+
+        DB::beginTransaction();
+        try {
+            SalePayment::create([
+                'sale_id'        => $sale->id,
+                'amount'         => $request->amount,
+                'payment_date'   => $request->payment_date,
+                'payment_method' => $request->payment_method,
+                'note'           => $request->note,
+                'created_by'     => Auth::id(),
+            ]);
+
+            // Update status jika sudah lunas
+            if ($sale->fresh()->remaining_balance <= 0) {
+                $sale->update(['payment_status' => 'lunas']);
+            } else {
+                $sale->update(['payment_status' => 'sebagian']);
+            }
+
+            DB::commit();
+            return back()->with('success', 'Pembayaran berhasil dicatat.');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mencatat pembayaran: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Tampilkan detail penjualan
      */
     public function show(Sale $sale)
     {
-        $sale->load(['customer', 'creator', 'items.product']);
+        $sale->load(['customer', 'creator', 'items.product', 'payments.creator']);
         return view('admin.sales.show', compact('sale'));
     }
 
@@ -152,7 +213,7 @@ class SaleController extends Controller
      */
     public function print(Sale $sale)
     {
-        $sale->load(['customer', 'creator', 'items.product']);
+        $sale->load(['customer', 'creator', 'items.product', 'payments']);
         
         $settings = [
             'shop_name'    => \App\Models\Setting::get('shop_name', 'MANAJEMEN KOPI'),

@@ -26,6 +26,25 @@
                     @error('code') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
                 </div>
 
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Gunakan Untuk</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="type" value="bahan_baku" {{ old('type', $unit->type) == 'bahan_baku' ? 'checked' : '' }} style="accent-color: #92400e;">
+                            <span style="font-size: 14px; font-weight: 500; color: #475569;">Khusus Bahan Baku</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="type" value="produk" {{ old('type', $unit->type) == 'produk' ? 'checked' : '' }} style="accent-color: #92400e;">
+                            <span style="font-size: 14px; font-weight: 500; color: #475569;">Khusus Produk Jadi</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="type" value="semua" {{ old('type', $unit->type) == 'semua' ? 'checked' : '' }} style="accent-color: #92400e;">
+                            <span style="font-size: 14px; font-weight: 500; color: #475569;">Gunakan Untuk Keduanya</span>
+                        </label>
+                    </div>
+                    @error('type') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
+                </div>
+
                 <div style="padding-top: 15px; border-top: 1px solid #f1f5f9;">
                     <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
                         <input type="hidden" name="is_active" value="0">

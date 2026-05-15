@@ -19,25 +19,32 @@
                                style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
                         @error('sale_date') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
                     </div>
-                    <div>
-                        <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Customer *</label>
-                        <select name="customer_id" required
-                                style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
-                            <option value="">-- Pilih Customer --</option>
-                            @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                    {{ $customer->name }} ({{ $customer->phone }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('customer_id') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Member (Opsional)</label>
+                            <select name="customer_id" id="select-customer" onchange="handleCustomerChange(this)"
+                                    style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
+                                <option value="">-- Member Umum (Guest) --</option>
+                                @foreach($customers as $customer)
+                                    <option value="{{ $customer->id }}" data-name="{{ $customer->name }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                        {{ $customer->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nama Pelanggan (Opsional)</label>
+                            <input type="text" name="customer_name" id="input-customer-name" value="{{ old('customer_name') }}" 
+                                   placeholder="Ketik nama jika Guest..."
+                                   style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
+                        </div>
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                     <div>
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Status Pembayaran *</label>
-                        <select name="payment_status" required
+                        <select name="payment_status" id="select-payment-status" required onchange="togglePaymentMethod()"
                                 style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
                             <option value="lunas" {{ old('payment_status') == 'lunas' ? 'selected' : '' }}>Lunas (Dibayar Penuh)</option>
                             <option value="sebagian" {{ old('payment_status') == 'sebagian' ? 'selected' : '' }}>Sebagian / DP</option>
@@ -45,7 +52,7 @@
                         </select>
                         @error('payment_status') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
                     </div>
-                    <div>
+                    <div id="col-payment-method">
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Metode Pembayaran *</label>
                         <select name="payment_method" required
                                 style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
@@ -56,11 +63,22 @@
                         </select>
                         @error('payment_method') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
                     </div>
-                    <div>
-                        <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Catatan (Opsional)</label>
-                        <input type="text" name="note" value="{{ old('note') }}" placeholder="Catatan transaksi..."
-                               style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    <div id="col-paid-amount">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Jumlah Bayar / DP *</label>
+                        <input type="number" name="paid_amount" id="input-paid-amount" value="{{ old('paid_amount', 0) }}" min="0" step="1"
+                               oninput="updatePaidPreview(this)"
+                               style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white;">
+                        <div id="paid-amount-preview" style="font-size: 12px; color: #16a34a; font-weight: 600; margin-top: 4px;">
+                            Konfirmasi: Rp 0
+                        </div>
+                        @error('paid_amount') <span style="color:#ef4444;font-size:12px;">{{ $message }}</span> @enderror
                     </div>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Catatan (Opsional)</label>
+                    <textarea name="note" rows="2" placeholder="Catatan transaksi..."
+                              style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; resize: none;">{{ old('note') }}</textarea>
                 </div>
             </div>
 
@@ -101,10 +119,19 @@
                                         style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;background:white;">
                                     <option value="">-- Pilih Produk --</option>
                                     @foreach($products as $product)
+                                        @php
+                                            $stock = (float)$product->current_stock;
+                                            $unit = strtolower($product->unit->name ?? 'pcs');
+                                            $label = number_format($stock, 0, ',', '.') . ' ' . $unit;
+                                            
+                                            if (($unit === 'kg' || $unit === 'kilogram') && $stock >= 1000) {
+                                                $label = number_format($stock/1000, 2, ',', '.') . ' Ton / ' . number_format($stock, 0, ',', '.') . ' kg';
+                                            }
+                                        @endphp
                                         <option value="{{ $product->id }}" 
                                                 data-price="{{ $product->price }}" 
                                                 data-stok="{{ $product->current_stock }}">
-                                            {{ $product->name }} {{ $product->variant ? '('.$product->variant.')' : '' }} (Stok: {{ $product->current_stock }})
+                                            {{ $product->name }} {{ $product->variant ? '('.$product->variant.')' : '' }} (Stok: {{ $label }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -161,6 +188,25 @@
         const dataProducts = @json($products->keyBy('id'));
         let barisIndex = 1;
 
+        // Helper untuk format angka Indonesia
+        function formatIndo(num, decimals = 0) {
+            return new Intl.NumberFormat('id-ID', { 
+                minimumFractionDigits: 0, 
+                maximumFractionDigits: decimals 
+            }).format(num);
+        }
+
+        // Helper untuk label stok yang cerdas
+        function getStockLabel(stock, unitName) {
+            stock = parseFloat(stock);
+            let unit = (unitName || 'pcs').toLowerCase();
+            
+            if ((unit === 'kg' || unit === 'kilogram') && stock >= 1000) {
+                return `${formatIndo(stock/1000, 2)} Ton / ${formatIndo(stock)} kg`;
+            }
+            return `${formatIndo(stock)} ${unit}`;
+        }
+
         function formatMataUang(angka) {
             return new Intl.NumberFormat('id-ID', { 
                 style: 'currency', 
@@ -173,11 +219,13 @@
         function tambahBaris() {
             const tbody = document.getElementById('tbody-items');
             const idx   = barisIndex++;
-            const opts  = Object.values(dataProducts).map(p =>
-                `<option value="${p.id}" data-price="${p.price}" data-stok="${p.current_stock}">
-                    ${p.name} ${p.variant ? '('+p.variant+')' : ''} (Stok: ${p.current_stock})
-                </option>`
-            ).join('');
+            const opts  = Object.values(dataProducts).map(p => {
+                const unitName = p.unit ? p.unit.name : 'pcs';
+                const label = getStockLabel(p.current_stock, unitName);
+                return `<option value="${p.id}" data-price="${p.price}" data-stok="${p.current_stock}">
+                    ${p.name} ${p.variant ? '('+p.variant+')' : ''} (Stok: ${label})
+                </option>`;
+            }).join('');
 
             const tr = document.createElement('tr');
             tr.className = 'baris-item';
@@ -266,14 +314,61 @@
             hitungTotal();
         }
 
+        function handleCustomerChange(select) {
+            const opt = select.options[select.selectedIndex];
+            const nameInput = document.getElementById('input-customer-name');
+            
+            if (opt.value) {
+                nameInput.value = opt.dataset.name;
+                nameInput.readOnly = true;
+                nameInput.style.background = '#f1f5f9';
+            } else {
+                nameInput.value = '';
+                nameInput.readOnly = false;
+                nameInput.style.background = 'white';
+            }
+        }
+
+        function updatePaidPreview(input) {
+            const preview = document.getElementById('paid-amount-preview');
+            const val = parseFloat(input.value) || 0;
+            preview.textContent = 'Konfirmasi: ' + formatMataUang(val);
+        }
+
+        function togglePaymentMethod() {
+            const status = document.getElementById('select-payment-status').value;
+            const colMethod = document.getElementById('col-payment-method');
+            const colPaid = document.getElementById('col-paid-amount');
+            const inputPaid = document.getElementById('input-paid-amount');
+            
+            if (status === 'belum_bayar') {
+                colMethod.style.display = 'none';
+                colPaid.style.display = 'none';
+                inputPaid.value = 0;
+            } else {
+                colMethod.style.display = 'block';
+                colPaid.style.display = 'block';
+                
+                if (status === 'lunas') {
+                    const totalRaw = document.getElementById('display-total').textContent;
+                    const totalNum = totalRaw.replace(/[^0-9]/g, '');
+                    inputPaid.value = totalNum;
+                    inputPaid.readOnly = true;
+                    inputPaid.style.background = '#f1f5f9';
+                } else {
+                    inputPaid.readOnly = false;
+                    inputPaid.style.background = 'white';
+                }
+            }
+            updatePaidPreview(inputPaid);
+        }
+
         function hitungTotal() {
             let total = 0;
             let adaErrorStok = false;
             
             document.querySelectorAll('.baris-item').forEach(tr => {
                 total += parseFloat(tr.querySelector('.input-subtotal').value) || 0;
-                
-                // Cek error stok per baris
                 if (tr.querySelector('.stok-error').style.display === 'block') {
                     adaErrorStok = true;
                 }
@@ -281,16 +376,17 @@
             
             document.getElementById('display-total').textContent = formatMataUang(total);
             
-            // Disable tombol simpan jika ada error stok
+            const status = document.getElementById('select-payment-status').value;
+            const inputPaid = document.getElementById('input-paid-amount');
+            if (status === 'lunas') {
+                inputPaid.value = total;
+            }
+            updatePaidPreview(inputPaid);
+            
             const btnSubmit = document.getElementById('btn-submit');
             btnSubmit.disabled = adaErrorStok;
-            if (adaErrorStok) {
-                btnSubmit.style.opacity = '0.5';
-                btnSubmit.style.cursor = 'not-allowed';
-            } else {
-                btnSubmit.style.opacity = '1';
-                btnSubmit.style.cursor = 'pointer';
-            }
+            btnSubmit.style.opacity = adaErrorStok ? '0.5' : '1';
+            btnSubmit.style.cursor = adaErrorStok ? 'not-allowed' : 'pointer';
         }
 
         // Jalankan saat halaman dimuat untuk memastikan baris pertama sinkron
@@ -298,6 +394,13 @@
             document.querySelectorAll('.select-produk').forEach(select => {
                 if (select.value) pilihProduk(select);
             });
+
+            // Sinkronkan nama pelanggan jika sudah ada customer_id
+            const selectCustomer = document.getElementById('select-customer');
+            if (selectCustomer.value) handleCustomerChange(selectCustomer);
+
+            // Sinkronkan visibilitas metode pembayaran
+            togglePaymentMethod();
         });
     </script>
 </x-layouts.admin>

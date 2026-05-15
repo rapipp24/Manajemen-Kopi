@@ -30,7 +30,7 @@
                                         {{ number_format($item->product->current_stock, 0, ',', '.') }} {{ $item->product->unit->name ?? '' }}
                                     </span>
                                 </td>
-                                <td style="padding: 16px 24px; text-align: center; font-weight: 700; font-size: 15px; color: #0f172a;">{{ $item->qty }}</td>
+                                <td style="padding: 16px 24px; text-align: center; font-weight: 700; font-size: 15px; color: #0f172a;">{{ number_format($item->qty, 0, ',', '.') }}</td>
                                 <td style="padding: 16px 24px; text-align: right; font-weight: 700;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                             </tr>
                             @endforeach

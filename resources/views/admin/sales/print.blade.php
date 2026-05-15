@@ -227,7 +227,7 @@
 
         <section class="info-container">
             <div class="info-block">
-                <h3>Informasi Customer</h3>
+                <h3>Informasi Member</h3>
                 <table class="info-table">
                     <tr>
                         <td class="label">Nama</td>
@@ -315,7 +315,7 @@
 
         <section class="signature-section">
             <div class="signature-box">
-                <p>Customer,</p>
+                <p>Member,</p>
                 <div class="signature-line">{{ $sale->customer->name ?? '.......................' }}</div>
             </div>
             <div class="signature-box">

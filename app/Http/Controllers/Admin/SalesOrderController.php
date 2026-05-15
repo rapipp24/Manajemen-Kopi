@@ -65,7 +65,9 @@ class SalesOrderController extends Controller
                     $product = Product::lockForUpdate()->find($item->product_id);
 
                     if ($product->current_stock < $item->qty) {
-                        throw new Exception("Stok produk '{$product->name}' tidak cukup. Sisa gudang: {$product->current_stock}");
+                        $currentStockFormatted = number_format($product->current_stock, 0, ',', '.');
+                        $unitName = $product->unit->name ?? '';
+                        throw new Exception("Stok produk '{$product->name}' tidak cukup. Sisa gudang: {$currentStockFormatted} {$unitName}");
                     }
 
                     $stockBefore = $product->current_stock;

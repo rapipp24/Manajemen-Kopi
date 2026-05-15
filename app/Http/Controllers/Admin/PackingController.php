@@ -22,6 +22,15 @@ class PackingController extends Controller
      */
     private function getCurahStockAll(): array
     {
+        // Ambil semua kategori produk yang ada sebagai master list
+        $categories = \App\Models\ProductCategory::orderBy('name')->pluck('name')->toArray();
+        
+        // Inisialisasi result dengan 0 untuk semua kategori
+        $result = [];
+        foreach ($categories as $catName) {
+            $result[$catName] = 0.0;
+        }
+
         // Total output per jenis produksi
         $produksi = ProductionBatch::select('product_type', DB::raw('SUM(total_output) as total'))
             ->groupBy('product_type')
@@ -37,14 +46,15 @@ class PackingController extends Controller
             ->pluck('total', 'curah_type')
             ->toArray();
 
-        // Hitung sisa per jenis
-        $result = [];
+        // Update nilai stok HANYA untuk kategori yang terdaftar secara resmi
         foreach ($produksi as $type => $totalOutput) {
-            $sudahPacked = $packed[$type] ?? 0;
-            $result[$type] = max(0, $totalOutput - $sudahPacked);
+            if (isset($result[$type])) {
+                $sudahPacked = $packed[$type] ?? 0;
+                $result[$type] = max(0, $totalOutput - $sudahPacked);
+            }
         }
 
-        return $result; // [ 'Kopi Robusta' => 60.0, ... ]
+        return $result;
     }
 
     /**
@@ -97,7 +107,6 @@ class PackingController extends Controller
             'items'                     => 'required|array|min:1',
             'items.*.product_id'        => 'required|exists:products,id',
             'items.*.qty_pack'          => 'required|integer|min:1',
-            'items.*.weight_per_pack'   => 'required|numeric|min:0.001',
         ]);
 
         $curahType = $request->curah_type;
@@ -105,7 +114,8 @@ class PackingController extends Controller
         // ── 2. Hitung total berat yang akan dipakai (kg) ─────────────────────
         $totalBeratKg = 0;
         foreach ($request->items as $item) {
-            $totalBeratKg += ($item['qty_pack'] * $item['weight_per_pack']) / 1000;
+            $product = Product::find($item['product_id']);
+            $totalBeratKg += ($item['qty_pack'] * $product->weight) / 1000;
         }
 
         // ── 3. Validasi stok curah jenis yang dipilih ────────────────────────
@@ -139,8 +149,11 @@ class PackingController extends Controller
 
             // 4c. Proses tiap item produk
             foreach ($request->items as $item) {
-                $jumlahKemasan  = $item['qty_pack'];
-                $beratPerKemasan = $item['weight_per_pack']; // gram
+                $jumlahKemasan = $item['qty_pack'];
+
+                // Ambil data produk untuk mendapatkan berat
+                $product = Product::lockForUpdate()->find($item['product_id']);
+                $beratPerKemasan = $product->weight;
                 $totalBeratItem  = ($jumlahKemasan * $beratPerKemasan) / 1000; // kg
 
                 // Simpan item

@@ -15,7 +15,8 @@ class StoreUnitRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:2|max:50',
-            'code' => 'required|string|min:1|max:10|unique:units,code',
+            'code' => 'required|string|min:1|max:10|unique:units,code,NULL,id,deleted_at,NULL',
+            'type' => 'required|in:bahan_baku,produk,semua',
         ];
     }
 }

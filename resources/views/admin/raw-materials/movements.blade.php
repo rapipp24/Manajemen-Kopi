@@ -37,72 +37,97 @@
     </div>
 
     <div class="stock-summary">
-        <div class="summary-card">
-            <div class="summary-label">Stok Awal (Input Sistem)</div>
+        <div class="summary-card" style="background: white; border-top: 4px solid #94a3b8;">
+            <div class="summary-label">Stok Awal (Input)</div>
             <div class="summary-value">0 <span style="font-size: 12px; color: var(--text-muted);">{{ $rawMaterial->unit->code }}</span></div>
         </div>
-        <div class="summary-card" style="border-left: 4px solid var(--brown-400);">
+        <div class="summary-card" style="background: #fdfaf7; border-top: 4px solid #92400e;">
             <div class="summary-label">Stok Saat Ini</div>
-            <div class="summary-value">{{ number_format($rawMaterial->current_stock, 2, ',', '.') }} <span style="font-size: 12px; color: var(--text-muted);">{{ $rawMaterial->unit->code }}</span></div>
+            <div class="summary-value" style="color: #92400e;">
+                @php
+                    $stock = $rawMaterial->current_stock;
+                    $unit = $rawMaterial->unit->code ?? 'kg';
+                    $displayStock = number_format($stock, 2, ',', '.');
+                    if (strtolower($unit) == 'kg' && $stock >= 1000) {
+                        $displayStock = number_format($stock / 1000, 2, ',', '.') . ' <span style="font-size: 14px;">Ton</span>';
+                    } else {
+                        $displayStock = $displayStock . ' <span style="font-size: 12px;">' . $unit . '</span>';
+                    }
+                @endphp
+                {!! $displayStock !!}
+            </div>
         </div>
-        <div class="summary-card">
+        <div class="summary-card" style="background: white; border-top: 4px solid #64748b;">
             <div class="summary-label">Total Mutasi</div>
             <div class="summary-value">{{ $movements->total() }} <span style="font-size: 12px; color: var(--text-muted);">Kejadian</span></div>
         </div>
     </div>
 
-    <div class="card">
+    <div class="card" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <table class="table">
             <thead>
-                <tr>
-                    <th>Waktu & Tanggal</th>
-                    <th>Tipe</th>
-                    <th style="text-align: right;">Stok Sebelum</th>
-                    <th style="text-align: right;">Jumlah (In/Out)</th>
-                    <th style="text-align: right;">Stok Sesudah</th>
-                    <th>Keterangan</th>
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 14px 20px;">Waktu & Tanggal</th>
+                    <th style="padding: 14px 20px;">Jenis</th>
+                    <th style="padding: 14px 20px; text-align: right;">Stok Sebelum</th>
+                    <th style="padding: 14px 20px; text-align: right;">Jumlah (In/Out)</th>
+                    <th style="padding: 14px 20px; text-align: right;">Stok Sesudah</th>
+                    <th style="padding: 14px 20px;">Keterangan</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($movements as $m)
-                    <tr>
-                        <td style="color: var(--text-muted); font-size: 13px;">
-                            <div style="color: var(--text-main); font-weight: 600;">{{ $m->created_at->format('d M Y') }}</div>
-                            {{ $m->created_at->format('H:i') }} WIB
+                    <tr style="transition: background 0.2s;">
+                        <td style="padding: 16px 20px;">
+                            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">{{ $m->created_at->format('d M Y') }}</div>
+                            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">{{ $m->created_at->format('H:i') }} WIB</div>
                         </td>
-                        <td>
-                            <span class="badge {{ $m->movement_type == 'in' ? 'badge-in' : 'badge-out' }}">
-                                {{ $m->movement_type == 'in' ? 'Masuk' : 'Keluar' }}
-                            </span>
+                        <td style="padding: 16px 20px;">
+                            @if($m->movement_type == 'in')
+                                <span style="display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid #dcfce7;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 10px; height: 10px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" /></svg>
+                                    MASUK
+                                </span>
+                            @else
+                                <span style="display: inline-flex; align-items: center; gap: 4px; background: #fef2f2; color: #991b1b; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid #fee2e2;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 10px; height: 10px;"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" /></svg>
+                                    KELUAR
+                                </span>
+                            @endif
                         </td>
-                        <td style="text-align: right; color: var(--text-muted);">{{ number_format($m->stock_before, 2, ',', '.') }}</td>
-                        <td style="text-align: right; font-weight: 800; color: {{ $m->movement_type == 'in' ? '#166534' : '#991b1b' }};">
-                            {{ $m->movement_type == 'in' ? '+' : '-' }}{{ number_format($m->qty, 2, ',', '.') }}
+                        <td style="padding: 16px 20px; text-align: right; color: #64748b; font-family: monospace; font-size: 13px;">
+                            {{ number_format($m->stock_before, 2, ',', '.') }}
                         </td>
-                        <td style="text-align: right; font-weight: 800;">{{ number_format($m->stock_after, 2, ',', '.') }}</td>
-                        <td>
+                        <td style="padding: 16px 20px; text-align: right;">
+                            <div style="font-size: 15px; font-weight: 800; color: {{ $m->movement_type == 'in' ? '#166534' : '#be123c' }};">
+                                {{ $m->movement_type == 'in' ? '+' : '-' }}{{ number_format($m->qty, 2, ',', '.') }}
+                            </div>
+                        </td>
+                        <td style="padding: 16px 20px; text-align: right; font-size: 15px; font-weight: 800; color: #1e293b; font-family: monospace;">
+                            {{ number_format($m->stock_after, 2, ',', '.') }}
+                        </td>
+                        <td style="padding: 16px 20px;">
                             @php
-                                // Ekstrak nomor RCP dari teks keterangan jika ada
                                 preg_match('/RCP-[\d-]+/', $m->note ?? '', $matches);
                                 $rcpNumber = $matches[0] ?? null;
                             @endphp
                             @if($rcpNumber)
-                                <div style="font-size: 13px; color: var(--text-mid);">
+                                <div style="font-size: 13px; color: #475569;">
                                     {{ Str::before($m->note, $rcpNumber) }}
                                     <a href="{{ route('admin.raw-material-receipts.show', $rcpNumber) }}"
-                                       style="color: var(--brown-400); font-weight: 700; text-decoration: none;"
+                                       style="background: #fdf4ff; color: #701a75; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-decoration: none; border: 1px solid #fae8ff;"
                                        title="Lihat detail penerimaan {{ $rcpNumber }}">
                                         {{ $rcpNumber }}
                                     </a>
                                 </div>
                             @else
-                                <div style="font-size: 13px; color: var(--text-mid);">{{ $m->note }}</div>
+                                <div style="font-size: 13px; color: #475569; line-height: 1.5;">{{ $m->note }}</div>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <td colspan="6" style="text-align: center; padding: 60px; color: #94a3b8; font-size: 14px;">
                             Belum ada riwayat mutasi untuk bahan ini.
                         </td>
                     </tr>

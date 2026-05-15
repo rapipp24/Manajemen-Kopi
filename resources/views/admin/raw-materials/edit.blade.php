@@ -38,6 +38,12 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Stok Minimum</label>
+                        <input type="number" name="minimum_stock" value="{{ old('minimum_stock', $rawMaterial->minimum_stock) }}" required
+                               style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('minimum_stock') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px;">
+                        @error('minimum_stock') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
                         <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Satuan Stok</label>
                         <select name="unit_id" required 
                                 style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('unit_id') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px; background-color: white;">
@@ -46,12 +52,6 @@
                             @endforeach
                         </select>
                         @error('unit_id') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Stok Minimum</label>
-                        <input type="number" name="minimum_stock" value="{{ old('minimum_stock', $rawMaterial->minimum_stock) }}" required
-                               style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('minimum_stock') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px;">
-                        @error('minimum_stock') <span style="color: #ef4444; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
                     </div>
                 </div>
 

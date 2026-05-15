@@ -28,7 +28,8 @@ class UpdateProductRequest extends FormRequest
                 'string', 
                 'min:3', 
                 'max:50', 
-                'regex:/^[a-zA-Z\s\.]+$/'
+                'unique:products,name,' . $productId . ',id,deleted_at,NULL',
+                'regex:/^[a-zA-Z0-9\s\.\(\)\-]+$/'
             ],
             'product_category_id' => [
                 'required',

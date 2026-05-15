@@ -41,13 +41,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('productions', ProductionController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('packings', PackingController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('/sales/{sale}/print', [SaleController::class, 'print'])->name('sales.print');
+    Route::post('/sales/{sale}/payments', [SaleController::class, 'storePayment'])->name('sales.payments.store');
     Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('/orders', function () {
         return "Halaman Pesanan Admin";
     })->name('orders');
-    Route::get('/reports', function () {
-        return "Halaman Laporan";
-    })->name('reports');
+    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
 
     // Sales Orders (Pesanan dari Sales)
     Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');

@@ -20,7 +20,8 @@ class StoreProductRequest extends FormRequest
                 'string', 
                 'min:3', 
                 'max:50', 
-                'regex:/^[a-zA-Z\s\.]+$/'
+                'unique:products,name,NULL,id,deleted_at,NULL',
+                'regex:/^[a-zA-Z0-9\s\.\(\)\-]+$/'
             ],
             'product_category_id' => [
                 'required',

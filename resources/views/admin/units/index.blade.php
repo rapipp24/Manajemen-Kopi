@@ -20,6 +20,7 @@
                         <tr style="background: #f1f5f9; border-bottom: 1px solid #e2e8f0;">
                             <th style="padding: 12px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Kode</th>
                             <th style="padding: 12px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Nama Satuan</th>
+                            <th style="padding: 12px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Kategori</th>
                             <th style="padding: 12px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Status</th>
                             <th style="padding: 12px 20px; text-align: right; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Aksi</th>
                         </tr>
@@ -29,6 +30,15 @@
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <td style="padding: 14px 20px; font-size: 14px; font-weight: 600; color: #0f172a;">{{ $unit->code }}</td>
                             <td style="padding: 14px 20px; font-size: 14px; color: #475569;">{{ $unit->name }}</td>
+                            <td style="padding: 14px 20px;">
+                                @if($unit->type == 'bahan_baku')
+                                    <span style="font-size: 11px; font-weight: 600; color: #92400e; background: #fffbeb; padding: 2px 8px; border-radius: 4px; border: 1px solid #fef3c7;">Bahan Baku</span>
+                                @elseif($unit->type == 'produk')
+                                    <span style="font-size: 11px; font-weight: 600; color: #0369a1; background: #f0f9ff; padding: 2px 8px; border-radius: 4px; border: 1px solid #e0f2fe;">Produk</span>
+                                @else
+                                    <span style="font-size: 11px; font-weight: 600; color: #475569; background: #f8fafc; padding: 2px 8px; border-radius: 4px; border: 1px solid #f1f5f9;">Semua</span>
+                                @endif
+                            </td>
                             <td style="padding: 14px 20px;">
                                 @if($unit->is_active)
                                 <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">Aktif</span>
@@ -71,11 +81,29 @@
                         style="width: 100%; padding: 10px; border: 1px solid {{ $errors->has('code') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px;">
                     @error('code') <span style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
                 </div>
-                <div style=" margin-bottom: 20px;">
+                <div style="margin-bottom: 20px;">
                     <label style="display: block; font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 6px;">Nama Lengkap (Misal: Kilogram)</label>
                     <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: Kilogram"
                         style="width: 100%; padding: 10px; border: 1px solid {{ $errors->has('name') ? '#ef4444' : '#cbd5e1' }}; border-radius: 8px; font-size: 14px;">
                     @error('name') <span style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 8px;">Gunakan Untuk</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="type" value="bahan_baku" {{ old('type') == 'bahan_baku' ? 'checked' : '' }} style="accent-color: #92400e;">
+                            <span style="font-size: 13px; font-weight: 500; color: #475569;">Khusus Bahan Baku</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="type" value="produk" {{ old('type') == 'produk' ? 'checked' : '' }} style="accent-color: #92400e;">
+                            <span style="font-size: 13px; font-weight: 500; color: #475569;">Khusus Produk Jadi</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;">
+                            <input type="radio" name="type" value="semua" {{ old('type', 'semua') == 'semua' ? 'checked' : '' }} style="accent-color: #92400e;">
+                            <span style="font-size: 13px; font-weight: 500; color: #475569;">Gunakan Untuk Keduanya</span>
+                        </label>
+                    </div>
+                    @error('type') <span style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span> @enderror
                 </div>
                 <button type="submit"
                     style="width: 100%; padding: 12px; background: #92400e; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">

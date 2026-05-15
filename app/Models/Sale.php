@@ -11,6 +11,7 @@ class Sale extends Model
     protected $fillable = [
         'invoice_number',
         'customer_id',
+        'customer_name',
         'sale_date',
         'payment_status',
         'payment_method',
@@ -22,6 +23,23 @@ class Sale extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(SalePayment::class);
+    }
+
+    // Helper untuk hitung total yang sudah dibayar
+    public function getTotalPaidAttribute()
+    {
+        return $this->payments()->sum('amount');
+    }
+
+    // Helper untuk hitung sisa tagihan
+    public function getRemainingBalanceAttribute()
+    {
+        return $this->total_amount - $this->total_paid;
     }
 
     public function items(): HasMany

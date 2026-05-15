@@ -29,7 +29,9 @@ class RawMaterialController extends Controller
 
     public function create()
     {
-        $units = Unit::where('is_active', true)->get();
+        $units = Unit::where('is_active', true)
+            ->whereIn('type', ['bahan_baku', 'semua'])
+            ->get();
         return view('admin.raw-materials.create', compact('units'));
     }
 
@@ -50,7 +52,9 @@ class RawMaterialController extends Controller
 
     public function edit(RawMaterial $rawMaterial)
     {
-        $units = Unit::where('is_active', true)->get();
+        $units = Unit::where('is_active', true)
+            ->whereIn('type', ['bahan_baku', 'semua'])
+            ->get();
         return view('admin.raw-materials.edit', compact('rawMaterial', 'units'));
     }
 
@@ -64,13 +68,10 @@ class RawMaterialController extends Controller
 
     public function destroy(RawMaterial $rawMaterial)
     {
-        // Check if material is used in transactions before deleting (optional/future)
-        // For now, we allow soft-delete via is_active toggle in edit, 
-        // but destroy will hard delete if allowed.
         $rawMaterial->delete();
 
         return redirect()->route('admin.raw-materials.index')
-            ->with('success', 'Bahan baku berhasil dihapus!');
+            ->with('success', 'Bahan baku berhasil dihapus ke tong sampah!');
     }
 
     public function movements(RawMaterial $rawMaterial)

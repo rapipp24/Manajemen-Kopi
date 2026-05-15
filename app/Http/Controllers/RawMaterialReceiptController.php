@@ -65,8 +65,23 @@ class RawMaterialReceiptController extends Controller
             ]);
 
             $totalAmount = 0;
-
+            
+            // Consolidate identical items (same material and same price)
+            $consolidatedItems = [];
             foreach ($request->items as $item) {
+                $key = $item['raw_material_id'] . '_' . (float)$item['unit_price'];
+                if (isset($consolidatedItems[$key])) {
+                    $consolidatedItems[$key]['qty'] += (float)$item['qty'];
+                } else {
+                    $consolidatedItems[$key] = [
+                        'raw_material_id' => $item['raw_material_id'],
+                        'qty' => (float)$item['qty'],
+                        'unit_price' => (float)$item['unit_price']
+                    ];
+                }
+            }
+
+            foreach ($consolidatedItems as $item) {
                 $subtotal = $item['qty'] * $item['unit_price'];
                 $totalAmount += $subtotal;
 

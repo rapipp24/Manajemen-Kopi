@@ -31,9 +31,18 @@ class UnitController extends Controller
      */
     public function store(StoreUnitRequest $request)
     {
-        Unit::create($request->validated());
+        $unit = Unit::withTrashed()->where('code', $request->code)->first();
 
-        return redirect()->route('admin.units.index')->with('success', 'Satuan berhasil ditambahkan!');
+        if ($unit) {
+            $unit->restore();
+            $unit->update($request->validated());
+            $message = 'Satuan berhasil dipulihkan dan diperbarui!';
+        } else {
+            Unit::create($request->validated());
+            $message = 'Satuan berhasil ditambahkan!';
+        }
+
+        return redirect()->route('admin.units.index')->with('success', $message);
     }
 
     /**
@@ -60,6 +69,6 @@ class UnitController extends Controller
     public function destroy(Unit $unit)
     {
         $unit->delete();
-        return redirect()->route('admin.units.index')->with('success', 'Satuan berhasil dihapus!');
+        return redirect()->route('admin.units.index')->with('success', 'Satuan berhasil dihapus ke tong sampah!');
     }
 }
