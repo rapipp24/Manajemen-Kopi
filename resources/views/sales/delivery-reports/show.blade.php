@@ -2,67 +2,99 @@
     <x-slot name="title">Laporan {{ $deliveryReport->report_number }}</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:20px; }
+        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:18px; }
         .back-link:hover { color:#1c1917; }
-        .layout { display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start; }
-        .card { background:#fff;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden; }
-        .card-header { padding:14px 18px;border-bottom:1px solid #f5f5f4;background:#fafaf9; }
-        .card-header h3 { font-size:13.5px;font-weight:700;color:#1c1917;margin:0; }
+
+        .report-heading { display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap; }
+        .report-number  { font-size:17px;font-weight:700;color:#1c1917;font-family:monospace;letter-spacing:0.02em; }
+        .badge-sent {
+            background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;
+            padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;
+        }
+
+        /* ── Layout ──────────────────────── */
+        .layout { display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:start; }
+
+        /* ── Card ────────────────────────── */
+        .card { background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden; }
+        .card-header { padding:13px 18px;border-bottom:1px solid #f5f0eb;background:#fafaf8; }
+        .card-header h3 { font-size:13px;font-weight:700;color:#1c1917;margin:0; }
+
+        /* ── Products table ──────────────── */
         table { width:100%;border-collapse:collapse; }
-        th { padding:10px 18px;font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;background:#fafaf9;border-bottom:1px solid #f5f5f4;text-align:left; }
-        td { padding:13px 18px;border-bottom:1px solid #f5f5f4;font-size:13.5px; }
+        th { padding:9px 18px;font-size:10px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.07em;background:#fafaf8;border-bottom:1px solid #f5f0eb;text-align:left; }
+        td { padding:13px 18px;border-bottom:1px solid #f5f0eb;font-size:13px; }
         tr:last-child td { border-bottom:none; }
-        .info-row { padding:12px 18px;border-bottom:1px solid #f5f5f4;display:flex;justify-content:space-between;align-items:baseline; }
+        tr:hover td { background:#fdfcfb; }
+
+        /* ── Info panel ──────────────────── */
+        .info-row { display:flex;justify-content:space-between;align-items:baseline;padding:11px 16px;border-bottom:1px solid #f5f0eb; }
         .info-row:last-child { border-bottom:none; }
-        .info-label { font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase; }
-        .info-value { font-size:13.5px;font-weight:600;color:#1c1917;text-align:right;max-width:60%; }
+        .info-label { font-size:11px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0; }
+        .info-value { font-size:13px;font-weight:600;color:#1c1917;text-align:right;max-width:60%; }
+
+        .note-box { padding:12px 18px;background:#fafaf8;border-top:1px solid #f5f0eb; }
+        .note-label { font-size:10px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px; }
+        .note-text  { font-size:13px;color:#78716c;font-style:italic; }
+
+        /* ── Weight pill ─────────────────── */
+        .weight-pill {
+            display:inline-block;background:#fdf3e7;border:1px solid #f0d9b5;
+            color:#7a5c3e;font-size:11px;font-weight:600;
+            padding:2px 8px;border-radius:20px;
+        }
+
+        /* ── Responsive ──────────────────── */
+        @media (max-width:680px) { .layout { grid-template-columns:1fr; } }
     </style>
 
-    <a href="{{ route('sales.delivery-reports.index') }}" class="back-link">
-        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Kembali
-    </a>
+    <a href="{{ route('sales.delivery-reports.index') }}" class="back-link">← Kembali ke Riwayat</a>
 
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-        <h1 style="font-size:18px;font-weight:700;color:#1c1917;font-family:monospace;">{{ $deliveryReport->report_number }}</h1>
-        <span style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">✓ Terkirim</span>
+    <div class="report-heading">
+        <span class="report-number">{{ $deliveryReport->report_number }}</span>
+        <span class="badge-sent">✓ Terkirim</span>
     </div>
 
     <div class="layout">
-        {{-- Kiri: Tabel Produk --}}
+
+        {{-- Kiri: Produk yang Dikirim --}}
         <div class="card">
             <div class="card-header"><h3>Produk yang Dikirim</h3></div>
             <table>
                 <thead>
                     <tr>
                         <th>Produk</th>
+                        <th>Kemasan</th>
                         <th style="text-align:center;">Qty</th>
-                        <th style="text-align:right;">Harga</th>
+                        <th style="text-align:right;">Harga Jual</th>
                         <th style="text-align:right;">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($deliveryReport->items as $item)
                     <tr>
-                        <td>
-                            <div style="font-weight:600;color:#1c1917;">{{ $item->product->name }}</div>
-                            <div style="font-size:11px;color:#a8a29e;">Kemasan: {{ $item->product->weight }}gr</div>
-                        </td>
-                        <td style="text-align:center;font-weight:700;">{{ number_format($item->qty, 0, ',', '.') }}</td>
+                        <td style="font-weight:600;color:#1c1917;">{{ $item->product->name }}</td>
+                        <td><span class="weight-pill">{{ $item->product->weight }} Gram</span></td>
+                        <td style="text-align:center;font-weight:700;color:#1c1917;">{{ number_format($item->qty, 0, ',', '.') }}</td>
                         <td style="text-align:right;color:#78716c;">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td style="text-align:right;font-weight:700;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                        <td style="text-align:right;font-weight:700;color:#1c1917;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="3" style="text-align:right;font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;padding-top:12px;">Total Nilai</td>
-                        <td style="text-align:right;font-size:18px;font-weight:800;color:#92400e;padding-top:12px;">Rp {{ number_format($deliveryReport->items->sum('subtotal'), 0, ',', '.') }}</td>
+                        <td colspan="4" style="text-align:right;font-size:10.5px;font-weight:700;color:#b9a99a;text-transform:uppercase;padding-top:12px;letter-spacing:0.06em;">
+                            Total Nilai
+                        </td>
+                        <td style="text-align:right;font-size:17px;font-weight:800;color:#92400e;padding-top:12px;letter-spacing:-0.02em;">
+                            Rp {{ number_format($deliveryReport->items->sum('subtotal'), 0, ',', '.') }}
+                        </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        {{-- Kanan: Info --}}
+        {{-- Kanan: Info Pengiriman --}}
         <div class="card">
             <div class="card-header"><h3>Info Pengiriman</h3></div>
             <div class="info-row">
@@ -83,8 +115,8 @@
             @endif
             @if($deliveryReport->payment_term_days)
             <div class="info-row">
-                <span class="info-label">Tempo</span>
-                <span class="info-value" style="color:#92400e;">{{ $deliveryReport->payment_term_days }} hari</span>
+                <span class="info-label">Tempo Bayar</span>
+                <span class="info-value" style="color:#92400e;font-weight:700;">{{ $deliveryReport->payment_term_days }} hari</span>
             </div>
             @endif
             <div class="info-row">
@@ -92,16 +124,63 @@
                 <span class="info-value">{{ \Carbon\Carbon::parse($deliveryReport->delivery_date)->format('d M Y') }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Dicatat</span>
+                <span class="info-label">Dicatat pada</span>
                 <span class="info-value" style="font-size:12px;">{{ $deliveryReport->created_at->format('d M Y, H:i') }}</span>
             </div>
+            
+            <div style="border-top:1px solid #f5f0eb; padding:11px 16px; background:#fafaf8;">
+                <div style="font-size:11px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Pembayaran</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="font-size:12px;color:#78716c;">Status</span>
+                    <span>
+                        @if($deliveryReport->payment_status === 'lunas')
+                            <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">LUNAS</span>
+                        @elseif($deliveryReport->payment_status === 'dp')
+                            <span style="background:#fef08a;color:#854d0e;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">DP</span>
+                        @else
+                            <span style="background:#fee2e2;color:#991b1b;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">BELUM BAYAR</span>
+                        @endif
+                    </span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="font-size:12px;color:#78716c;">Total Tagihan</span>
+                    <span style="font-size:12px;font-weight:600;color:#1c1917;">Rp {{ number_format($deliveryReport->total_amount, 0, ',', '.') }}</span>
+                </div>
+                @if($deliveryReport->payment_status === 'dp')
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="font-size:12px;color:#78716c;">Jumlah DP</span>
+                    <span style="font-size:12px;font-weight:600;color:#1c1917;">Rp {{ number_format($deliveryReport->down_payment_amount, 0, ',', '.') }}</span>
+                </div>
+                @endif
+                <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px dashed #d6d3d1;">
+                    <span style="font-size:12px;font-weight:700;color:#92400e;">Sisa Tagihan</span>
+                    <span style="font-size:13px;font-weight:800;color:#92400e;">Rp {{ number_format($deliveryReport->remaining_amount, 0, ',', '.') }}</span>
+                </div>
+                @if($deliveryReport->due_date)
+                <div style="display:flex; justify-content:space-between; margin-top:6px;">
+                    <span style="font-size:11px;color:#ef4444;">Jatuh Tempo</span>
+                    <span style="font-size:11px;font-weight:600;color:#ef4444;">{{ \Carbon\Carbon::parse($deliveryReport->due_date)->format('d M Y') }}</span>
+                </div>
+                @endif
+                
+                @if($deliveryReport->remaining_amount > 0)
+                <div style="margin-top:14px; padding-top:12px; border-top:1px dashed #d6d3d1;">
+                    <a href="{{ route('sales.deposits.create', ['delivery_report_id' => $deliveryReport->id]) }}" 
+                       style="background:#92400e; color:#fff; text-decoration:none; display:block; text-align:center; padding:8px; border-radius:6px; font-size:12.5px; font-weight:700; transition:background 0.15s;">
+                        + Kirim Setoran
+                    </a>
+                </div>
+                @endif
+            </div>
+
             @if($deliveryReport->note)
-            <div style="padding:12px 18px;background:#fafaf9;border-top:1px solid #f5f5f4;">
-                <div style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;margin-bottom:4px;">Catatan</div>
-                <div style="font-size:13px;color:#78716c;font-style:italic;">{{ $deliveryReport->note }}</div>
+            <div class="note-box">
+                <div class="note-label">Catatan</div>
+                <div class="note-text">{{ $deliveryReport->note }}</div>
             </div>
             @endif
         </div>
+
     </div>
 
 </x-layouts.user>

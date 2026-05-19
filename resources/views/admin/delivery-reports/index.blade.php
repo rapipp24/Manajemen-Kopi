@@ -33,11 +33,11 @@
                     <th style="padding:12px 18px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">No. Laporan</th>
                     <th style="padding:12px 18px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Sales</th>
                     <th style="padding:12px 18px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Toko Tujuan</th>
-                    <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Tempo</th>
+                    <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Status</th>
                     <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Tgl Kirim</th>
-                    <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Item</th>
-                    <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Total Qty</th>
-                    <th style="padding:12px 18px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Nominal</th>
+                    <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Jatuh Tempo</th>
+                    <th style="padding:12px 18px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Total Tagihan</th>
+                    <th style="padding:12px 18px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Sisa Tagihan</th>
                     <th style="padding:12px 18px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Aksi</th>
                 </tr>
             </thead>
@@ -57,25 +57,25 @@
                         @endif
                     </td>
                     <td style="padding:14px 18px;text-align:center;">
-                        @if($report->payment_term_days)
-                            <span style="background:#fff7ed;color:#92400e;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">
-                                {{ $report->payment_term_days }} hari
-                            </span>
+                        @if($report->payment_status === 'lunas')
+                            <span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;">LUNAS</span>
+                        @elseif($report->payment_status === 'dp')
+                            <span style="background:#fef08a;color:#854d0e;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;">DP</span>
                         @else
-                            <span style="color:#94a3b8;font-size:12px;">—</span>
+                            <span style="background:#fee2e2;color:#991b1b;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;">BELUM BAYAR</span>
                         @endif
                     </td>
                     <td style="padding:14px 18px;text-align:center;color:#475569;font-size:13px;">
-                        {{ \Carbon\Carbon::parse($report->delivery_date)->format('d M Y') }}
+                        {{ \Carbon\Carbon::parse($report->delivery_date)->format('d/m/Y') }}
                     </td>
-                    <td style="padding:14px 18px;text-align:center;font-weight:600;color:#475569;">
-                        {{ $report->items->count() }} mcm
+                    <td style="padding:14px 18px;text-align:center;color:#b91c1c;font-size:13px;font-weight:600;">
+                        {{ $report->due_date ? \Carbon\Carbon::parse($report->due_date)->format('d/m/Y') : '—' }}
                     </td>
-                    <td style="padding:14px 18px;text-align:center;font-weight:700;color:#0f172a;">
-                        {{ number_format($report->items->sum('qty'), 0, ',', '.') }}
+                    <td style="padding:14px 18px;text-align:right;font-weight:600;color:#0f172a;">
+                        Rp {{ number_format($report->total_amount, 0, ',', '.') }}
                     </td>
-                    <td style="padding:14px 18px;text-align:right;font-weight:700;color:#166534;">
-                        Rp {{ number_format($report->items->sum('subtotal'), 0, ',', '.') }}
+                    <td style="padding:14px 18px;text-align:right;font-weight:700;color:#92400e;">
+                        Rp {{ number_format($report->remaining_amount, 0, ',', '.') }}
                     </td>
                     <td style="padding:14px 18px;text-align:center;">
                         <a href="{{ route('admin.delivery-reports.show', $report) }}"

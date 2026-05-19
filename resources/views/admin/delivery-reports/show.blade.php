@@ -88,7 +88,6 @@
                             ['label' => 'Alamat', 'value' => $deliveryReport->customer_address_manual ?? ($deliveryReport->customer?->address ?? null)],
                             ['label' => 'No. HP', 'value' => $deliveryReport->customer_phone_manual ?? ($deliveryReport->customer?->phone ?? null)],
                             ['label' => 'Tgl Kirim', 'value' => \Carbon\Carbon::parse($deliveryReport->delivery_date)->format('d M Y')],
-                            ['label' => 'Tempo', 'value' => $deliveryReport->payment_term_days ? $deliveryReport->payment_term_days . ' hari' : null],
                         ];
                     @endphp
                     @foreach($rows as $row)
@@ -99,10 +98,41 @@
                         </div>
                         @endif
                     @endforeach
-                    @if($deliveryReport->payment_term_days)
-                    <div style="padding:10px 18px;background:#fff7ed;border-top:1px solid #fed7aa;">
-                        <span style="font-size:12px;color:#92400e;font-weight:600;">
-                            ⏱ Jatuh tempo: {{ \Carbon\Carbon::parse($deliveryReport->delivery_date)->addDays($deliveryReport->payment_term_days)->format('d M Y') }}
+                </div>
+            </div>
+
+            {{-- Info Pembayaran --}}
+            <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+                <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Pembayaran</h3>
+                    @if($deliveryReport->payment_status === 'lunas')
+                        <span style="font-size:10px;font-weight:800;background:#dcfce7;color:#166534;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">LUNAS</span>
+                    @elseif($deliveryReport->payment_status === 'dp')
+                        <span style="font-size:10px;font-weight:800;background:#fef08a;color:#854d0e;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">DP</span>
+                    @else
+                        <span style="font-size:10px;font-weight:800;background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">BELUM BAYAR</span>
+                    @endif
+                </div>
+                <div style="padding:0;">
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;">Total Tagihan</span>
+                        <span style="font-size:13px;font-weight:600;color:#0f172a;">Rp {{ number_format($deliveryReport->total_amount, 0, ',', '.') }}</span>
+                    </div>
+                    @if($deliveryReport->payment_status === 'dp')
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;">Uang Muka (DP)</span>
+                        <span style="font-size:13px;font-weight:600;color:#0f172a;">Rp {{ number_format($deliveryReport->down_payment_amount, 0, ',', '.') }}</span>
+                    </div>
+                    @endif
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;background:#f8fafc;border-top:1px dashed #cbd5e1;">
+                        <span style="font-size:11px;font-weight:800;color:#b91c1c;text-transform:uppercase;">Sisa Tagihan</span>
+                        <span style="font-size:14px;font-weight:800;color:#b91c1c;">Rp {{ number_format($deliveryReport->remaining_amount, 0, ',', '.') }}</span>
+                    </div>
+                    @if($deliveryReport->due_date)
+                    <div style="padding:10px 18px;background:#fff7ed;border-top:1px solid #fed7aa;display:flex;align-items:center;gap:6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span style="font-size:12px;color:#ea580c;font-weight:700;">
+                            Jatuh Tempo: {{ \Carbon\Carbon::parse($deliveryReport->due_date)->format('d M Y') }}
                         </span>
                     </div>
                     @endif

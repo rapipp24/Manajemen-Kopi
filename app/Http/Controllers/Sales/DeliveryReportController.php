@@ -63,6 +63,8 @@ class DeliveryReportController extends Controller
             // Info pengiriman
             'delivery_date'            => 'required|date',
             'note'                     => 'nullable|string',
+            // Pembayaran: tidak diterima dari frontend
+            // payment_status dan down_payment_amount di-force oleh backend
             // Produk
             'items'                    => 'required|array|min:1',
             'items.*.product_id'       => 'required|exists:products,id',
@@ -71,20 +73,28 @@ class DeliveryReportController extends Controller
             'customer_name_manual.required_without'    => 'Nama toko wajib diisi jika tidak memilih dari daftar customer.',
             'customer_address_manual.required_without' => 'Alamat toko wajib diisi jika tidak memilih dari daftar customer.',
             'customer_phone_manual.required_without'   => 'No. telepon toko wajib diisi jika tidak memilih dari daftar customer.',
+            'payment_status.required'                  => 'Status pembayaran wajib dipilih.',
         ]);
 
         DB::beginTransaction();
 
         try {
+            // Semua Delivery Report baru selalu dimulai belum_bayar.
+            // Pembayaran DP/Lunas harus melalui Setoran Uang (sales_deposits) + verifikasi Admin.
+            $dpAmount = 0;
+
+            // Hitung due_date otomatis jika tempo ada
+            $dueDate = null;
+            if ($request->payment_term_days) {
+                $dueDate = \Carbon\Carbon::parse($request->delivery_date)
+                    ->addDays((int)$request->payment_term_days)
+                    ->format('Y-m-d');
+            }
+
             // Generate nomor laporan: DEL-YYYYMMDD-XXX
             $date  = date('Ymd');
             $count = DeliveryReport::whereDate('created_at', today())->count() + 1;
             $reportNumber = 'DEL-' . $date . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
-
-            // Tentukan nama toko untuk note (gunakan accessor atau fallback langsung)
-            $tokoName = $request->customer_id
-                ? (Customer::find($request->customer_id)?->name ?? 'Toko')
-                : $request->customer_name_manual;
 
             $report = DeliveryReport::create([
                 'report_number'           => $reportNumber,
@@ -97,8 +107,15 @@ class DeliveryReportController extends Controller
                 'delivery_date'           => $request->delivery_date,
                 'note'                    => $request->note,
                 'status'                  => 'submitted',
+                'total_amount'            => 0, // Akan diupdate
+                'payment_status'          => 'belum_bayar',
+                'down_payment_amount'     => 0,
+                'due_date'                => $dueDate,
                 'created_by'              => Auth::id(),
             ]);
+
+            $totalAmount = 0;
+            $tokoName = $report->toko_name; // Dari accessor: customer->name atau customer_name_manual
 
             foreach ($request->items as $item) {
                 // Lock stok sales untuk cegah race condition
@@ -149,7 +166,18 @@ class DeliveryReportController extends Controller
                     'note'           => "Keluar stok sales → {$tokoName} ({$reportNumber})",
                     'user_id'        => Auth::id(),
                 ]);
+
+                $totalAmount += $subtotal;
             }
+
+            // down_payment_amount tetap 0 untuk laporan baru.
+            // Pembayaran dicatat terpisah via sales_deposits.
+
+            // Update nilai final di laporan
+            $report->update([
+                'total_amount'        => $totalAmount,
+                'down_payment_amount' => $dpAmount,
+            ]);
 
             DB::commit();
 

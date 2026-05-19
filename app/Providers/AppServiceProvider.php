@@ -26,10 +26,12 @@ class AppServiceProvider extends ServiceProvider
                 ->count();
             
             $pendingSalesCount = \App\Models\SalesOrder::where('status', 'menunggu')->count();
+            $pendingDepositCount = \App\Models\SalesDeposit::where('status', 'menunggu_verifikasi')->count();
             
             $view->with([
                 'lowStockCount' => $count,
-                'pendingSalesOrderCount' => $pendingSalesCount
+                'pendingSalesOrderCount' => $pendingSalesCount,
+                'pendingDepositCount' => $pendingDepositCount
             ]);
         });
     }

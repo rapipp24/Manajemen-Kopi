@@ -57,6 +57,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Laporan Pengiriman Sales (Admin: read-only)
     Route::get('/delivery-reports', [AdminDeliveryReportController::class, 'index'])->name('delivery-reports.index');
     Route::get('/delivery-reports/{deliveryReport}', [AdminDeliveryReportController::class, 'show'])->name('delivery-reports.show');
+    Route::get('/sales-deposits', [\App\Http\Controllers\Admin\SalesDepositController::class, 'index'])->name('sales-deposits.index');
+    Route::get('/sales-deposits/{deposit}', [\App\Http\Controllers\Admin\SalesDepositController::class, 'show'])->name('sales-deposits.show');
+    Route::post('/sales-deposits/{deposit}/approve', [\App\Http\Controllers\Admin\SalesDepositController::class, 'approve'])->name('sales-deposits.approve');
+    Route::post('/sales-deposits/{deposit}/reject', [\App\Http\Controllers\Admin\SalesDepositController::class, 'reject'])->name('sales-deposits.reject');
 
     // Pengaturan
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
@@ -72,6 +76,10 @@ Route::middleware(['auth', 'sales', 'verified'])->name('sales.')->group(function
 
     // Laporan Pengiriman ke Toko
     Route::resource('delivery-reports', \App\Http\Controllers\Sales\DeliveryReportController::class)
+        ->only(['index', 'create', 'store', 'show']);
+
+    // Setoran Sales Lapangan
+    Route::resource('deposits', \App\Http\Controllers\Sales\SalesDepositController::class)
         ->only(['index', 'create', 'store', 'show']);
 
     Route::get('/orders-placeholder', function () {

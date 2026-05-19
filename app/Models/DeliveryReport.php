@@ -11,21 +11,41 @@ class DeliveryReport extends Model
     protected $fillable = [
         'report_number',
         'sales_id',
-        'customer_id',               // nullable — dari master customer (opsional)
-        'customer_name_manual',      // wajib jika customer_id kosong
-        'customer_address_manual',   // opsional
-        'customer_phone_manual',     // opsional
-        'payment_term_days',         // tempo: 15 | 30 | null
+        'customer_id',
+        'customer_name_manual',
+        'customer_address_manual',
+        'customer_phone_manual',
+        'payment_term_days',
         'delivery_date',
         'note',
         'status',
+        'total_amount',
+        'payment_status',
+        'down_payment_amount',
+        'due_date',
         'created_by',
     ];
 
     protected $casts = [
         'delivery_date'    => 'date',
+        'due_date'         => 'date',
         'payment_term_days' => 'integer',
+        'total_amount'     => 'decimal:2',
+        'down_payment_amount' => 'decimal:2',
     ];
+
+    /**
+     * Hitung sisa tagihan
+     */
+    public function getRemainingAmountAttribute()
+    {
+        return max(0, $this->total_amount - $this->down_payment_amount);
+    }
+
+    public function deposits()
+    {
+        return $this->hasMany(SalesDeposit::class, 'delivery_report_id');
+    }
 
     /**
      * Nama toko tujuan — prioritaskan master customer,
