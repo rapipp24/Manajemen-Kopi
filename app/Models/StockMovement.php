@@ -16,8 +16,15 @@ class StockMovement extends Model
         'qty',
         'stock_before',
         'stock_after',
-        'note'
+        'note',
+        'user_id',   // nullable, diisi jika movement terkait stok sales
     ];
+
+    /** Sales terkait (jika movement dari stok sales) */
+    public function sales()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     /**
      * Get the parent item model (Product or RawMaterial).

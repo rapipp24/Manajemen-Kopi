@@ -1,104 +1,125 @@
 <x-layouts.user>
-    <x-slot name="title">Status Pengajuan #{{ $order->order_number }}</x-slot>
+    <x-slot name="title">Detail Pengajuan {{ $order->order_number }}</x-slot>
 
-    <div style="max-width: 900px; margin: 0 auto; margin-bottom: 60px;">
-        <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
-            <a href="{{ route('sales.orders.index') }}" style="color: #92400e; text-decoration: none; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                Kembali ke Daftar
-            </a>
-            
-            @php
-                $statusColors = [
-                    'menunggu' => ['bg' => '#fef3c7', 'text' => '#92400e', 'label' => 'Menunggu Persetujuan'],
-                    'diproses' => ['bg' => '#dcfce7', 'text' => '#166534', 'label' => 'Disetujui & Diproses'],
-                    'selesai' => ['bg' => '#e0f2fe', 'text' => '#075985', 'label' => 'Barang Selesai Diambil'],
-                    'dibatalkan' => ['bg' => '#fee2e2', 'text' => '#991b1b', 'label' => 'Ditolak / Dibatalkan'],
-                ];
-                $color = $statusColors[$order->status] ?? ['bg' => '#f5f5f4', 'text' => '#78716c', 'label' => $order->status];
-            @endphp
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 14px; color: #78716c;">Status Pengajuan:</span>
-                <span style="display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; background: {{ $color['bg'] }}; color: {{ $color['text'] }};">
-                    {{ $color['label'] }}
-                </span>
-            </div>
-        </div>
+    <style>
+        .back-link { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:20px; }
+        .back-link:hover { color:#1c1917; }
+        .layout { display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start; }
+        .card { background:#fff;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden; }
+        .card-header { padding:16px 20px;border-bottom:1px solid #f5f5f4;background:#fafaf9; }
+        .card-header h3 { font-size:14px;font-weight:700;color:#1c1917;margin:0; }
+        .card-body { padding:20px; }
+        table { width:100%;border-collapse:collapse; }
+        th { padding:10px 0;font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;border-bottom:1px solid #f5f5f4; }
+        td { padding:14px 0;border-bottom:1px solid #f5f5f4;font-size:13.5px; }
+        tr:last-child td { border-bottom:none; }
+        .badge { display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700; }
+        .badge-pending  { background:#fef3c7;color:#92400e; }
+        .badge-approved { background:#f0fdf4;color:#166534; }
+        .badge-done     { background:#e0f2fe;color:#075985; }
+        .badge-canceled { background:#fef2f2;color:#991b1b; }
 
-        <div style="background: white; border-radius: 20px; border: 1px solid #e7e5e4; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden;">
-            <div style="padding: 32px; border-bottom: 1px solid #f5f5f4; display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h1 style="font-size: 20px; font-weight: 800; color: #1c1917; margin-bottom: 8px;">PENGAJUAN #{{ $order->order_number }}</h1>
-                    <p style="color: #78716c; font-size: 14px;">Diajukan pada: {{ $order->created_at->format('d M Y, H:i') }}</p>
-                </div>
-                <div style="text-align: right;">
-                    <label style="display: block; font-size: 11px; font-weight: 700; color: #a8a29e; text-transform: uppercase; margin-bottom: 4px;">Tujuan Barang</label>
-                    <div style="font-size: 16px; font-weight: 700; color: #1c1917;">{{ $order->customer->name ?? 'Stok Pribadi / Keliling' }}</div>
-                    <div style="font-size: 13px; color: #78716c;">{{ $order->customer ? ($order->customer->phone ?? '-') : 'Gudang Utama' }}</div>
-                </div>
-            </div>
+        .info-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+        .info-row:last-child { margin-bottom:0; }
+        .info-label { font-size:11px; font-weight:700; color:#a8a29e; text-transform:uppercase; letter-spacing:0.04em; }
+        .info-value { font-size:13px; font-weight:600; color:#1c1917; text-align:right; max-width:65%; }
+        .log-item { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; font-size:12px; color:#78716c; }
+        .log-item:last-child { margin-bottom:0; }
+        .log-item strong { color:#1c1917; text-align:right; }
+    </style>
 
-            <div style="padding: 32px;">
-                <table style="width: 100%; border-collapse: collapse;">
+    <a href="{{ route('sales.orders.index') }}" class="back-link">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Kembali
+    </a>
+
+    @php
+        $statusMap = [
+            'menunggu'   => ['badge-pending',  'Menunggu Persetujuan'],
+            'diproses'   => ['badge-approved', 'Disetujui'],
+            'selesai'    => ['badge-done',     'Selesai Diambil'],
+            'dibatalkan' => ['badge-canceled', 'Ditolak / Dibatalkan'],
+        ];
+        [$badgeCls, $badgeLbl] = $statusMap[$order->status] ?? ['badge-pending', $order->status];
+    @endphp
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <h1 style="font-size:18px;font-weight:700;color:#1c1917;font-family:monospace;">{{ $order->order_number }}</h1>
+        <span class="badge {{ $badgeCls }}">{{ $badgeLbl }}</span>
+    </div>
+
+    <div class="layout">
+        {{-- Kiri: Tabel Item --}}
+        <div class="card">
+            <div class="card-header"><h3>Daftar Barang yang Diminta</h3></div>
+            <div style="padding:0 20px;">
+                <table>
                     <thead>
-                        <tr style="border-bottom: 2px solid #f5f5f4;">
-                            <th style="padding: 12px 0; text-align: left; font-size: 12px; color: #a8a29e; text-transform: uppercase;">Produk</th>
-                            <th style="padding: 12px 0; text-align: right; font-size: 12px; color: #a8a29e; text-transform: uppercase;">Nilai Estimasi</th>
-                            <th style="padding: 12px 0; text-align: center; font-size: 12px; color: #a8a29e; text-transform: uppercase;">Jumlah</th>
-                            <th style="padding: 12px 0; text-align: right; font-size: 12px; color: #a8a29e; text-transform: uppercase;">Subtotal</th>
+                        <tr>
+                            <th style="text-align:left;">Produk</th>
+                            <th style="text-align:center;">Qty</th>
+                            <th style="text-align:right;">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($order->items as $item)
-                        <tr style="border-bottom: 1px solid #f5f5f4;">
-                            <td style="padding: 20px 0;">
-                                <div style="font-weight: 700; color: #1c1917;">{{ $item->product->name }}</div>
-                            </td>
-                            <td style="padding: 20px 0; text-align: right; color: #44403c;">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                            <td style="padding: 20px 0; text-align: center; font-weight: 600; color: #1c1917;">{{ $item->qty }}</td>
-                            <td style="padding: 20px 0; text-align: right; font-weight: 800; color: #1c1917;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                        <tr>
+                            <td style="font-weight:600;color:#1c1917;">{{ $item->product->name }} — {{ $item->product->weight }}gr</td>
+                            <td style="text-align:center;font-weight:700;">{{ $item->qty }}</td>
+                            <td style="text-align:right;color:#78716c;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                         </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" style="text-align:right;font-size:12px;font-weight:700;color:#a8a29e;text-transform:uppercase;padding-top:12px;">Total Nilai</td>
+                            <td style="text-align:right;font-size:18px;font-weight:800;color:#92400e;padding-top:12px;">Rp {{ number_format($order->total, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
+            </div>
+            @if($order->catatan)
+            <div style="padding:14px 20px;background:#fafaf9;border-top:1px solid #f5f5f4;font-size:13px;color:#78716c;font-style:italic;">
+                "{{ $order->catatan }}"
+            </div>
+            @endif
+        </div>
 
-                <div style="margin-top: 32px; padding-top: 32px; border-top: 2px solid #f5f5f4; display: flex; justify-content: space-between; align-items: flex-end;">
-                    <div>
-                        <label style="display: block; font-size: 11px; font-weight: 700; color: #a8a29e; text-transform: uppercase; margin-bottom: 8px;">Catatan Pengajuan</label>
-                        <div style="font-size: 14px; color: #44403c; font-style: italic;">"{{ $order->catatan ?: 'Tidak ada catatan.' }}"</div>
+        {{-- Kanan: Info --}}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+                <div class="card-header"><h3>Info Pengajuan</h3></div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="info-label">Tujuan / Toko</div>
+                        <div class="info-value">{{ $order->customer->name ?? 'Stok Sales' }}</div>
                     </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 14px; color: #78716c; margin-bottom: 4px;">Total Nilai Barang</div>
-                        <div style="font-size: 28px; font-weight: 800; color: #92400e;">Rp {{ number_format($order->total, 0, ',', '.') }}</div>
+                    <div class="info-row">
+                        <div class="info-label">Tanggal Diajukan</div>
+                        <div class="info-value">{{ $order->created_at->format('d M Y, H:i') }}</div>
                     </div>
                 </div>
             </div>
 
-            <div style="padding: 24px 32px; background: #fafaf9; border-top: 1px solid #f5f5f4;">
-                <h4 style="font-size: 12px; font-weight: 700; color: #a8a29e; text-transform: uppercase; margin-bottom: 12px;">Log Persetujuan</h4>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-                    <div>
-                        <label style="display: block; font-size: 10px; color: #a8a29e; margin-bottom: 4px;">Tgl Diajukan</label>
-                        <div style="font-size: 12px; font-weight: 600;">{{ $order->created_at->format('d/m/Y H:i') }}</div>
+            <div class="card">
+                <div class="card-header"><h3>Log Persetujuan</h3></div>
+                <div class="card-body">
+                    <div class="log-item">
+                        <span>Diajukan</span>
+                        <strong>{{ $order->created_at->format('d/m/Y H:i') }}</strong>
                     </div>
-                    <div>
-                        <label style="display: block; font-size: 10px; color: #a8a29e; margin-bottom: 4px;">Disetujui Admin</label>
-                        <div style="font-size: 12px; font-weight: 600;">{{ $order->processed_at ? $order->processed_at->format('d/m/Y H:i') : '-' }}</div>
+                    <div class="log-item">
+                        <span>Disetujui Admin</span>
+                        <strong>{{ $order->processed_at ? $order->processed_at->format('d/m/Y H:i') : '—' }}</strong>
                     </div>
-                    <div>
-                        <label style="display: block; font-size: 10px; color: #a8a29e; margin-bottom: 4px;">Selesai Diambil</label>
-                        <div style="font-size: 12px; font-weight: 600;">{{ $order->completed_at ? $order->completed_at->format('d/m/Y H:i') : '-' }}</div>
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 10px; color: #a8a29e; margin-bottom: 4px;">Status Stok Gudang</label>
-                        <div style="font-size: 12px; font-weight: 600;">
-                            @if($order->processed_at) <span style="color: #166534;">Sudah Terpotong</span>
-                            @else <span style="color: #92400e;">Menunggu Admin</span>
-                            @endif
-                        </div>
+                    <div class="log-item">
+                        <span>Stok Gudang</span>
+                        <strong style="color:{{ $order->processed_at ? '#166534' : '#92400e' }};">
+                            {{ $order->processed_at ? 'Sudah terpotong' : 'Menunggu admin' }}
+                        </strong>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </x-layouts.user>

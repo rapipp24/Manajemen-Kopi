@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\SalesOrder;
+use App\Models\SalesStock;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,7 +62,7 @@ class SalesOrderController extends Controller
                 }
 
                 foreach ($salesOrder->items as $item) {
-                    // Lock product record for update to prevent race conditions
+                    // Lock product record untuk cegah race condition
                     $product = Product::lockForUpdate()->find($item->product_id);
 
                     if ($product->current_stock < $item->qty) {
@@ -70,11 +71,13 @@ class SalesOrderController extends Controller
                         throw new Exception("Stok produk '{$product->name}' tidak cukup. Sisa gudang: {$currentStockFormatted} {$unitName}");
                     }
 
-                    $stockBefore = $product->current_stock;
+                    // ── STEP 1: Kurangi stok GUDANG ──────────────────────────────
+                    $gudangBefore = $product->current_stock;
                     $product->current_stock -= $item->qty;
                     $product->save();
 
-                    // Catat Stock Movement
+                    // Movement #1 — OUT dari Gudang Utama
+                    // user_id = NULL → menandakan movement ini milik stok gudang/products
                     StockMovement::create([
                         'item_type'      => 'product',
                         'item_id'        => $product->id,
@@ -82,9 +85,34 @@ class SalesOrderController extends Controller
                         'reference_type' => SalesOrder::class,
                         'reference_id'   => $salesOrder->id,
                         'qty'            => $item->qty,
-                        'stock_before'   => $stockBefore,
+                        'stock_before'   => $gudangBefore,
                         'stock_after'    => $product->current_stock,
-                        'note'           => "Pengajuan Barang Sales {$salesOrder->order_number}",
+                        'note'           => "Keluar gudang → Sales {$salesOrder->sales->name} ({$salesOrder->order_number})",
+                        'user_id'        => null, // NULL = stok gudang utama
+                    ]);
+
+                    // ── STEP 2: Tambah stok SALES ────────────────────────────────
+                    $salesStock = SalesStock::firstOrCreate(
+                        ['user_id' => $salesOrder->sales_id, 'product_id' => $product->id],
+                        ['qty' => 0]
+                    );
+                    $salesStockBefore = $salesStock->qty;
+                    $salesStock->increment('qty', $item->qty);
+                    $salesStock->refresh(); // ambil nilai terbaru
+
+                    // Movement #2 — IN ke Stok Sales
+                    // user_id = sales_id → menandakan movement ini milik stok sales
+                    StockMovement::create([
+                        'item_type'      => 'product',
+                        'item_id'        => $product->id,
+                        'movement_type'  => 'in',
+                        'reference_type' => SalesOrder::class,
+                        'reference_id'   => $salesOrder->id,
+                        'qty'            => $item->qty,
+                        'stock_before'   => $salesStockBefore,
+                        'stock_after'    => $salesStock->qty,
+                        'note'           => "Masuk stok sales dari gudang ({$salesOrder->order_number})",
+                        'user_id'        => $salesOrder->sales_id, // NOT NULL = stok sales
                     ]);
                 }
                 $salesOrder->processed_at = now();

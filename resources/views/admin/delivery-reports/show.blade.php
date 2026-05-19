@@ -1,0 +1,121 @@
+<x-layouts.admin>
+    <x-slot name="title">Detail Laporan {{ $deliveryReport->report_number }}</x-slot>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+        <a href="{{ route('admin.delivery-reports.index') }}"
+           style="color:#64748b;text-decoration:none;font-size:13px;">← Semua Laporan</a>
+        <h1 style="font-size:20px;font-weight:800;color:#0f172a;font-family:monospace;margin:0;">
+            {{ $deliveryReport->report_number }}
+        </h1>
+        <span style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;">✓ Terkirim</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;">
+
+        {{-- Kiri: Tabel Produk --}}
+        <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+            <div style="padding:14px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+                <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Produk yang Dikirim</h3>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;">
+                        <th style="padding:11px 20px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Produk</th>
+                        <th style="padding:11px 20px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Qty</th>
+                        <th style="padding:11px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Harga</th>
+                        <th style="padding:11px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($deliveryReport->items as $item)
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:14px 20px;">
+                            <div style="font-weight:600;color:#0f172a;">{{ $item->product->name }}</div>
+                            <div style="font-size:11px;color:#94a3b8;">Kemasan: {{ $item->product->weight }}gr</div>
+                        </td>
+                        <td style="padding:14px 20px;text-align:center;font-weight:700;">{{ number_format($item->qty, 0, ',', '.') }}</td>
+                        <td style="padding:14px 20px;text-align:right;color:#475569;">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                        <td style="padding:14px 20px;text-align:right;font-weight:700;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr style="background:#f8fafc;">
+                        <td style="padding:14px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Total</td>
+                        <td style="padding:14px 20px;text-align:center;font-size:14px;font-weight:800;color:#0f172a;">
+                            {{ number_format($deliveryReport->items->sum('qty'), 0, ',', '.') }}
+                        </td>
+                        <td style="padding:14px 20px;"></td>
+                        <td style="padding:14px 20px;text-align:right;font-size:18px;font-weight:800;color:#0f172a;">
+                            Rp {{ number_format($deliveryReport->items->sum('subtotal'), 0, ',', '.') }}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        {{-- Kanan: Info --}}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            {{-- Info Sales --}}
+            <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+                <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
+                    <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Sales</h3>
+                </div>
+                <div style="padding:14px 18px;">
+                    <div style="font-weight:700;color:#0f172a;">{{ $deliveryReport->sales->name ?? '—' }}</div>
+                    <div style="font-size:12px;color:#94a3b8;">{{ $deliveryReport->sales->email ?? '' }}</div>
+                    <div style="font-size:12px;color:#64748b;margin-top:6px;">
+                        Dicatat: {{ $deliveryReport->created_at->format('d M Y, H:i') }}
+                    </div>
+                </div>
+            </div>
+
+            {{-- Info Toko --}}
+            <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+                <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Toko Tujuan</h3>
+                    @if(!$deliveryReport->customer_id)
+                        <span style="font-size:10px;font-weight:700;background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:10px;">Input Manual</span>
+                    @else
+                        <span style="font-size:10px;font-weight:700;background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:10px;">Master Customer</span>
+                    @endif
+                </div>
+                <div style="padding:0;">
+                    @php
+                        $rows = [
+                            ['label' => 'Nama', 'value' => $deliveryReport->toko_name],
+                            ['label' => 'Alamat', 'value' => $deliveryReport->customer_address_manual ?? ($deliveryReport->customer?->address ?? null)],
+                            ['label' => 'No. HP', 'value' => $deliveryReport->customer_phone_manual ?? ($deliveryReport->customer?->phone ?? null)],
+                            ['label' => 'Tgl Kirim', 'value' => \Carbon\Carbon::parse($deliveryReport->delivery_date)->format('d M Y')],
+                            ['label' => 'Tempo', 'value' => $deliveryReport->payment_term_days ? $deliveryReport->payment_term_days . ' hari' : null],
+                        ];
+                    @endphp
+                    @foreach($rows as $row)
+                        @if($row['value'])
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:11px 18px;border-bottom:1px solid #f1f5f9;">
+                            <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;">{{ $row['label'] }}</span>
+                            <span style="font-size:13px;font-weight:600;color:#0f172a;text-align:right;max-width:65%;">{{ $row['value'] }}</span>
+                        </div>
+                        @endif
+                    @endforeach
+                    @if($deliveryReport->payment_term_days)
+                    <div style="padding:10px 18px;background:#fff7ed;border-top:1px solid #fed7aa;">
+                        <span style="font-size:12px;color:#92400e;font-weight:600;">
+                            ⏱ Jatuh tempo: {{ \Carbon\Carbon::parse($deliveryReport->delivery_date)->addDays($deliveryReport->payment_term_days)->format('d M Y') }}
+                        </span>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Catatan --}}
+            @if($deliveryReport->note)
+            <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;padding:16px 18px;">
+                <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;">Catatan</div>
+                <div style="font-size:13px;color:#475569;font-style:italic;">{{ $deliveryReport->note }}</div>
+            </div>
+            @endif
+        </div>
+    </div>
+</x-layouts.admin>

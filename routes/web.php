@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductionController;
 use App\Http\Controllers\Admin\PackingController;
 use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\SalesOrderController;
+use App\Http\Controllers\Admin\DeliveryReportController as AdminDeliveryReportController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\User\ProductController;
@@ -48,10 +49,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     })->name('orders');
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
 
-    // Sales Orders (Pesanan dari Sales)
+    // Sales Orders (Pengajuan Barang dari Sales)
     Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');
     Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
     Route::patch('/sales-orders/{salesOrder}/status', [SalesOrderController::class, 'updateStatus'])->name('sales-orders.update-status');
+
+    // Laporan Pengiriman Sales (Admin: read-only)
+    Route::get('/delivery-reports', [AdminDeliveryReportController::class, 'index'])->name('delivery-reports.index');
+    Route::get('/delivery-reports/{deliveryReport}', [AdminDeliveryReportController::class, 'show'])->name('delivery-reports.show');
 
     // Pengaturan
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
@@ -61,9 +66,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 // ─── AREA SALES (Khusus Sales) ────────────────────────────────────────────────
 Route::middleware(['auth', 'sales', 'verified'])->name('sales.')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products');
-    
-    // Pesanan Sales
+
+    // Pengajuan Barang Sales
     Route::resource('orders', \App\Http\Controllers\Sales\OrderController::class)->only(['index', 'create', 'store', 'show']);
+
+    // Laporan Pengiriman ke Toko
+    Route::resource('delivery-reports', \App\Http\Controllers\Sales\DeliveryReportController::class)
+        ->only(['index', 'create', 'store', 'show']);
 
     Route::get('/orders-placeholder', function () {
         return "Halaman Buat Pesanan Sales";

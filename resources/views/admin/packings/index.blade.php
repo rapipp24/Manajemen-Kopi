@@ -17,9 +17,18 @@
     @if(count($curahStocks) > 0)
     <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
         @foreach($curahStocks as $jenis => $stok)
+        @php
+            if ($stok >= 1000) {
+                $ton = rtrim(rtrim(number_format($stok / 1000, 2, ',', '.'), '0'), ',');
+                $stokLabel = $ton . ' Ton / ' . number_format($stok, 0, ',', '.') . ' kg';
+            } else {
+                $kgFmt = rtrim(rtrim(number_format($stok, 2, ',', '.'), '0'), ',');
+                $stokLabel = $kgFmt . ' kg';
+            }
+        @endphp
         <div style="background:white;border:1px solid #e2e8f0;border-radius:10px;padding:14px 20px;min-width:180px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
             <p style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Curah: {{ $jenis }}</p>
-            <p style="font-size:20px;font-weight:800;color:{{ $stok > 0 ? '#166534' : '#dc2626' }};">{{ number_format($stok, 2) }} <span style="font-size:13px;font-weight:500;">kg</span></p>
+            <p style="font-size:{{ $stok >= 1000 ? '16px' : '20px' }};font-weight:800;color:{{ $stok > 0 ? '#166534' : '#dc2626' }};">{{ $stokLabel }}</p>
         </div>
         @endforeach
     </div>
