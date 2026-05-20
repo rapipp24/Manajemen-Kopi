@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PackingController;
 use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\SalesOrderController;
 use App\Http\Controllers\Admin\DeliveryReportController as AdminDeliveryReportController;
+use App\Http\Controllers\Admin\SalesReturnController as AdminSalesReturnController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\User\ProductController;
@@ -62,6 +63,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/sales-deposits/{deposit}/approve', [\App\Http\Controllers\Admin\SalesDepositController::class, 'approve'])->name('sales-deposits.approve');
     Route::post('/sales-deposits/{deposit}/reject', [\App\Http\Controllers\Admin\SalesDepositController::class, 'reject'])->name('sales-deposits.reject');
 
+    // Return Sales (Verifikasi Return dari Sales)
+    Route::get('/returns', [AdminSalesReturnController::class, 'index'])->name('returns.index');
+    Route::get('/returns/{return}', [AdminSalesReturnController::class, 'show'])->name('returns.show');
+    Route::post('/returns/{return}/receive', [AdminSalesReturnController::class, 'receive'])->name('returns.receive');
+    Route::post('/returns/{return}/reject', [AdminSalesReturnController::class, 'reject'])->name('returns.reject');
+
     // Pengaturan
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
@@ -80,6 +87,10 @@ Route::middleware(['auth', 'sales', 'verified'])->name('sales.')->group(function
 
     // Setoran Sales Lapangan
     Route::resource('deposits', \App\Http\Controllers\Sales\SalesDepositController::class)
+        ->only(['index', 'create', 'store', 'show']);
+
+    // Return Barang dari Toko
+    Route::resource('returns', \App\Http\Controllers\Sales\SalesReturnController::class)
         ->only(['index', 'create', 'store', 'show']);
 
     Route::get('/orders-placeholder', function () {

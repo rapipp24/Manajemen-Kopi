@@ -201,7 +201,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <h1>☕ Manajemen Kopi</h1>
+            <h1> Manajemen Kopi</h1>
             <span>Panel Admin</span>
         </div>
 

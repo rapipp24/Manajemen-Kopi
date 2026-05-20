@@ -265,8 +265,14 @@
 
             <a href="{{ route('sales.deposits.index') }}"
                class="nav-item {{ request()->routeIs('sales.deposits*') ? 'active' : '' }}">
-                <i data-lucide="dollar-sign" class="nav-icon"></i>
+                <i data-lucide="wallet" class="nav-icon"></i>
                 Setoran Uang
+            </a>
+
+            <a href="{{ route('sales.returns.index') }}"
+               class="nav-item {{ request()->routeIs('sales.returns*') ? 'active' : '' }}">
+                <i data-lucide="corner-up-left" class="nav-icon"></i>
+                Return Barang
             </a>
         </nav>
 

@@ -42,6 +42,26 @@ class DeliveryReport extends Model
         return max(0, $this->total_amount - $this->down_payment_amount);
     }
 
+    /**
+     * Total return yang sudah diterima admin pada laporan ini.
+     * Dihitung dinamis dari relasi, tidak disimpan di kolom.
+     */
+    public function getTotalReturnDiterimaAttribute(): float
+    {
+        return (float) $this->salesReturns()
+            ->where('status', 'diterima')
+            ->join('sales_return_items', 'sales_returns.id', '=', 'sales_return_items.sales_return_id')
+            ->sum('sales_return_items.subtotal_return');
+    }
+
+    /**
+     * Tagihan efektif = total_amount dikurangi semua return yang sudah diterima.
+     */
+    public function getTagihanEfektifAttribute(): float
+    {
+        return max(0, (float) $this->total_amount - $this->total_return_diterima);
+    }
+
     public function deposits()
     {
         return $this->hasMany(SalesDeposit::class, 'delivery_report_id');
@@ -78,5 +98,11 @@ class DeliveryReport extends Model
     public function items(): HasMany
     {
         return $this->hasMany(DeliveryReportItem::class);
+    }
+
+    /** Return barang yang diajukan dari laporan ini */
+    public function salesReturns(): HasMany
+    {
+        return $this->hasMany(SalesReturn::class);
     }
 }

@@ -3,7 +3,7 @@
 
     <div style="max-width: 600px; margin-bottom: 50px;">
         <form action="{{ route('admin.customers.update', $customer->id) }}" method="POST">
-            @csrf
+            @csrf   
             @method('PUT')
             
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; margin-bottom: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">

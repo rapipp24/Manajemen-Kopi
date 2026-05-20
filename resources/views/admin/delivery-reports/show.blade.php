@@ -7,7 +7,7 @@
         <h1 style="font-size:20px;font-weight:800;color:#0f172a;font-family:monospace;margin:0;">
             {{ $deliveryReport->report_number }}
         </h1>
-        <span style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;">✓ Terkirim</span>
+        <span style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check" style="width:12px;height:12px;"></i> Terkirim</span>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;">
@@ -146,6 +146,69 @@
                 <div style="font-size:13px;color:#475569;font-style:italic;">{{ $deliveryReport->note }}</div>
             </div>
             @endif
+
+            {{-- Informasi Return (hitung dinamis) --}}
+            @php
+                $totalReturnDiterima = $deliveryReport->total_return_diterima;
+                $tagihanEfektif      = $deliveryReport->total_amount - $totalReturnDiterima;
+                $sisaTagihanReturn   = $tagihanEfektif - $deliveryReport->down_payment_amount;
+                $returnsRelated      = $deliveryReport->salesReturns()->with('items.product')->orderBy('created_at','desc')->get();
+            @endphp
+            @if($totalReturnDiterima > 0 || $returnsRelated->isNotEmpty())
+            <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+                <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Tagihan Efektif (Setelah Return)</h3>
+                </div>
+                <div style="padding:0;">
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;">Total Return Diterima</span>
+                        <span style="font-size:13px;font-weight:600;color:#dc2626;">- Rp {{ number_format($totalReturnDiterima, 0, ',', '.') }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;">Tagihan Efektif</span>
+                        <span style="font-size:13px;font-weight:800;color:#0f172a;">Rp {{ number_format(max(0,$tagihanEfektif), 0, ',', '.') }}</span>
+                    </div>
+                    @if($sisaTagihanReturn < 0)
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;background:#eff6ff;">
+                        <span style="font-size:11px;font-weight:800;color:#1d4ed8;text-transform:uppercase;">Kelebihan Bayar</span>
+                        <span style="font-size:14px;font-weight:800;color:#1d4ed8;">Rp {{ number_format(abs($sisaTagihanReturn), 0, ',', '.') }}</span>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
+            {{-- Daftar Return Terkait --}}
+            @if($returnsRelated->isNotEmpty())
+            <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+                <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:13px;font-weight:700;color:#0f172a;margin:0;">Riwayat Return ({{ $returnsRelated->count() }})</h3>
+                </div>
+                @foreach($returnsRelated as $ret)
+                <div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-family:monospace;font-weight:700;font-size:12px;color:#92400e;">{{ $ret->return_number }}</div>
+                        <div style="font-size:11px;color:#94a3b8;margin-top:2px;">{{ $ret->return_date->format('d M Y') }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:12px;font-weight:700;color:#0f172a;">Rp {{ number_format($ret->total_return, 0, ',', '.') }}</div>
+                        @if($ret->status === 'diterima')
+                            <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;">DITERIMA</span>
+                        @elseif($ret->status === 'ditolak')
+                            <span style="background:#fee2e2;color:#991b1b;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;">DITOLAK</span>
+                        @else
+                            <span style="background:#fef08a;color:#854d0e;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;">MENUNGGU</span>
+                        @endif
+                    </div>
+                    <a href="{{ route('admin.returns.show', $ret) }}"
+                       style="font-size:11.5px;font-weight:600;color:#475569;text-decoration:none;border:1px solid #cbd5e1;padding:4px 10px;border-radius:6px;">Detail</a>
+                </div>
+                @endforeach
+            </div>
+            @endif
         </div>
     </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
 </x-layouts.admin>

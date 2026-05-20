@@ -52,7 +52,9 @@
 
     <div class="report-heading">
         <span class="report-number">{{ $deliveryReport->report_number }}</span>
-        <span class="badge-sent">✓ Terkirim</span>
+        <span class="badge-sent" style="display:inline-flex;align-items:center;gap:4px;">
+            <i data-lucide="check" style="width:12px;height:12px;"></i> Terkirim
+        </span>
     </div>
 
     <div class="layout">
@@ -165,12 +167,47 @@
                 
                 @if($deliveryReport->remaining_amount > 0)
                 <div style="margin-top:14px; padding-top:12px; border-top:1px dashed #d6d3d1;">
-                    <a href="{{ route('sales.deposits.create', ['delivery_report_id' => $deliveryReport->id]) }}" 
-                       style="background:#92400e; color:#fff; text-decoration:none; display:block; text-align:center; padding:8px; border-radius:6px; font-size:12.5px; font-weight:700; transition:background 0.15s;">
+                    <a href="{{ route('sales.deposits.create', ['delivery_report_id' => $deliveryReport->id]) }}"
+                       style="background:#92400e; color:#fff; text-decoration:none; display:block; text-align:center; padding:8px; border-radius:6px; font-size:12.5px; font-weight:700;">
                         + Kirim Setoran
                     </a>
                 </div>
                 @endif
+            </div>
+
+            {{-- Informasi Return --}}
+            @php
+                $totalReturnDiterima = $deliveryReport->total_return_diterima;
+                $tagihanEfektif      = $deliveryReport->total_amount - $totalReturnDiterima;
+                $sisaTagihanReturn   = $tagihanEfektif - $deliveryReport->down_payment_amount;
+                $returnsRelated      = $deliveryReport->salesReturns()->with('items')->orderBy('created_at', 'desc')->get();
+            @endphp
+            @if($totalReturnDiterima > 0 || $returnsRelated->isNotEmpty())
+            <div style="border-top:1px solid #f5f0eb; padding:11px 16px;">
+                <div style="font-size:11px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Tagihan Efektif (Setelah Return)</div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:12px;color:#78716c;">Total Return Diterima</span>
+                    <span style="font-size:12px;font-weight:600;color:#dc2626;">- Rp {{ number_format($totalReturnDiterima, 0, ',', '.') }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:12px;color:#78716c;">Tagihan Efektif</span>
+                    <span style="font-size:12px;font-weight:700;color:#1c1917;">Rp {{ number_format(max(0,$tagihanEfektif), 0, ',', '.') }}</span>
+                </div>
+                @if($sisaTagihanReturn < 0)
+                <div style="display:flex;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px dashed #d6d3d1;">
+                    <span style="font-size:12px;font-weight:700;color:#1d4ed8;">Kelebihan Bayar</span>
+                    <span style="font-size:13px;font-weight:800;color:#1d4ed8;">Rp {{ number_format(abs($sisaTagihanReturn), 0, ',', '.') }}</span>
+                </div>
+                @endif
+            </div>
+            @endif
+
+            {{-- Tombol Ajukan Return --}}
+            <div style="border-top:1px solid #f5f0eb;padding:12px 16px;">
+                <a href="{{ route('sales.returns.create', ['delivery_report_id' => $deliveryReport->id]) }}"
+                   style="background:#fff;border:1px solid #d6d3d1;color:#57534e;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:6px;font-size:12.5px;font-weight:600;width:100%;box-sizing:border-box;">
+                    <i data-lucide="corner-up-left" style="width:14px;height:14px;"></i> Ajukan Return Barang
+                </a>
             </div>
 
             @if($deliveryReport->note)
