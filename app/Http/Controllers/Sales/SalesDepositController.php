@@ -24,8 +24,11 @@ class SalesDepositController extends Controller
     public function create(Request $request)
     {
         // Get all delivery reports of this sales that are not fully paid
-        // total_amount > down_payment_amount
+        // and do not have any pending deposits (status: menunggu_verifikasi)
         $reports = DeliveryReport::where('sales_id', Auth::id())
+            ->whereDoesntHave('deposits', function ($query) {
+                $query->where('status', 'menunggu_verifikasi');
+            })
             ->get()
             ->filter(function ($report) {
                 return $report->remaining_amount > 0;
@@ -49,6 +52,15 @@ class SalesDepositController extends Controller
         $report = DeliveryReport::where('id', $request->delivery_report_id)
             ->where('sales_id', Auth::id())
             ->firstOrFail();
+
+        // Validasi backend: Cegah double submit jika masih ada setoran berstatus menunggu_verifikasi untuk laporan ini
+        $hasPendingDeposit = SalesDeposit::where('delivery_report_id', $report->id)
+            ->where('status', 'menunggu_verifikasi')
+            ->exists();
+
+        if ($hasPendingDeposit) {
+            return back()->withInput()->with('error', 'Masih ada setoran untuk laporan ini yang menunggu verifikasi admin.');
+        }
 
         if ($report->remaining_amount <= 0) {
             return back()->withInput()->with('error', 'Laporan pengiriman ini sudah lunas.');

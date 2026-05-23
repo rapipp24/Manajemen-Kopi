@@ -57,8 +57,15 @@ class SalesReturnController extends Controller
      * - Status menjadi 'diterima'
      * - Semua dilakukan dalam database transaction dengan locking
      */
-    public function receive(SalesReturn $return)
+    public function receive(Request $request, SalesReturn $return)
     {
+        $request->validate([
+            'return_condition' => 'required|in:layak_jual,perlu_proses_ulang',
+        ], [
+            'return_condition.required' => 'Kondisi barang wajib dipilih.',
+            'return_condition.in' => 'Kondisi barang tidak valid.',
+        ]);
+
         DB::beginTransaction();
         try {
             // Lock record return agar tidak bisa diproses ganda (race condition)
@@ -70,41 +77,49 @@ class SalesReturnController extends Controller
 
             $return->load('items');
 
-            // Proses setiap item: tambah stok gudang + buat stock movement
-            foreach ($return->items as $item) {
-                // Lock produk agar tidak ada race condition stok
-                $product = Product::lockForUpdate()->findOrFail($item->product_id);
+            // Jika layak jual, proses penambahan stok ke gudang
+            if ($request->return_condition === 'layak_jual') {
+                // Proses setiap item: tambah stok gudang + buat stock movement
+                foreach ($return->items as $item) {
+                    // Lock produk agar tidak ada race condition stok
+                    $product = Product::lockForUpdate()->findOrFail($item->product_id);
 
-                $stockBefore = $product->current_stock;
-                $product->current_stock += $item->qty_return;
-                $product->save();
+                    $stockBefore = $product->current_stock;
+                    $product->current_stock += $item->qty_return;
+                    $product->save();
 
-                // Catat stock movement IN ke gudang (user_id = null berarti gudang)
-                StockMovement::create([
-                    'item_type'      => Product::class,
-                    'item_id'        => $product->id,
-                    'movement_type'  => 'IN',
-                    'reference_type' => SalesReturn::class,
-                    'reference_id'   => $return->id,
-                    'qty'            => $item->qty_return,
-                    'stock_before'   => $stockBefore,
-                    'stock_after'    => $product->current_stock,
-                    'note'           => 'Return dari toko (Laporan: ' . $return->deliveryReport->report_number . ')',
-                    'user_id'        => null, // null = stok gudang
-                ]);
+                    // Catat stock movement IN ke gudang (user_id = null berarti gudang)
+                    StockMovement::create([
+                        'item_type'      => 'product',
+                        'item_id'        => $product->id,
+                        'movement_type'  => 'in',
+                        'reference_type' => SalesReturn::class,
+                        'reference_id'   => $return->id,
+                        'qty'            => $item->qty_return,
+                        'stock_before'   => $stockBefore,
+                        'stock_after'    => $product->current_stock,
+                        'note'           => 'Return dari toko (Laporan: ' . $return->deliveryReport->report_number . ') - Layak Jual',
+                        'user_id'        => null, // null = stok gudang
+                    ]);
+                }
             }
 
-            // Update status return
+            // Update status return dan simpan return_condition
             $return->update([
-                'status'      => 'diterima',
-                'approved_by' => Auth::id(),
-                'approved_at' => now(),
+                'status'           => 'diterima',
+                'return_condition' => $request->return_condition,
+                'approved_by'      => Auth::id(),
+                'approved_at'      => now(),
             ]);
 
             DB::commit();
 
+            $msg = $request->return_condition === 'layak_jual'
+                ? 'Return diterima. Barang Layak Jual dan stok gudang berhasil ditambahkan.'
+                : 'Return diterima. Barang Perlu Proses Ulang, proses fisik packing ulang ditangani manual oleh gudang.';
+
             return redirect()->route('admin.returns.show', $return)
-                ->with('success', 'Return diterima. Stok gudang berhasil ditambahkan.');
+                ->with('success', $msg);
 
         } catch (Exception $e) {
             DB::rollBack();

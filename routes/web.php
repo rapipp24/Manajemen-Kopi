@@ -58,6 +58,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Laporan Pengiriman Sales (Admin: read-only)
     Route::get('/delivery-reports', [AdminDeliveryReportController::class, 'index'])->name('delivery-reports.index');
     Route::get('/delivery-reports/{deliveryReport}', [AdminDeliveryReportController::class, 'show'])->name('delivery-reports.show');
+    Route::post('/delivery-reports/{deliveryReport}/resolve-overpayment', [AdminDeliveryReportController::class, 'resolveOverpayment'])->name('delivery-reports.resolve-overpayment');
     Route::get('/sales-deposits', [\App\Http\Controllers\Admin\SalesDepositController::class, 'index'])->name('sales-deposits.index');
     Route::get('/sales-deposits/{deposit}', [\App\Http\Controllers\Admin\SalesDepositController::class, 'show'])->name('sales-deposits.show');
     Route::post('/sales-deposits/{deposit}/approve', [\App\Http\Controllers\Admin\SalesDepositController::class, 'approve'])->name('sales-deposits.approve');

@@ -6,7 +6,7 @@
         <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Kembali ke Daftar Return
     </a>
 
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
         <span style="font-size:17px;font-weight:700;color:#1c1917;font-family:monospace;">{{ $return->return_number }}</span>
         @if($return->status === 'diterima')
             <span style="background:#dcfce7;color:#166534;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check" style="width:12px;height:12px;"></i> DITERIMA</span>
@@ -15,6 +15,13 @@
         @else
             <span style="background:#fef08a;color:#854d0e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="clock" style="width:12px;height:12px;"></i> MENUNGGU VERIFIKASI</span>
         @endif
+    </div>
+
+    {{-- Helper: Penjelasan verifikasi return --}}
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-left:3px solid #38bdf8;border-radius:8px;padding:11px 15px;margin-bottom:20px;font-size:12px;color:#0369a1;line-height:1.6;">
+        <strong>Info:</strong> Return yang diterima akan diverifikasi oleh Admin.
+        Barang dengan kondisi <strong>Layak Jual</strong> akan masuk ke stok produk siap jual di gudang, sedangkan barang dengan kondisi <strong>Perlu Proses Ulang</strong> akan dipacking ulang oleh gudang secara manual tanpa menambah stok siap jual.
+        Kedua kondisi tersebut tetap mengurangi sisa tagihan toko Anda.
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start;">
@@ -75,6 +82,18 @@
                         <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Tgl Return</span>
                         <span style="font-size:12px;font-weight:600;color:#1c1917;">{{ $return->return_date->format('d M Y') }}</span>
                     </div>
+                    @if($return->status === 'diterima')
+                    <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #f5f0eb;align-items:center;">
+                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Kondisi Barang</span>
+                        @if($return->return_condition === 'layak_jual')
+                            <span style="background:#dcfce7;color:#166534;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> Layak Jual</span>
+                        @elseif($return->return_condition === 'perlu_proses_ulang')
+                            <span style="background:#fefce8;color:#a16207;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Proses Ulang</span>
+                        @else
+                            <span style="background:#f5f5f4;color:#78716c;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;">Belum Diisi</span>
+                        @endif
+                    </div>
+                    @endif
                     @if($return->note)
                     <div style="padding:10px 16px;border-bottom:1px solid #f5f0eb;">
                         <div style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;margin-bottom:4px;">Catatan</div>

@@ -6,7 +6,14 @@
         ← Kembali ke Daftar Return
     </a>
 
-    <h1 style="font-size:18px;font-weight:800;color:#1c1917;margin-bottom:20px;">Ajukan Return Barang</h1>
+    <h1 style="font-size:18px;font-weight:800;color:#1c1917;margin-bottom:12px;">Ajukan Return Barang</h1>
+
+    {{-- Helper: Penjelasan scope return versi ini --}}
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-left:3px solid #38bdf8;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12.5px;color:#0369a1;line-height:1.6;">
+        <strong>Catatan:</strong> Return yang diterima admin akan masuk kembali ke stok produk yang sama.
+        Jika barang perlu proses ulang atau packing ulang, tuliskan keterangannya di kolom <strong>Catatan Tambahan</strong> di bawah —
+        proses fisiknya ditangani manual oleh gudang. Stok khusus barang return/proses ulang belum tersedia di versi ini.
+    </div>
 
     @if(session('error'))
         <div style="background:#fff5f5;border:1px solid #fca5a5;border-left:3px solid #ef4444;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;">
@@ -76,8 +83,9 @@
 
             <div>
                 <label style="font-size:11.5px;font-weight:700;color:#78716c;display:block;margin-bottom:5px;">Catatan Tambahan</label>
-                <textarea name="note" rows="2" placeholder="Contoh: Barang dikembalikan karena kadaluarsa..."
+                <textarea name="note" rows="2" placeholder="Contoh: Barang dikembalikan karena kadaluarsa. Jika perlu proses ulang/packing ulang, tulis di sini."
                           style="width:100%;padding:9px 12px;border:1px solid #d6d3d1;border-radius:8px;font-size:13px;box-sizing:border-box;resize:vertical;">{{ old('note') }}</textarea>
+                <p style="font-size:11px;color:#a8a29e;margin:4px 0 0;">Jika barang perlu proses ulang atau packing ulang, catat di sini. Proses fisiknya ditangani manual oleh gudang.</p>
             </div>
         </div>
 

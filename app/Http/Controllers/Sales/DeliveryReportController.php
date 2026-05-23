@@ -179,6 +179,19 @@ class DeliveryReportController extends Controller
                 'down_payment_amount' => $dpAmount,
             ]);
 
+            // Guard pencegahan untuk memastikan data tersimpan dengan benar dan menghindari total_amount = 0
+            $report->refresh();
+
+            // Guard 1: Jika totalAmount <= 0 padahal ada item
+            if (count($request->items) > 0 && $totalAmount <= 0) {
+                throw new Exception("Total laporan tidak valid. Silakan coba simpan ulang.");
+            }
+
+            // Guard 2: Jika delivery_reports.total_amount gagal tersimpan atau tetap 0/tidak sinkron padahal totalAmount > 0
+            if ($totalAmount > 0 && ((float)$report->total_amount <= 0 || abs((float)$report->total_amount - $totalAmount) > 0.01)) {
+                throw new Exception("Total laporan tidak valid. Silakan coba simpan ulang.");
+            }
+
             DB::commit();
 
             return redirect()

@@ -224,9 +224,11 @@ class SalesReturnTest extends TestCase
 
         $stockBefore = $this->product->current_stock; // 100
 
-        // Admin terima return
+        // Admin terima return dengan layak_jual
         $response = $this->actingAs($this->admin)
-            ->post(route('admin.returns.receive', $return));
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'layak_jual',
+            ]);
 
         $response->assertRedirect(route('admin.returns.show', $return));
         
@@ -236,7 +238,7 @@ class SalesReturnTest extends TestCase
         // Cek movement
         $movement = StockMovement::first();
         $this->assertNotNull($movement);
-        $this->assertEquals('IN', $movement->movement_type);
+        $this->assertEquals('in', $movement->movement_type);
         $this->assertEquals(2, $movement->qty);
         $this->assertNull($movement->user_id); // null = stok gudang
         $this->assertEquals($stockBefore, $movement->stock_before);
@@ -302,4 +304,204 @@ class SalesReturnTest extends TestCase
         $this->assertEquals('ditolak', $return->status);
         $this->assertEquals('Barang tidak sesuai', $return->rejection_reason);
     }
+
+    /**
+     * Test 6: Sidebar admin menampilkan badge tanda merah jika ada pengajuan return dengan status 'menunggu'.
+     */
+    public function test_admin_sidebar_displays_pending_return_count_badge()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-001',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        // Sebelum ada return menunggu
+        $response = $this->actingAs($this->admin)->get(route('admin.returns.index'));
+        $response->assertStatus(200);
+        $response->assertDontSee('background: #ef4444');
+
+        // Buat return dengan status 'menunggu'
+        $return = SalesReturn::create([
+            'return_number' => 'RET-01',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        // Sesudah ada return menunggu
+        $response = $this->actingAs($this->admin)->get(route('admin.returns.index'));
+        $response->assertStatus(200);
+        $response->assertSee('background: #ef4444');
+        $response->assertSee('Verifikasi Return');
+    }
+
+    /**
+     * Test 7: Admin menerima return dengan kondisi perlu_proses_ulang tidak menambah stok gudang / stock movements.
+     */
+    public function test_admin_accept_return_with_rework_does_not_update_stock_or_movement()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-001',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-01',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 2,
+            'price_snapshot' => 15000,
+            'subtotal_return' => 30000
+        ]);
+
+        $stockBefore = $this->product->current_stock; // 100
+
+        // Admin terima return dengan perlu_proses_ulang
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'perlu_proses_ulang',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+        
+        $this->product->refresh();
+        $this->assertEquals($stockBefore, $this->product->current_stock); // Stok TIDAK bertambah (tetap 100)
+        $this->assertEquals(0, StockMovement::count()); // Tidak ada stock movement yang dibuat
+
+        $return->refresh();
+        $this->assertEquals('diterima', $return->status);
+        $this->assertEquals('perlu_proses_ulang', $return->return_condition);
+    }
+
+    /**
+     * Test 8: Admin menerima return tanpa memasukkan return_condition menghasilkan validation error.
+     */
+    public function test_admin_accept_return_validation()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-001',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-01',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => '', // kosong
+            ]);
+
+        $response->assertSessionHasErrors('return_condition');
+        $this->assertEquals('menunggu', $return->fresh()->status);
+    }
+
+    /**
+     * Test 9: Admin dapat menyelesaikan bayar lebih secara manual dengan catatan.
+     */
+    public function test_admin_resolves_overpayment()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-001',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'lunas',
+            'down_payment_amount' => 30000, // sudah bayar lunas Rp 30.000
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        // Buat return diterima senilai Rp 15.000
+        $return = SalesReturn::create([
+            'return_number' => 'RET-01',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'diterima',
+            'return_condition' => 'layak_jual'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 1, // return 1 pcs
+            'price_snapshot' => 15000,
+            'subtotal_return' => 15000
+        ]);
+
+        // Tagihan efektif = 30000 - 15000 = 15000
+        // Uang masuk = 30000
+        // Sisa tagihan setelah return = 15000 - 30000 = -15000 (Bayar lebih 15000)
+        
+        $this->assertTrue($report->fresh()->is_overpaid);
+        $this->assertEquals(15000, $report->fresh()->overpayment_amount);
+        $this->assertNull($report->fresh()->overpayment_resolved_at);
+
+        // Admin menandai diselesaikan
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.delivery-reports.resolve-overpayment', $report), [
+                'overpayment_resolution_note' => 'Kelebihan bayar 15rb sudah dikembalikan tunai ke toko.',
+            ]);
+
+        $response->assertSessionHas('success');
+        $report->refresh();
+        $this->assertNotNull($report->overpayment_resolved_at);
+        $this->assertEquals($this->admin->id, $report->overpayment_resolved_by);
+        $this->assertEquals('Kelebihan bayar 15rb sudah dikembalikan tunai ke toko.', $report->overpayment_resolution_note);
+    }
 }
+

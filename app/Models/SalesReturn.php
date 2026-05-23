@@ -14,6 +14,7 @@ class SalesReturn extends Model
         'sales_id',
         'return_date',
         'status',
+        'return_condition',
         'note',
         'rejection_reason',
         'approved_by',

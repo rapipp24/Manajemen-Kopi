@@ -24,6 +24,9 @@ class DeliveryReport extends Model
         'down_payment_amount',
         'due_date',
         'created_by',
+        'overpayment_resolved_at',
+        'overpayment_resolved_by',
+        'overpayment_resolution_note',
     ];
 
     protected $casts = [
@@ -32,6 +35,7 @@ class DeliveryReport extends Model
         'payment_term_days' => 'integer',
         'total_amount'     => 'decimal:2',
         'down_payment_amount' => 'decimal:2',
+        'overpayment_resolved_at' => 'datetime',
     ];
 
     /**
@@ -40,6 +44,46 @@ class DeliveryReport extends Model
     public function getRemainingAmountAttribute()
     {
         return max(0, $this->total_amount - $this->down_payment_amount);
+    }
+
+    /**
+     * Hitung nominal bayar lebih jika ada
+     */
+    public function getOverpaymentAmountAttribute(): float
+    {
+        $tagihanEfektif = $this->tagihan_efektif;
+        $totalBayar = (float) $this->down_payment_amount;
+        if ($totalBayar > $tagihanEfektif) {
+            return $totalBayar - $tagihanEfektif;
+        }
+        return 0.0;
+    }
+
+    /**
+     * Cek apakah ada bayar lebih
+     */
+    public function getIsOverpaidAttribute(): bool
+    {
+        return $this->overpayment_amount > 0;
+    }
+
+    /**
+     * Status bayar lebih
+     */
+    public function getOverpaymentStatusAttribute(): string
+    {
+        if (!$this->is_overpaid) {
+            return 'none';
+        }
+        return $this->overpayment_resolved_at ? 'selesai' : 'belum_selesai';
+    }
+
+    /**
+     * User admin yang menandai penyelesaian bayar lebih
+     */
+    public function overpaymentResolver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'overpayment_resolved_by');
     }
 
     /**

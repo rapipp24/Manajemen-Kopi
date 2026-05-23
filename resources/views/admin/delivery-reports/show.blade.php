@@ -57,6 +57,63 @@
         {{-- Kanan: Info --}}
         <div style="display:flex;flex-direction:column;gap:16px;">
 
+            {{-- Panel Penyelesaian Bayar Lebih --}}
+            @if($deliveryReport->is_overpaid)
+            <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
+                <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Penyelesaian Bayar Lebih</h3>
+                    @if($deliveryReport->overpayment_resolved_at)
+                        <span style="font-size:10px;font-weight:800;background:#dcfce7;color:#166534;padding:3px 8px;border-radius:10px;">SELESAI</span>
+                    @else
+                        <span style="font-size:10px;font-weight:800;background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:10px;">BELUM SELESAI</span>
+                    @endif
+                </div>
+                <div style="padding:16px 18px;">
+                    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;margin-bottom:12px;color:#1e40af;font-size:13px;line-height:1.4;">
+                        Nominal yang perlu diselesaikan:<br>
+                        <strong style="font-size:18px;color:#1d4ed8;display:block;margin-top:4px;">Rp {{ number_format($deliveryReport->overpayment_amount, 0, ',', '.') }}</strong>
+                    </div>
+                    <div style="font-size:12px;color:#64748b;line-height:1.5;margin-bottom:16px;">
+                        Toko sudah membayar lebih dari tagihan setelah return. Penyelesaian dilakukan manual oleh admin.
+                    </div>
+
+                    @if(!$deliveryReport->overpayment_resolved_at)
+                        <form action="{{ route('admin.delivery-reports.resolve-overpayment', $deliveryReport) }}" method="POST">
+                            @csrf
+                            <div style="margin-bottom:12px;">
+                                <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Catatan Penyelesaian <span style="color:#ef4444;">*</span></label>
+                                <textarea name="overpayment_resolution_note" rows="3" required
+                                          placeholder="Contoh: Dikembalikan tunai ke toko / disepakati untuk potongan transaksi berikutnya."
+                                          style="width:100%;padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;box-sizing:border-box;resize:vertical;"></textarea>
+                                @error('overpayment_resolution_note')
+                                    <div style="color:#ef4444;font-size:12px;margin-top:4px;">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit"
+                                    style="background:#1d4ed8;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+                                <i data-lucide="check" style="width:14px;height:14px;"></i> Tandai Sudah Diselesaikan
+                            </button>
+                        </form>
+                    @else
+                        <div style="font-size:12.5px;color:#475569;display:flex;flex-direction:column;gap:8px;">
+                            <div>
+                                <span style="font-weight:700;color:#0f172a;display:block;">Diselesaikan Oleh:</span>
+                                <span>{{ $deliveryReport->overpaymentResolver->name ?? '—' }}</span>
+                            </div>
+                            <div>
+                                <span style="font-weight:700;color:#0f172a;display:block;">Tanggal Selesai:</span>
+                                <span>{{ $deliveryReport->overpayment_resolved_at->format('d M Y, H:i') }}</span>
+                            </div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-top:4px;">
+                                <span style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:11.5px;text-transform:uppercase;">Catatan:</span>
+                                <span style="font-style:italic;color:#334155;">"{{ $deliveryReport->overpayment_resolution_note }}"</span>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
             {{-- Info Sales --}}
             <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
                 <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">

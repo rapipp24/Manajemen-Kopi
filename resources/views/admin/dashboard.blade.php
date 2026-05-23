@@ -177,7 +177,7 @@
                             </svg>
                         </button>
                     </div>
-                    <p style="font-size: 13px; opacity: 0.7;">Total Penjualan Kotor Periode Terpilih</p>
+                    <p style="font-size: 13px; opacity: 0.7;">Total Uang Masuk Periode Terpilih</p>
                 </div>
                 
                 <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);">
@@ -417,7 +417,7 @@
             @if(count($chartValues) > 0)
             const options = {
                 series: [{
-                    name: 'Total Penjualan',
+                    name: 'Total Uang Masuk',
                     data: {!! json_encode($chartValues) !!}
                 }],
                 chart: {

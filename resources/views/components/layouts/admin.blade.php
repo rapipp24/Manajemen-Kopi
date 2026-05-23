@@ -500,7 +500,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"/>
                     </svg>
-                    Verifikasi Return
+                    <span>Verifikasi Return</span>
+                    @if(isset($pendingReturnCount) && $pendingReturnCount > 0)
+                        <span style="background: #ef4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto;">
+                            {{ $pendingReturnCount }}
+                        </span>
+                    @endif
                 </a>
             </div>
 

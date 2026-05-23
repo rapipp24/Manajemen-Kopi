@@ -202,6 +202,37 @@
             </div>
             @endif
 
+            {{-- Bayar Lebih Info --}}
+            @if($deliveryReport->is_overpaid)
+            <div style="border-top:1px solid #f5f0eb; padding:11px 16px; background:#eff6ff;">
+                <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Informasi Bayar Lebih</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px; align-items:center;">
+                    <span style="font-size:12px;color:#1e40af;">Status</span>
+                    <span>
+                        @if($deliveryReport->overpayment_resolved_at)
+                            <span style="background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">SUDAH DISELESAIKAN</span>
+                        @else
+                            <span style="background:#fee2e2;color:#991b1b;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">BELUM DISELESAIKAN</span>
+                        @endif
+                    </span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="font-size:12px;color:#1e40af;">Nominal</span>
+                    <span style="font-size:12px;font-weight:700;color:#1d4ed8;">Rp {{ number_format($deliveryReport->overpayment_amount, 0, ',', '.') }}</span>
+                </div>
+                @if($deliveryReport->overpayment_resolved_at)
+                <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #bfdbfe; font-size:11.5px; color:#1e40af; line-height:1.4;">
+                    Diselesaikan oleh: <strong>Admin</strong> pada {{ $deliveryReport->overpayment_resolved_at->format('d M Y') }}<br>
+                    Catatan Admin: <span style="font-style:italic;">"{{ $deliveryReport->overpayment_resolution_note }}"</span>
+                </div>
+                @else
+                <div style="margin-top:4px; font-size:11px; color:#60a5fa; font-style:italic;">
+                    Bayar Lebih akan diselesaikan oleh admin.
+                </div>
+                @endif
+            </div>
+            @endif
+
             {{-- Tombol Ajukan Return --}}
             <div style="border-top:1px solid #f5f0eb;padding:12px 16px;">
                 <a href="{{ route('sales.returns.create', ['delivery_report_id' => $deliveryReport->id]) }}"

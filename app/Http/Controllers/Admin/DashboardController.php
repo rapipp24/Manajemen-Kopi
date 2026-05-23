@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\Sale;
 use App\Models\Supplier;
+use App\Models\SalePayment;
+use App\Models\SalesDeposit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -18,51 +20,76 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         // 0. Filter Tanggal (Default: Bulan Ini)
-        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
-        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : now()->endOfMonth();
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : now()->startOfMonth();
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : now()->endOfMonth();
+
+        // 1. Current Period: Total Uang Masuk
+        $currentAdminPayments = SalePayment::whereBetween('payment_date', [$startDate, $endDate])->sum('amount');
+        $currentSalesDeposits = SalesDeposit::where('status', 'disetujui')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+        $currentCashIn = $currentAdminPayments + $currentSalesDeposits;
 
         $stats = [
             'raw_material_count' => RawMaterial::count(),
             'product_count'      => Product::count(),
             'order_count'        => Order::whereBetween('created_at', [$startDate, $endDate])->count(),
-            'total_sales'        => Sale::whereBetween('created_at', [$startDate, $endDate])->sum('total_amount'),
+            'total_sales'        => $currentCashIn, // mapping total_sales to currentCashIn to prevent view error
         ];
 
-        // Hitung Tren (Bandingkan dengan periode sebelumnya dengan durasi yang sama)
+        // 2. Previous Period: Total Uang Masuk (for trend comparison)
         $diffInDays = $startDate->diffInDays($endDate) + 1;
-        $prevStartDate = (clone $startDate)->subDays($diffInDays);
-        $prevEndDate = (clone $startDate)->subDay();
-        
-        $prevSales = Sale::whereBetween('created_at', [$prevStartDate, $prevEndDate])->sum('total_amount');
-        $currentSales = $stats['total_sales'];
-        
-        $salesTrend = 0;
-        if ($prevSales > 0) {
-            $salesTrend = (($currentSales - $prevSales) / $prevSales) * 100;
-        } elseif ($currentSales > 0) {
-            $salesTrend = 100; // Jika sebelumnya 0 dan sekarang ada penjualan, anggap naik 100%
-        }
-        
-        $stats['sales_trend'] = $salesTrend;
-        $stats['prev_sales'] = $prevSales;
+        $prevStartDate = (clone $startDate)->subDays($diffInDays)->startOfDay();
+        $prevEndDate = (clone $startDate)->subDay()->endOfDay();
 
-        // Chart Data (Sales per Day)
-        $salesData = Sale::select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total_amount) as total')
+        $prevAdminPayments = SalePayment::whereBetween('payment_date', [$prevStartDate, $prevEndDate])->sum('amount');
+        $prevSalesDeposits = SalesDeposit::where('status', 'disetujui')
+            ->whereBetween('payment_date', [$prevStartDate, $prevEndDate])
+            ->sum('amount');
+        $prevCashIn = $prevAdminPayments + $prevSalesDeposits;
+
+        $salesTrend = 0;
+        if ($prevCashIn > 0) {
+            $salesTrend = (($currentCashIn - $prevCashIn) / $prevCashIn) * 100;
+        } elseif ($currentCashIn > 0) {
+            $salesTrend = 100;
+        }
+
+        $stats['sales_trend'] = $salesTrend;
+        $stats['prev_sales'] = $prevCashIn;
+
+        // 3. Chart Data (Tren Kas Masuk Harian)
+        $dailyAdminPayments = SalePayment::select(
+                DB::raw('DATE(payment_date) as date'),
+                DB::raw('SUM(amount) as total_amount')
             )
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('payment_date', [$startDate, $endDate])
             ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
+            ->pluck('total_amount', 'date');
+
+        $dailySalesDeposits = SalesDeposit::select(
+                DB::raw('DATE(payment_date) as date'),
+                DB::raw('SUM(amount) as total_amount')
+            )
+            ->where('status', 'disetujui')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->groupBy('date')
+            ->pluck('total_amount', 'date');
+
+        $allDates = collect(array_merge($dailyAdminPayments->keys()->all(), $dailySalesDeposits->keys()->all()))
+            ->unique()
+            ->sort();
 
         $chartLabels = [];
         $chartValues = [];
-        
-        // Fill missing days with 0 if needed, or just use what we have
-        foreach ($salesData as $data) {
-            $chartLabels[] = Carbon::parse($data->date)->format('d M');
-            $chartValues[] = (int) $data->total;
+
+        foreach ($allDates as $dateStr) {
+            $adminVal = (float)($dailyAdminPayments[$dateStr] ?? 0.0);
+            $salesVal = (float)($dailySalesDeposits[$dateStr] ?? 0.0);
+            $totalVal = $adminVal + $salesVal;
+            
+            $chartLabels[] = Carbon::parse($dateStr)->format('d M');
+            $chartValues[] = (int)$totalVal;
         }
 
         // 1. Stok Bahan Baku Kritis (Di bawah stok minimal)
