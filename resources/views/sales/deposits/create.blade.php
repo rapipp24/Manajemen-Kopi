@@ -69,7 +69,7 @@
     @endif
 
     <div class="form-card">
-        <form action="{{ route('sales.deposits.store') }}" method="POST">
+        <form action="{{ route('sales.deposits.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
@@ -133,6 +133,14 @@
                 </select>
             </div>
 
+            <div class="form-group" id="proof_upload_group" style="display:none;">
+                <label class="form-label" for="payment_proof">Upload Bukti Pembayaran <span style="color:#dc2626;">*</span></label>
+                <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept=".jpg,.jpeg,.png,.webp,.pdf">
+                <span style="font-size:11.5px;color:#78716c;margin-top:4px;display:block;">
+                    Upload bukti transfer agar admin bisa memverifikasi setoran. Maksimal 2MB. Disarankan foto dikompres agar tidak terlalu besar.
+                </span>
+            </div>
+
             <div class="form-group">
                 <label class="form-label" for="note">Catatan Tambahan (Opsional)</label>
                 <textarea name="note" id="note" class="form-control" rows="3" placeholder="Contoh: Pembayaran cicilan kedua dari toko.">{{ old('note') }}</textarea>
@@ -154,6 +162,10 @@
             const sumRemaining = document.getElementById('sum_remaining');
             const amountInput = document.getElementById('amount');
             const amountDisplayInput = document.getElementById('amount_display');
+
+            const methodSelect = document.getElementById('payment_method');
+            const proofGroup = document.getElementById('proof_upload_group');
+            const proofInput = document.getElementById('payment_proof');
 
             function formatRupiah(num) {
                 return 'Rp ' + Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -177,10 +189,18 @@
                 sumPaid.textContent = formatRupiah(paid);
                 sumRemaining.textContent = formatRupiah(remaining);
 
-                // Hapus validasi HTML max, kita handle di backend atau JS opsional
-                // amountInput.max = remaining;
-
                 summaryBox.style.display = 'block';
+            }
+
+            function toggleProofField() {
+                if (methodSelect.value === 'Transfer') {
+                    proofGroup.style.display = 'block';
+                    proofInput.setAttribute('required', 'required');
+                } else {
+                    proofGroup.style.display = 'none';
+                    proofInput.removeAttribute('required');
+                    proofInput.value = ''; // Reset value
+                }
             }
 
             // Inisialisasi display value jika ada old() value
@@ -201,8 +221,11 @@
             });
 
             selectEl.addEventListener('change', updatePreview);
+            methodSelect.addEventListener('change', toggleProofField);
+
             // Run on load in case of validation back with input
             updatePreview();
+            toggleProofField();
         });
     </script>
 </x-layouts.user>

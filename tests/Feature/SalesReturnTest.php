@@ -44,9 +44,10 @@ class SalesReturnTest extends TestCase
             'unit_id' => $this->unit->id,
             'cost_price' => 10000,
             'price' => 15000,
-            'current_stock' => 100,
             'is_active' => true
         ]);
+        $this->product->current_stock = 100;
+        $this->product->save();
         $this->customer = Customer::create([
             'name' => 'Toko Sedap',
             'address' => 'Jl. Kopi No. 1',

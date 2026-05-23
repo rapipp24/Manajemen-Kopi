@@ -51,6 +51,32 @@ class OrderController extends Controller
             'items.*.qty'        => 'required|integer|min:1',
         ]);
 
+        // Hitung akumulasi qty per product_id dari request
+        $accumulatedQty = [];
+        foreach ($request->items as $item) {
+            $productId = $item['product_id'];
+            $qty = (int)$item['qty'];
+            if (!isset($accumulatedQty[$productId])) {
+                $accumulatedQty[$productId] = 0;
+            }
+            $accumulatedQty[$productId] += $qty;
+        }
+
+        // Validasi terhadap stok gudang
+        foreach ($accumulatedQty as $productId => $totalQty) {
+            $product = Product::find($productId);
+            if (!$product) {
+                return back()->withInput()->with('error', 'Gagal membuat pengajuan: Produk tidak valid.');
+            }
+
+            if ($totalQty > $product->current_stock) {
+                $currentStockFormatted = number_format($product->current_stock, 0, ',', '.');
+                $totalQtyFormatted = number_format($totalQty, 0, ',', '.');
+                $unitName = $product->unit->name ?? 'pcs';
+                return back()->withInput()->with('error', "Stok '{$product->name}' tidak mencukupi. Tersedia: {$currentStockFormatted} {$unitName}, diajukan: {$totalQtyFormatted} {$unitName}.");
+            }
+        }
+
         DB::beginTransaction();
 
         try {

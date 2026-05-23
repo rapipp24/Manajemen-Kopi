@@ -128,16 +128,9 @@ class SalesOrderController extends Controller
 
             // Jika Dibatalkan / Ditolak
             if ($newStatus === 'dibatalkan') {
-                // Jika dibatalkan saat sudah diproses, stok harusnya dikembalikan? 
-                // Namun sesuai requirement: "Jika ditolak (dari menunggu), stok tidak berubah".
-                // Untuk keamanan, kita hanya izinkan tolak jika status masih 'menunggu' atau 'diproses' (dengan catatan stok tetap berkurang jika sudah diproses).
-                // Tapi user minta: "Jika ditolak, stok tidak berubah". Ini biasanya untuk status 'menunggu'.
-                
-                if ($oldStatus === 'diproses') {
-                    // Opsional: Logika kembalikan stok jika admin membatalkan yang sudah disetujui
-                    // Tapi kita ikuti rule simpel dulu: Tolak berarti Gagal.
+                if ($oldStatus !== 'menunggu') {
+                    throw new Exception("Hanya pengajuan dengan status 'Menunggu' yang bisa ditolak.");
                 }
-                
                 $salesOrder->cancelled_at = now();
             }
 

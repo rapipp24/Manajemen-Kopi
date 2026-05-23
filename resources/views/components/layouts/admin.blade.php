@@ -421,7 +421,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/>
                     </svg>
-                    Produk Kopi
+                    <span>Produk Kopi</span>
+                    @if(isset($outOfStockProductCount) && $outOfStockProductCount > 0)
+                        <span style="background: #ef4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto;">
+                            {{ $outOfStockProductCount > 99 ? '99+' : $outOfStockProductCount }}
+                        </span>
+                    @endif
                 </a>
             </div>
 

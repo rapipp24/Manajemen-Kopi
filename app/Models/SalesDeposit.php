@@ -13,6 +13,7 @@ class SalesDeposit extends Model
         'amount',
         'payment_date',
         'payment_method',
+        'payment_proof_path',
         'note',
         'status',
         'rejection_reason',

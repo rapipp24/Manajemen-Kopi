@@ -41,12 +41,15 @@ class SalesDepositController extends Controller
 
     public function store(Request $request)
     {
+        $isTransfer = $request->payment_method === 'Transfer';
+
         $request->validate([
             'delivery_report_id' => 'required|exists:delivery_reports,id',
             'amount' => 'required|numeric|min:0.01',
             'payment_date' => 'required|date',
-            'payment_method' => 'required|string|max:255',
+            'payment_method' => 'required|string|in:Tunai,Transfer',
             'note' => 'nullable|string',
+            'payment_proof' => ($isTransfer ? 'required' : 'nullable') . '|file|mimes:jpg,jpeg,png,webp,pdf|max:2048',
         ]);
 
         $report = DeliveryReport::where('id', $request->delivery_report_id)
@@ -70,6 +73,12 @@ class SalesDepositController extends Controller
             return back()->withInput()->with('error', 'Nominal setoran melebihi sisa tagihan (Maksimal Rp ' . number_format($report->remaining_amount, 0, ',', '.') . ').');
         }
 
+        // Simpan file bukti transfer hanya jika seluruh validasi bisnis di atas telah lolos (mencegah file yatim/orphan)
+        $paymentProofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payment-proofs/sales-deposits', 'public');
+        }
+
         $depositNumber = 'DEP-' . date('Ymd') . '-' . strtoupper(Str::random(6));
 
         SalesDeposit::create([
@@ -79,6 +88,7 @@ class SalesDepositController extends Controller
             'amount' => $request->amount,
             'payment_date' => $request->payment_date,
             'payment_method' => $request->payment_method,
+            'payment_proof_path' => $paymentProofPath,
             'note' => $request->note,
             'status' => 'menunggu_verifikasi',
         ]);

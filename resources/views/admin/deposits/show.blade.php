@@ -67,6 +67,37 @@
                 <span style="color:#475569;font-size:13px;max-width:250px;text-align:right;word-break:break-word;">{{ $deposit->note ?? '—' }}</span>
             </div>
 
+            <div style="display:flex;flex-direction:column;padding:11px 0;border-bottom:1px solid #f8fafc;gap:8px;">
+                <span style="color:#64748b;font-size:13px;">Bukti Pembayaran</span>
+                <span style="font-size:13px;font-weight:600;color:#0f172a;width:100%;">
+                    @if($deposit->payment_proof_path)
+                        @php
+                            $fileExtension = strtolower(pathinfo($deposit->payment_proof_path, PATHINFO_EXTENSION));
+                        @endphp
+                        @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'webp']))
+                            <div style="margin-top: 4px;">
+                                <img src="{{ Storage::url($deposit->payment_proof_path) }}" alt="Bukti Pembayaran" style="max-width: 180px; max-height: 180px; border-radius: 8px; border: 1px solid #e2e8f0; display: block; margin-bottom: 8px;">
+                                <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" 
+                                   style="background:#fff;border:1px solid #cbd5e1;color:#475569;padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                    Lihat Bukti Pembayaran
+                                </a>
+                            </div>
+                        @else
+                            <div style="margin-top: 4px;">
+                                <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" 
+                                   style="background:#fff;border:1px solid #cbd5e1;color:#475569;padding:8px 14px;border-radius:6px;font-size:12.5px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                    Lihat Bukti Pembayaran (PDF)
+                                </a>
+                            </div>
+                        @endif
+                    @else
+                        <span style="color:#64748b;font-style:italic;font-weight:normal;">Tidak ada bukti pembayaran</span>
+                    @endif
+                </span>
+            </div>
+
             <div style="display:flex;justify-content:space-between;padding:11px 0;">
                 <span style="color:#64748b;font-size:13px;">Status</span>
                 <span>

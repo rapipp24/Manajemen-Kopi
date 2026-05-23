@@ -44,8 +44,8 @@
                     <td style="padding: 16px 20px; font-size: 14px; font-weight: 600; color: #1e293b;">
                         Rp {{ number_format($product->price, 0, ',', '.') }}
                     </td>
-                    <td style="padding: 16px 20px; font-size: 14px; color: #475569;">
-                        {{ number_format($product->current_stock, 0) }} <span style="font-size: 12px; color: #94a3b8;">{{ $product->unit->code ?? '-' }}</span>
+                    <td style="padding: 16px 20px; font-size: 14px; color: {{ $product->current_stock <= 0 ? '#ef4444; font-weight: 600;' : '#475569' }};">
+                        {{ number_format($product->current_stock, 0) }} <span style="font-size: 12px; color: {{ $product->current_stock <= 0 ? '#fca5a5' : '#94a3b8' }};">{{ $product->unit->code ?? '-' }}</span>
                     </td>
                     <td style="padding: 16px 20px; font-size: 14px;">
                         @if($product->is_active)

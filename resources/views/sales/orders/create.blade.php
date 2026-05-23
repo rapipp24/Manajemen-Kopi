@@ -139,11 +139,13 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <span id="stock_info" style="font-size:11.5px;color:#78716c;display:none;margin-top:4px;font-weight:500;"></span>
                         </div>
                         <div class="field">
                             <label>Jumlah yang Diminta</label>
                             <input type="number" id="qty_selector" value="1" min="1" placeholder="0">
                         </div>
+                        <div id="stock_error_msg" style="display:none;margin: 0 0 12px 0;padding:10px 14px;background:#fef2f2;border:1px solid #fee2e2;border-radius:8px;font-size:12.5px;color:#991b1b;line-height:1.4;font-weight:500;"></div>
                         <button type="button" id="add_item" class="btn-add">+ Tambah ke Daftar</button>
                     </div>
                 </div>
@@ -187,22 +189,86 @@
         const grandTotalEl    = document.getElementById('grand_total');
         const itemCountBadge  = document.getElementById('item_count_badge');
         const form            = document.getElementById('orderForm');
+        const stockInfoEl     = document.getElementById('stock_info');
+        const stockErrorMsgEl = document.getElementById('stock_error_msg');
 
         let items = [];
+        let errorTimeout = null;
 
         function rp(n) { return 'Rp ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+
+        function showStockError(message) {
+            stockErrorMsgEl.textContent = message;
+            stockErrorMsgEl.style.display = 'block';
+
+            if (errorTimeout) {
+                clearTimeout(errorTimeout);
+            }
+
+            // Hilang otomatis setelah 6 detik
+            errorTimeout = setTimeout(function () {
+                hideStockError();
+            }, 6000);
+        }
+
+        function hideStockError() {
+            stockErrorMsgEl.style.display = 'none';
+            stockErrorMsgEl.textContent = '';
+            if (errorTimeout) {
+                clearTimeout(errorTimeout);
+                errorTimeout = null;
+            }
+        }
+
+        productSelector.addEventListener('change', function () {
+            hideStockError();
+            const opt = this.options[this.selectedIndex];
+            if (!this.value) {
+                stockInfoEl.style.display = 'none';
+                qtySelector.removeAttribute('max');
+                return;
+            }
+            const stock = parseFloat(opt.dataset.stock) || 0;
+            const unit = opt.dataset.unit || 'pcs';
+            
+            stockInfoEl.textContent = `Stok tersedia di gudang: ${Math.round(stock)} ${unit}`;
+            stockInfoEl.style.display = 'block';
+            qtySelector.setAttribute('max', Math.round(stock));
+        });
+
+        qtySelector.addEventListener('input', function () {
+            hideStockError();
+        });
+
+        qtySelector.addEventListener('change', function () {
+            hideStockError();
+        });
 
         addItemBtn.addEventListener('click', function () {
             const id  = productSelector.value;
             const qty = parseInt(qtySelector.value) || 0;
-            if (!id)    { alert('Pilih produk terlebih dahulu.'); return; }
-            if (qty < 1){ alert('Jumlah minimal 1.'); return; }
+            if (!id)    { showStockError('Pilih produk terlebih dahulu.'); return; }
+            if (qty < 1){ showStockError('Jumlah minimal 1.'); return; }
 
             const opt   = productSelector.options[productSelector.selectedIndex];
             const name  = opt.dataset.name;
             const price = parseFloat(opt.dataset.price);
+            const stock = parseInt(opt.dataset.stock) || 0;
 
+            // Hitung akumulasi qty produk yang sama yang sudah ada di daftar
+            let currentQtyInList = 0;
             const idx = items.findIndex(i => i.id === id);
+            if (idx > -1) {
+                currentQtyInList = items[idx].qty;
+            }
+
+            const totalRequestedQty = currentQtyInList + qty;
+
+            if (totalRequestedQty > stock) {
+                showStockError(`Qty melebihi stok gudang. Stok tersedia: ${stock} pcs. (Di daftar: ${currentQtyInList} pcs, diajukan tambahan: ${qty} pcs)`);
+                return;
+            }
+
             if (idx > -1) {
                 items[idx].qty += qty;
                 items[idx].sub  = items[idx].qty * price;
@@ -212,6 +278,9 @@
             render();
             productSelector.value = '';
             qtySelector.value = 1;
+            stockInfoEl.style.display = 'none';
+            qtySelector.removeAttribute('max');
+            hideStockError();
         });
 
         function render() {
@@ -242,7 +311,10 @@
         window.removeItem = i => { items.splice(i, 1); render(); };
 
         form.addEventListener('submit', e => {
-            if (items.length === 0) { e.preventDefault(); alert('Tambahkan minimal 1 produk.'); }
+            if (items.length === 0) {
+                e.preventDefault();
+                showStockError('Tambahkan minimal 1 produk.');
+            }
         });
     </script>
 

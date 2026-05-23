@@ -91,6 +91,34 @@
                 @endif
             </span>
         </div>
+        <div class="info-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+            <span class="info-label">Bukti Pembayaran</span>
+            <span class="info-value" style="text-align: left; width: 100%;">
+                @if($deposit->payment_proof_path)
+                    @php
+                        $fileExtension = strtolower(pathinfo($deposit->payment_proof_path, PATHINFO_EXTENSION));
+                    @endphp
+                    @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'webp']))
+                        <div style="margin-top: 4px;">
+                            <img src="{{ Storage::url($deposit->payment_proof_path) }}" alt="Bukti Pembayaran" style="max-width: 180px; max-height: 180px; border-radius: 8px; border: 1px solid #ece8e3; display: block; margin-bottom: 8px;">
+                            <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; text-decoration: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                Lihat Bukti Pembayaran
+                            </a>
+                        </div>
+                    @else
+                        <div style="margin-top: 4px;">
+                            <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" class="btn-secondary" style="padding: 8px 14px; font-size: 12.5px; text-decoration: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                Lihat Bukti Pembayaran (PDF)
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <span style="color: #78716c; font-style: italic; font-weight: normal;">Tidak ada bukti pembayaran</span>
+                @endif
+            </span>
+        </div>
 
         @if($deposit->status !== 'menunggu_verifikasi' && $deposit->verifier)
             <div class="info-row" style="background:#fafaf8;margin:12px -24px -24px;padding:16px 24px;border-top:1px solid #ece8e3;border-bottom-left-radius:12px;border-bottom-right-radius:12px;">

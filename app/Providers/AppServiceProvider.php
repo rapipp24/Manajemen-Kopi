@@ -20,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Share low stock count to all admin views
-        view()->composer('components.layouts.admin', function ($view) {
+        view()->composer(['components.layouts.admin', 'layouts.admin'], function ($view) {
             $count = \App\Models\RawMaterial::whereColumn('current_stock', '<=', 'minimum_stock')
                 ->where('is_active', true)
                 ->count();
@@ -29,11 +29,16 @@ class AppServiceProvider extends ServiceProvider
             $pendingDepositCount = \App\Models\SalesDeposit::where('status', 'menunggu_verifikasi')->count();
             $pendingReturnCount = \App\Models\SalesReturn::where('status', 'menunggu')->count();
             
+            $outOfStockProductCount = \App\Models\Product::where('current_stock', '<=', 0)
+                ->where('is_active', true)
+                ->count();
+            
             $view->with([
                 'lowStockCount' => $count,
                 'pendingSalesOrderCount' => $pendingSalesCount,
                 'pendingDepositCount' => $pendingDepositCount,
-                'pendingReturnCount' => $pendingReturnCount
+                'pendingReturnCount' => $pendingReturnCount,
+                'outOfStockProductCount' => $outOfStockProductCount
             ]);
         });
     }
