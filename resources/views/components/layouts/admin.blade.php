@@ -415,6 +415,14 @@
                     </svg>
                     Manajemen User
                 </a>
+                <a href="{{ route('admin.warehouse-employees.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.warehouse-employees*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+                    </svg>
+                    Karyawan Gudang
+                </a>
                 <a href="{{ route('admin.products.index') }}"
                    class="nav-item {{ request()->routeIs('admin.products*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -525,7 +533,8 @@
                     </svg>
                     Laporan Stok
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admin.attendances.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.attendances*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>

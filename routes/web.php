@@ -73,6 +73,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Pengaturan
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+    // Karyawan Gudang & Absensi Manual
+    Route::resource('warehouse-employees', \App\Http\Controllers\Admin\WarehouseEmployeeController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    Route::post('attendances/mark', [\App\Http\Controllers\Admin\AttendanceController::class, 'mark'])
+        ->name('attendances.mark');
+    Route::resource('attendances', \App\Http\Controllers\Admin\AttendanceController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });
 
 // ─── AREA SALES (Khusus Sales) ────────────────────────────────────────────────
