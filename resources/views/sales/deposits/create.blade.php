@@ -134,10 +134,11 @@
             </div>
 
             <div class="form-group" id="proof_upload_group" style="display:none;">
-                <label class="form-label" for="payment_proof">Upload Bukti Pembayaran <span style="color:#dc2626;">*</span></label>
-                <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept=".jpg,.jpeg,.png,.webp,.pdf">
+                <label class="form-label" for="payment_proof">Upload / Foto Bukti Pembayaran <span style="color:#dc2626;">*</span></label>
+                <input type="file" name="payment_proof" id="payment_proof" class="form-control"
+                       accept="image/*,.pdf" capture="environment">
                 <span style="font-size:11.5px;color:#78716c;margin-top:4px;display:block;">
-                    Upload bukti transfer agar admin bisa memverifikasi setoran. Maksimal 2MB. Disarankan foto dikompres agar tidak terlalu besar.
+                    Untuk transfer bank, foto bukti pembayaran atau upload file bukti transfer. Maksimal 2MB.
                 </span>
             </div>
 
