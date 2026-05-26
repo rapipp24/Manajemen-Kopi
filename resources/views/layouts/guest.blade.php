@@ -15,6 +15,19 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- PWA Basic Meta Tags -->
+        <meta name="theme-color" content="#1c0f05">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Kopi Elang">
+        
+        <!-- PWA Icons & Manifest -->
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+        <link rel="manifest" href="/manifest.json">
+
+
+
         <style>
             body {
                 font-family: 'Inter', sans-serif;
@@ -171,5 +184,16 @@
                 </div>
             </div>
         </div>
+    
+        <!-- Service Worker Registration (Non-blocking) -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then((reg) => console.log('Service worker registered successfully', reg.scope))
+                        .catch((err) => console.error('Service worker registration failed:', err));
+                });
+            }
+        </script>
     </body>
 </html>
