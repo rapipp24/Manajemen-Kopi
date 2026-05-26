@@ -63,7 +63,15 @@
 
         .pdf-table tr {
             page-break-inside: avoid;
-            page-break-after: auto;
+            break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
         }
 
         .pdf-table th {
@@ -93,15 +101,18 @@
         }
 
         .pdf-footer {
-            margin-top: 60px;
+            margin-top: 48px;
             display: flex;
             justify-content: space-between;
             page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .signature-block {
             text-align: center;
             width: 200px;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .signature-line {
@@ -120,23 +131,57 @@
             }
             
             .no-print {
-                display: none;
+                display: none !important;
             }
 
             @page {
                 size: A4 portrait;
                 margin: 1.5cm;
             }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tfoot {
+                display: table-footer-group;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            .pdf-footer {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin-top: 48px;
+            }
+
+            .signature-block {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Petunjuk Cetak (Hanya tampil di screen browser, tidak ikut tercetak) -->
+    <div class="no-print" style="background: #fffbeb; border: 1.5px solid #fde68a; color: #b45309; padding: 14px 20px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; display: flex; align-items: center; gap: 10px; line-height: 1.5; font-family: system-ui, -apple-system, sans-serif; box-shadow: 0 2px 8px rgba(180, 83, 9, 0.05);">
+        <svg style="width: 20px; height: 20px; flex-shrink: 0; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span><strong>Petunjuk Cetak:</strong> Jika URL, tanggal, atau nomor halaman muncul saat dicetak, silakan nonaktifkan opsi <strong>Headers and footers</strong> di dialog print browser Anda.</span>
+    </div>
+
     <!-- Header Dokumen -->
     <div class="pdf-header">
         <div class="company-info">
-            <h1>Kopi Elang Emas</h1>
-            <p>Manajemen Kopi & Produksi Terintegrasi</p>
+            <h1>{{ \App\Models\Setting::get('report_header_name', 'Kopi Elang Emas') }}</h1>
+            <p>{{ \App\Models\Setting::get('report_subtitle', 'Manajemen Kopi & Produksi Terintegrasi') }}</p>
         </div>
         <div class="report-title">
             <h2>{{ $title }}</h2>
@@ -330,16 +375,22 @@
         <div class="signature-block">
             <p>Dibuat Oleh,</p>
             <div class="signature-line">
-                Staf Administrasi
+                {{ \App\Models\Setting::get('report_prepared_by_label', 'Staf Administrasi') }}
             </div>
         </div>
         <div class="signature-block">
             <p>Disetujui Oleh,</p>
             <div class="signature-line">
-                Pemilik Gudang / Owner
+                {{ \App\Models\Setting::get('report_approved_by_label', 'Pemilik Gudang / Owner') }}
             </div>
         </div>
     </div>
+
+    @if(\App\Models\Setting::get('report_footer_note'))
+        <div class="no-print" style="margin-top: 30px; border-top: 1px dashed #ddd; padding-top: 10px; font-size: 11px; color: #666; text-align: center; font-style: italic;">
+            {{ \App\Models\Setting::get('report_footer_note') }}
+        </div>
+    @endif
 
     <!-- Pemicu Dialog Print Otomatis -->
     <script>

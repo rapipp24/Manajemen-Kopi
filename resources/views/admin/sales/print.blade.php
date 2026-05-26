@@ -204,7 +204,7 @@
                     <div class="brand-sub">Telp: {{ $settings['shop_phone'] }}</div>
                 </td>
                 <td style="width: 40%; text-align: right;">
-                    <div class="invoice-title">INVOICE PENJUALAN</div>
+                    <div class="invoice-title">{{ \App\Models\Setting::get('receipt_title', 'INVOICE PENJUALAN') }}</div>
                     <div class="invoice-num">{{ $sale->invoice_number }}</div>
                 </td>
             </tr>
@@ -313,10 +313,10 @@
         <table class="signature-table">
             <tr>
                 <td>
-                    Penerima / Member
+                    {{ $settings['receipt_left_signature_label'] ?? 'Penerima / Member' }}
                 </td>
                 <td>
-                    Hormat Kami,
+                    {{ $settings['receipt_right_signature_label'] ?? 'Hormat Kami,' }}
                 </td>
             </tr>
             <tr>
@@ -324,13 +324,16 @@
                     <div class="signature-line">{{ $sale->customer->name ?? '.......................' }}</div>
                 </td>
                 <td>
-                    <div class="signature-line">{{ $sale->creator->name ?? 'Admin Gudang' }}</div>
+                    <div class="signature-line">{{ $settings['receipt_right_signature_name'] ?? 'Administrator' }}</div>
                 </td>
             </tr>
         </table>
 
         <!-- Catatan Kaki Nota -->
         <footer class="footer-note">
+            @if(\App\Models\Setting::get('receipt_thank_you_text'))
+                <div style="margin-bottom: 2px; font-weight: bold; text-transform: uppercase;">{{ \App\Models\Setting::get('receipt_thank_you_text') }}</div>
+            @endif
             {{ $settings['footer_note'] }}
         </footer>
     </div>

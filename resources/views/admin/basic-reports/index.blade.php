@@ -284,18 +284,23 @@
         @endif
 
         <!-- Action Buttons (Export) -->
-        <div class="report-actions">
-            <a href="{{ route('admin.basic-reports.export-excel', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-               class="btn-action-outline">
-                <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Export Excel (.csv)
-            </a>
-            <a href="{{ route('admin.basic-reports.export-pdf', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-               target="_blank"
-               class="btn-action-outline">
-                <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
-                Export PDF (Cetak)
-            </a>
+        <div class="report-actions" style="flex-direction: column; align-items: flex-end;">
+            <div style="display: flex; gap: 12px;">
+                <a href="{{ route('admin.basic-reports.export-excel', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
+                   class="btn-action-outline">
+                    <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export Excel (.csv)
+                </a>
+                <a href="{{ route('admin.basic-reports.export-pdf', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
+                   target="_blank"
+                   class="btn-action-outline">
+                    <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
+                    Export PDF (Cetak)
+                </a>
+            </div>
+            <span style="font-size: 11.5px; color: #847162; font-weight: 500; text-align: right; margin-top: 8px; display: block; line-height: 1.4;">
+                * Export Excel menggunakan format CSV. Untuk hasil PDF bersih, nonaktifkan <em>Headers and footers</em> saat mencetak.
+            </span>
         </div>
 
         <!-- Table Display Area -->

@@ -47,24 +47,24 @@
         }
 
         /* ═══════════════ SIDEBAR ═══════════════ */
-        /* ═══════════════ SIDEBAR ═══════════════ */
         .sidebar {
             width: var(--sidebar-w);
             height: 100vh;
-            background: #110c08; /* Deep Coffee Black */
+            background: #0f0a07; /* Sleek Dark Espresso */
             display: flex;
             flex-direction: column;
             position: fixed;
             top: 0; left: 0;
             z-index: 200;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            border-right: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
         }
 
         .sidebar-brand {
-            padding: 24px 20px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            flex-direction: column;
         }
 
         .brand-logo {
@@ -74,97 +74,96 @@
         }
 
         .brand-icon {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             background: linear-gradient(135deg, #92400e, #78350f);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(146, 64, 14, 0.3);
+            box-shadow: 0 4px 10px rgba(146, 64, 14, 0.2);
             flex-shrink: 0;
         }
 
         .brand-name {
-            font-size: 16px;
-            font-weight: 800;
-            color: #f3f4f6;
-            letter-spacing: -0.5px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fdfaf6;
+            letter-spacing: -0.3px;
             line-height: 1.1;
         }
 
         .brand-tagline {
-            font-size: 10px;
-            color: #9ca3af;
+            font-size: 9.5px;
+            color: #847162;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
-            padding-left: 50px;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+            padding-left: 48px;
+            font-weight: 600;
         }
 
         /* Nav */
         .sidebar-nav {
             flex: 1;
-            padding: 20px 12px;
+            padding: 16px 12px;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.1) transparent;
+            scrollbar-color: rgba(146, 64, 14, 0.15) transparent;
         }
 
         /* Custom Scrollbar for Webkit */
         .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
         .sidebar-nav::-webkit-scrollbar-track {
             background: transparent;
         }
         .sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.1);
+            background: rgba(146, 64, 14, 0.15);
             border-radius: 10px;
         }
         .sidebar-nav::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(146, 64, 14, 0.3);
         }
 
         .nav-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .nav-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            color: #4b5563;
-            letter-spacing: 1.5px;
+            color: #645244; /* Readable warm muted brown */
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            padding: 0 12px 10px;
+            padding: 0 12px 8px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            color: #9ca3af;
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: #c4b8ab; /* Soft readable warm grey */
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             border: 1px solid transparent;
         }
 
         .nav-item:hover {
-            background: rgba(255,255,255,0.05);
-            color: #f3f4f6;
-            transform: translateX(4px);
+            background: rgba(212, 162, 116, 0.08); /* Soft brown transparent */
+            color: #fdfaf6;
+            transform: translateX(3px);
         }
 
         .nav-item.active {
-            background: rgba(146, 64, 14, 0.1);
-            color: #fbbf24;
-            border-color: rgba(251, 191, 36, 0.1);
+            background: #92400e; /* Warm brown active */
+            color: #fdfaf6; /* Cream active text */
             font-weight: 600;
         }
 
@@ -172,51 +171,56 @@
             width: 18px;
             height: 18px;
             flex-shrink: 0;
-            opacity: 0.7;
+            opacity: 0.65;
             transition: all 0.2s;
         }
 
-        .nav-item:hover svg, .nav-item.active svg {
+        .nav-item:hover svg {
             opacity: 1;
-            color: #fbbf24;
+            color: #fdfaf6;
+        }
+
+        .nav-item.active svg {
+            opacity: 1;
+            color: #fdfaf6;
         }
 
         .nav-divider {
             height: 1px;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
-            margin: 16px 0;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+            margin: 12px 0;
         }
 
         /* Sidebar Footer */
         .sidebar-footer {
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 16px 12px;
+            background: rgba(0,0,0,0.15);
+            border-top: 1px solid rgba(255,255,255,0.03);
         }
 
         .sidebar-user {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.05);
+            gap: 10px;
+            padding: 8px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.03);
         }
 
         .sidebar-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             background: #92400e;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 14px;
+            color: #fdfaf6;
+            font-size: 13px;
             font-weight: 700;
             flex-shrink: 0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
         .sidebar-user-info {
@@ -225,34 +229,30 @@
         }
 
         .sidebar-user-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            color: #f3f4f6;
+            color: #fdfaf6;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .sidebar-user-role {
-            font-size: 11px;
-            color: #6b7280;
+            font-size: 10px;
+            color: #847162;
             font-weight: 500;
         }
 
-        .btn-logout-small {
-            background: none;
-            border: none;
-            color: #6b5242;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 5px;
-            transition: color 0.15s;
-            display: flex;
-            align-items: center;
+        .btn-logout-footer {
+            transition: all 0.2s ease;
         }
 
-        .btn-logout-small:hover { color: #ef9a9a; }
-        .btn-logout-small svg { width: 15px; height: 15px; }
+        .btn-logout-footer:hover { 
+            background: #dc2626 !important;
+            border-color: #dc2626 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+        }
 
         /* ═══════════════ TOPBAR ═══════════════ */
         .topbar {
@@ -339,10 +339,15 @@
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="brand-logo">
-                <div class="brand-icon"></div>
-                <span class="brand-name">Kopi Elang Emas</span>
+                <div class="brand-icon">
+                    <!-- Premium Coffee Cup SVG -->
+                    <svg style="width: 18px; height: 18px; color: #fffdfa;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 14a6 6 0 0012 0H6zM18 10h-2V7a2 2 0 00-2-2H8a2 2 0 00-2 2v3H4a2 2 0 00-2 2v2a6 6 0 0012 0h2a4 4 0 004-4v-1a3 3 0 00-3-3z"></path>
+                    </svg>
+                </div>
+                <span class="brand-name">{{ \App\Models\Setting::get('shop_name', 'Kopi Elang Emas') }}</span>
             </div>
-            <span class="brand-tagline">Panel Manajemen</span>
+            <span class="brand-tagline">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</span>
         </div>
 
         <nav class="sidebar-nav">
@@ -547,17 +552,17 @@
             <div class="nav-divider"></div>
 
             <div class="nav-group">
-                <p class="nav-label">Sistem</p>
+                <p class="nav-label">SISTEM</p>
                 <a href="{{ route('admin.settings.index') }}" class="nav-item {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    Pengaturan Nota
+                    Pengaturan
                 </a>
             </div>
         </nav>
 
-        <div class="sidebar-footer">
-            <div class="sidebar-user">
+        <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="sidebar-user" style="margin-bottom: 2px;">
                 <div class="sidebar-avatar">
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 </div>
@@ -565,19 +570,20 @@
                     <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
                     <div class="sidebar-user-role">Administrator</div>
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn-logout-small confirm-action" 
-                            data-confirm-title="Keluar dari Sistem?" 
-                            data-confirm-text="Anda harus login kembali untuk mengakses panel manajemen."
-                            data-confirm-icon="question"
-                            title="Logout">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                    </button>
-                </form>
             </div>
+            <form method="POST" action="{{ route('logout') }}" style="width: 100%;">
+                @csrf
+                <button type="submit" class="confirm-action btn-logout-footer" 
+                        data-confirm-title="Keluar dari Sistem?" 
+                        data-confirm-text="Anda harus login kembali untuk mengakses panel manajemen."
+                        data-confirm-icon="question"
+                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; color: #fca5a5; font-size: 12px; font-weight: 700; cursor: pointer;">
+                    <svg style="width: 14px; height: 14px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Keluar Sistem
+                </button>
+            </form>
         </div>
     </aside>
 

@@ -216,11 +216,14 @@ class SaleController extends Controller
         $sale->load(['customer', 'creator', 'items.product', 'payments']);
         
         $settings = [
-            'shop_name'    => \App\Models\Setting::get('shop_name', 'MANAJEMEN KOPI'),
-            'shop_address' => \App\Models\Setting::get('shop_address', 'Jl. Kopi Nikmat No. 123, Indonesia'),
-            'shop_phone'   => \App\Models\Setting::get('shop_phone', '(021) 1234-5678'),
-            'shop_email'   => \App\Models\Setting::get('shop_email', 'hello@kopimanajer.com'),
-            'footer_note'  => \App\Models\Setting::get('footer_note', 'Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan kecuali ada perjanjian sebelumnya.'),
+            'shop_name'                     => \App\Models\Setting::get('shop_name', 'MANAJEMEN KOPI'),
+            'shop_address'                  => \App\Models\Setting::get('shop_address', 'Jl. Kopi Nikmat No. 123, Indonesia'),
+            'shop_phone'                    => \App\Models\Setting::get('shop_phone', '(021) 1234-5678'),
+            'shop_email'                    => \App\Models\Setting::get('shop_email', 'hello@kopimanajer.com'),
+            'footer_note'                   => \App\Models\Setting::get('footer_note', 'Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan kecuali ada perjanjian sebelumnya.'),
+            'receipt_left_signature_label'   => \App\Models\Setting::get('receipt_left_signature_label', 'Penerima / Member'),
+            'receipt_right_signature_label'  => \App\Models\Setting::get('receipt_right_signature_label', 'Hormat Kami,'),
+            'receipt_right_signature_name'   => \App\Models\Setting::get('receipt_right_signature_name', 'Administrator'),
         ];
 
         return view('admin.sales.print', compact('sale', 'settings'));

@@ -88,7 +88,7 @@ class BasicReportTest extends TestCase
             ]));
 
         $response->assertOk();
-        $response->assertHeader('Content-Disposition', 'attachment; filename="Laporan_raw_material_20260501_20260531.csv"');
+        $response->assertHeader('Content-Disposition', 'attachment; filename="laporan-dasar-raw-material-01-05-2026-sampai-31-05-2026.csv"');
         
         $content = $response->streamedContent();
         $this->assertStringContainsString('LAPORAN PEMBELIAN BAHAN BAKU', $content);
