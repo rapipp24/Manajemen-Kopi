@@ -209,98 +209,79 @@
         </div>
 
         <!-- 2. Stats Grid -->
-        <div class="stats-grid">
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            @php
+                $rawMaterialCount = $stats['raw_material_count'] ?? 0;
+                $criticalCount = $stats['critical_materials_count'] ?? 0;
+                $rawAvailability = $rawMaterialCount > 0 ? round((($rawMaterialCount - $criticalCount) / $rawMaterialCount) * 100) : 100;
+            @endphp
             <!-- Card Bahan Baku -->
-            <div class="premium-card" style="display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 28px; background: #ffffff; border-radius: 24px; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02); position: relative; overflow: hidden;">
-                <!-- Decorative Subtle Background Pattern -->
-                <div style="position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: rgba(120, 53, 15, 0.02); border-radius: 50%; pointer-events: none;"></div>
-                
+            <div class="premium-card" style="background: #ffffff; border-radius: 16px; padding: 20px 24px; border: 1px solid #e8d8c4; box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02); display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; position: relative;">
                 <div>
-                    <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px;">Bahan Baku</span>
-                    <div style="display: flex; align-items: baseline; gap: 8px; margin: 12px 0 16px 0;">
-                        <h3 style="font-size: 36px; font-weight: 850; color: #1e293b; margin: 0; line-height: 1;">{{ $stats['raw_material_count'] }}</h3>
-                        <span style="font-size: 14px; font-weight: 700; color: #64748b;">Jenis Terdaftar</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <span style="font-size: 11px; font-weight: 700; color: #9e7c62; text-transform: uppercase; letter-spacing: 0.5px;">Bahan Baku</span>
+                        @if($criticalCount > 0)
+                            <span style="font-size: 11px; font-weight: 700; color: #dc2626; display: flex; align-items: center; gap: 4px;">
+                                <span style="width: 5px; height: 5px; border-radius: 50%; background: #dc2626; display: inline-block;"></span>
+                                {{ $criticalCount }} bahan hampir habis
+                            </span>
+                        @else
+                            <span style="font-size: 11px; font-weight: 700; color: #16a34a; display: flex; align-items: center; gap: 4px;">
+                                <span style="width: 5px; height: 5px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+                                Semua bahan aman
+                            </span>
+                        @endif
                     </div>
-                    
-                    @php
-                        $rawMaterialCount = $stats['raw_material_count'] ?? 0;
-                        $criticalCount = $stats['critical_materials_count'] ?? 0;
-                        $rawAvailability = $rawMaterialCount > 0 ? round((($rawMaterialCount - $criticalCount) / $rawMaterialCount) * 100) : 100;
-                    @endphp
-
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            @if($criticalCount > 0)
-                                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 99px; color: #ef4444; font-size: 11px; font-weight: 700;">
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444;"></span>
-                                    {{ $criticalCount }} Bahan Kritis
-                                </div>
-                            @else
-                                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 99px; color: #059669; font-size: 11px; font-weight: 700;">
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
-                                    Stok Sangat Aman
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <!-- Progress Bar Ketersediaan -->
-                        <div style="margin-top: 4px; width: 100%; min-width: 200px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 4px;">
-                                <span>Rasio Aman</span>
-                                <span>{{ $rawAvailability }}%</span>
-                            </div>
-                            <div style="width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; overflow: hidden;">
-                                <div style="width: {{ $rawAvailability }}%; height: 100%; background: {{ $rawAvailability == 100 ? '#10b981' : ($rawAvailability >= 70 ? '#f59e0b' : '#ef4444') }}; border-radius: 99px; transition: width 0.5s ease-in-out;"></div>
-                            </div>
-                        </div>
+                    <div style="display: flex; align-items: baseline; gap: 6px; margin: 8px 0 4px 0;">
+                        <span style="font-size: 28px; font-weight: 800; color: #2c1a0e; line-height: 1;">{{ $stats['raw_material_count'] }}</span>
+                        <span style="font-size: 12.5px; font-weight: 600; color: #9e7c62;">Jenis Terdaftar</span>
                     </div>
                 </div>
 
-                <!-- Right Icon Section -->
-                <div style="width: 72px; height: 72px; border-radius: 20px; background: #fffbeb; border: 1.5px solid #fde68a; display: flex; align-items: center; justify-content: center; color: #78350f; box-shadow: 0 4px 12px rgba(120, 53, 15, 0.05); position: relative; z-index: 2;">
-                    <!-- Sack of Coffee Beans (SVG) -->
-                    <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
+                <div style="border-top: 1px dashed #f0dcc8; padding-top: 12px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 16px; font-size: 11.5px; color: #6b4c35; font-weight: 500;">
+                        <span>Bahan Kritis: <strong>{{ $criticalCount }}</strong></span>
+                        <span>Rasio Aman: <strong>{{ $rawAvailability }}%</strong></span>
+                    </div>
+                    <!-- Subtle progress bar -->
+                    <div style="width: 70px; height: 4px; background: #fdfaf6; border: 1px solid #f0dcc8; border-radius: 99px; overflow: hidden;">
+                        <div style="width: {{ $rawAvailability }}%; height: 100%; background: {{ $rawAvailability == 100 ? '#10b981' : ($rawAvailability >= 70 ? '#f59e0b' : '#ef4444') }}; border-radius: 99px;"></div>
+                    </div>
                 </div>
             </div>
 
             <!-- Card Barang Jadi -->
-            <div class="premium-card" style="display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 28px; background: #ffffff; border-radius: 24px; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02); position: relative; overflow: hidden;">
-                <!-- Decorative Subtle Background Pattern -->
-                <div style="position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: rgba(120, 53, 15, 0.02); border-radius: 50%; pointer-events: none;"></div>
-                
+            <div class="premium-card" style="background: #ffffff; border-radius: 16px; padding: 20px 24px; border: 1px solid #e8d8c4; box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02); display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; position: relative;">
                 <div>
-                    <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px;">Barang Jadi</span>
-                    <div style="display: flex; align-items: baseline; gap: 8px; margin: 12px 0 16px 0;">
-                        <h3 style="font-size: 36px; font-weight: 850; color: #1e293b; margin: 0; line-height: 1;">{{ $stats['product_count'] }}</h3>
-                        <span style="font-size: 14px; font-weight: 700; color: #64748b;">Produk Aktif</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <span style="font-size: 11px; font-weight: 700; color: #9e7c62; text-transform: uppercase; letter-spacing: 0.5px;">Barang Jadi</span>
+                        @if(count($out_of_stock_products) > 0)
+                            <span style="font-size: 11px; font-weight: 700; color: #dc2626; display: flex; align-items: center; gap: 4px;">
+                                <span style="width: 5px; height: 5px; border-radius: 50%; background: #dc2626; display: inline-block;"></span>
+                                Ada produk habis
+                            </span>
+                        @else
+                            <span style="font-size: 11px; font-weight: 700; color: #16a34a; display: flex; align-items: center; gap: 4px;">
+                                <span style="width: 5px; height: 5px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+                                Stok tersedia
+                            </span>
+                        @endif
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 99px; color: #2563eb; font-size: 11px; font-weight: 700;">
-                                <svg style="width: 12px; height: 12px; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                                </svg>
-                                Siap Kirim
-                            </div>
-                        </div>
-                        
-                        <!-- Info Stok Global Detail -->
-                        <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
-                            <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Total Volume Fisik</span>
-                            <span style="font-size: 16px; font-weight: 800; color: #78350f;">{{ number_format($stats['total_product_stock'], 0, ',', '.') }} <span style="font-size: 12px; color: #94a3b8; font-weight: 600;">Pcs</span></span>
-                        </div>
+                    <div style="display: flex; align-items: baseline; gap: 6px; margin: 8px 0 4px 0;">
+                        <span style="font-size: 28px; font-weight: 800; color: #2c1a0e; line-height: 1;">{{ $stats['product_count'] }}</span>
+                        <span style="font-size: 12.5px; font-weight: 600; color: #9e7c62;">Produk Aktif</span>
                     </div>
                 </div>
 
-                <!-- Right Icon Section -->
-                <div style="width: 72px; height: 72px; border-radius: 20px; background: #faf5ff; border: 1.5px solid #e9d5ff; display: flex; align-items: center; justify-content: center; color: #6b21a8; box-shadow: 0 4px 12px rgba(107, 33, 168, 0.05); position: relative; z-index: 2;">
-                    <!-- Package/Cup SVG -->
-                    <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                    </svg>
+                <div style="border-top: 1px dashed #f0dcc8; padding-top: 12px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 16px; font-size: 11.5px; color: #6b4c35; font-weight: 500;">
+                        <span>Total Volume Fisik: <strong>{{ number_format($stats['total_product_stock'], 0, ',', '.') }} Pcs</strong></span>
+                        @if(count($out_of_stock_products) > 0)
+                            <span>Status: <strong style="color: #dc2626;">{{ count($out_of_stock_products) }} Habis</strong></span>
+                        @else
+                            <span>Status: <strong style="color: #16a34a;">Lengkap</strong></span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

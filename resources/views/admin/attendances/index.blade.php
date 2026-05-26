@@ -2,11 +2,6 @@
     <x-slot name="title">Papan Absensi Karyawan Gudang</x-slot>
 
     <style>
-        /* Warm off-white background senada brand kopi */
-        body {
-            background-color: #faf7f2;
-        }
-
         .page-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -23,51 +18,49 @@
             flex-wrap: wrap;
         }
         .page-title-block h1 {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1c1917;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
             margin: 0;
-            letter-spacing: -0.5px;
         }
         .page-title-block p {
             font-size: 13.5px;
-            color: #78716c;
+            color: var(--text-muted);
             margin: 4px 0 0 0;
         }
 
         /* Date Picker Card - Premium Minimalist */
         .date-picker-card {
             background: #fff;
-            border: 1px solid #e7e5e4;
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 8px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);
         }
         .date-picker-card label {
             font-size: 11px;
             font-weight: 700;
-            color: #78716c;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .date-control {
             padding: 6px 12px;
-            border: 1px solid #d6d3d1;
+            border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
-            color: #1c1917;
+            color: var(--text-main);
             background: #fff;
             outline: none;
             transition: all 0.15s;
             cursor: pointer;
         }
         .date-control:focus {
-            border-color: #9a4a12;
-            box-shadow: 0 0 0 3px rgba(154,74,18,0.1);
+            border-color: var(--brown-500);
         }
 
         /* Summary Cards - Premium Mockup Style */
@@ -79,20 +72,20 @@
         }
         .summary-card {
             background: #fff;
-            border: 1px solid #e7e5e4;
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 18px 20px;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01);
+            box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);
             position: relative;
             overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .summary-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+            box-shadow: 0 6px 16px rgba(120, 53, 15, 0.04);
         }
 
         /* Accent vertical bar */
@@ -128,7 +121,7 @@
         .summary-card .label {
             font-size: 11px;
             font-weight: 800;
-            color: #64748b;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             line-height: 1.1;
@@ -140,9 +133,9 @@
         }
 
         .summary-card .val {
-            font-size: 34px;
+            font-size: 30px;
             font-weight: 800;
-            color: #111827;
+            color: var(--text-main);
             line-height: 1;
             margin-top: 4px;
         }
@@ -154,8 +147,8 @@
         .theme-hadir::before { background-color: #10b981; }
         .theme-hadir .icon-circle { background-color: #ecfdf5; color: #10b981; }
 
-        .theme-izin::before { background-color: #f59e0b; }
-        .theme-izin .icon-circle { background-color: #fffbeb; color: #f59e0b; }
+        .theme-izin::before { background-color: var(--brown-500); }
+        .theme-izin .icon-circle { background-color: #fffbeb; color: var(--brown-500); }
 
         .theme-sakit::before { background-color: #06b6d4; }
         .theme-sakit .icon-circle { background-color: #ecfeff; color: #06b6d4; }
@@ -163,8 +156,8 @@
         .theme-alfa::before { background-color: #ef4444; }
         .theme-alfa .icon-circle { background-color: #fef2f2; color: #ef4444; }
 
-        .theme-belum::before { background-color: #64748b; }
-        .theme-belum .icon-circle { background-color: #f8fafc; color: #64748b; }
+        .theme-belum::before { background-color: var(--text-muted); }
+        .theme-belum .icon-circle { background-color: #fcfaf8; color: var(--text-muted); }
 
         /* Search & Filter Row */
         .controls-row {
@@ -183,26 +176,25 @@
         .search-input {
             width: 100%;
             padding: 9px 12px 9px 36px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border);
             border-radius: 10px;
             font-size: 13.5px;
-            color: #1c1917;
+            color: var(--text-main);
             background: #fff;
             outline: none;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);
             transition: all 0.15s;
             box-sizing: border-box;
         }
         .search-input:focus {
-            border-color: #9a4a12;
-            box-shadow: 0 0 0 3px rgba(154,74,18,0.08);
+            border-color: var(--brown-500);
         }
         .search-icon-wrapper {
             position: absolute;
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
         }
@@ -225,22 +217,21 @@
         
         .btn-secondary-control {
             background: #fff;
-            color: #4b5563;
-            border: 1px solid #e5e7eb;
+            color: var(--text-mid);
+            border: 1px solid var(--border);
             padding: 8px 30px 8px 32px;
             border-radius: 10px;
             font-size: 13.5px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);
             transition: all 0.15s;
             appearance: none;
             outline: none;
         }
         .btn-secondary-control:hover {
-            background: #faf9f6;
-            color: #1f2937;
-            border-color: #d1d5db;
+            background: var(--cream-100);
+            border-color: var(--border);
         }
         
         /* Custom icons for select wrapper */
@@ -248,7 +239,7 @@
             position: absolute;
             left: 12px;
             pointer-events: none;
-            color: #6b7280;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
         }
@@ -261,7 +252,7 @@
             position: absolute;
             right: 12px;
             pointer-events: none;
-            color: #6b7280;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
         }
@@ -273,15 +264,15 @@
         /* Large Board Card */
         .board-card {
             background: #fff;
-            border: 1px solid #e7e5e4;
-            border-radius: 14px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.006);
+            box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);
         }
 
         /* Coffee Header Board */
         .board-header {
-            background-color: #a14d12; /* Coffee Accent */
+            background-color: var(--brown-500); /* Coffee Accent */
             padding: 14px 20px;
             display: flex;
             justify-content: space-between;
@@ -335,23 +326,23 @@
             text-align: left;
         }
         thead tr {
-            background: #faf9f6;
-            border-bottom: 1px solid #e7e5e4;
+            background: #fffdfb;
+            border-bottom: 1.5px solid var(--border);
         }
         th {
-            padding: 12px 20px;
-            font-size: 10.5px;
-            font-weight: 800;
-            color: #64748b;
+            padding: 14px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.75px;
+            letter-spacing: 0.5px;
         }
         tbody tr {
-            border-bottom: 1px solid #f2efe9;
+            border-bottom: 1px solid #fcf6ee;
             transition: background 0.1s;
         }
         tbody tr:hover {
-            background: #fafaf8;
+            background: #fffdfb;
         }
         tbody tr:last-child {
             border-bottom: none;
@@ -359,7 +350,7 @@
         td {
             padding: 14px 20px;
             font-size: 13.5px;
-            color: #111827;
+            color: var(--text-main);
             vertical-align: middle;
         }
 
@@ -367,20 +358,20 @@
         .badge-pill {
             display: inline-flex;
             align-items: center;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11.5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 700;
             white-space: nowrap;
         }
-        .status-hadir { background-color: #ecfdf5; color: #047857; }
-        .status-izin  { background-color: #fffbeb; color: #b45309; }
-        .status-sakit { background-color: #f0fdfa; color: #0f766e; }
-        .status-alfa  { background-color: #fef2f2; color: #b91c1c; }
-        .status-belum { background-color: #f1f5f9; color: #475569; }
+        .status-hadir { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .status-izin  { background-color: #fffbeb; color: var(--brown-500); border: 1px solid #fde68a; }
+        .status-sakit { background-color: #ecfeff; color: #0891b2; border: 1px solid #c5f2f7; }
+        .status-alfa  { background-color: #fff5f5; color: #be123c; border: 1px solid #fecaca; }
+        .status-belum { background-color: var(--cream-100); color: var(--text-muted); border: 1px solid var(--border); }
 
         .note-empty {
-            color: #cbd5e1;
+            color: var(--text-muted);
             font-size: 13px;
         }
 
@@ -392,12 +383,12 @@
         }
         .btn-quick {
             background: #fff;
-            color: #4b5563;
-            border: 1px solid #e5e7eb;
+            color: var(--text-mid);
+            border: 1px solid var(--border);
             padding: 5px 10px;
             border-radius: 7px;
             font-size: 11.5px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -407,13 +398,12 @@
         .btn-quick svg {
             width: 12px;
             height: 12px;
-            color: #6b7280;
+            color: var(--text-muted);
         }
         
         .btn-quick:hover:not(:disabled) {
-            background: #f9fafb;
-            color: #111827;
-            border-color: #d1d5db;
+            background: var(--cream-50);
+            border-color: var(--border);
         }
 
         .btn-quick:disabled {
@@ -423,36 +413,36 @@
 
         /* Selected Status styles */
         .btn-quick.active-hadir {
-            background-color: #ecfdf5;
-            color: #047857;
-            border-color: #a7f3d0;
+            background-color: #f0fdf4;
+            color: #166534;
+            border-color: #bbf7d0;
             font-weight: 700;
         }
-        .btn-quick.active-hadir svg { color: #047857; }
+        .btn-quick.active-hadir svg { color: #166534; }
 
         .btn-quick.active-izin {
             background-color: #fffbeb;
-            color: #b45309;
+            color: var(--brown-500);
             border-color: #fde68a;
             font-weight: 700;
         }
-        .btn-quick.active-izin svg { color: #b45309; }
+        .btn-quick.active-izin svg { color: var(--brown-500); }
 
         .btn-quick.active-sakit {
-            background-color: #f0fdfa;
-            color: #0f766e;
-            border-color: #99f6e4;
+            background-color: #ecfeff;
+            color: #0891b2;
+            border-color: #c5f2f7;
             font-weight: 700;
         }
-        .btn-quick.active-sakit svg { color: #0f766e; }
+        .btn-quick.active-sakit svg { color: #0891b2; }
 
         .btn-quick.active-alfa {
-            background-color: #fef2f2;
-            color: #b91c1c;
+            background-color: #fff5f5;
+            color: #be123c;
             border-color: #fecaca;
             font-weight: 700;
         }
-        .btn-quick.active-alfa svg { color: #b91c1c; }
+        .btn-quick.active-alfa svg { color: #be123c; }
 
         /* Premium Modal */
         .modal {
@@ -464,7 +454,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(28, 25, 23, 0.4); /* warm slate dark color */
+            background-color: rgba(28, 15, 5, 0.45); /* warm slate dark color */
             backdrop-filter: blur(4px);
             align-items: center;
             justify-content: center;
@@ -473,11 +463,11 @@
             background-color: #fff;
             margin: auto;
             padding: 24px;
-            border: 1px solid #e7e5e4;
+            border: 1px solid var(--border);
             width: 100%;
             max-width: 440px;
             border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 30px rgba(28, 15, 5, 0.15);
             animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes modalSlideUp {
@@ -493,25 +483,25 @@
         .modal-title {
             font-size: 16px;
             font-weight: 800;
-            color: #1c1917;
+            color: var(--text-main);
         }
         .close-btn {
             font-size: 22px;
             font-weight: 700;
-            color: #a8a29e;
+            color: var(--text-muted);
             cursor: pointer;
             border: none;
             background: none;
             line-height: 1;
         }
         .close-btn:hover {
-            color: #1c1917;
+            color: var(--text-main);
         }
         .modal-label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            color: #44403c;
+            color: var(--text-mid);
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -519,10 +509,10 @@
         .modal-textarea {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #d6d3d1;
+            border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 13.5px;
-            color: #1c1917;
+            color: var(--text-main);
             background: #fff;
             box-sizing: border-box;
             outline: none;
@@ -531,8 +521,7 @@
             transition: border-color 0.15s;
         }
         .modal-textarea:focus {
-            border-color: #a14d12;
-            box-shadow: 0 0 0 3px rgba(161,77,18,0.08);
+            border-color: var(--brown-500);
         }
         .modal-footer {
             display: flex;
@@ -541,19 +530,19 @@
             margin-top: 20px;
         }
         .btn-cancel {
-            background: #fff;
-            color: #78716c;
-            border: 1px solid #d6d3d1;
+            background: var(--cream-100);
+            color: var(--text-mid);
+            border: 1px solid var(--border);
             padding: 8px 16px;
             border-radius: 8px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.15s;
         }
-        .btn-cancel:hover { background: #fafaf9; }
+        .btn-cancel:hover { background: var(--cream-200); }
         .btn-confirm {
-            background: #a14d12;
+            background: var(--brown-500);
             color: #fff;
             border: none;
             padding: 8px 20px;
@@ -563,12 +552,12 @@
             cursor: pointer;
             transition: all 0.15s;
         }
-        .btn-confirm:hover { background: #853e0d; }
+        .btn-confirm:hover { background: var(--brown-700); }
 
         /* Empty Search Row */
         .empty-search-row td {
             text-align: center;
-            color: #64748b;
+            color: var(--text-muted);
             font-style: italic;
             padding: 24px;
         }
@@ -619,20 +608,20 @@
 
     <div class="page-container">
         @if(session('success'))
-            <div style="background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:13px;">
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; padding:12px 16px; border-radius:12px; margin-bottom:20px; font-size:13.5px; font-weight: 600;">
                 {{ session('success') }}
             </div>
         @endif
 
         @if(session('error'))
-            <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:13px;">
+            <div style="background:#fff5f5; border:1px solid #fecaca; color:#be123c; padding:12px 16px; border-radius:12px; margin-bottom:20px; font-size:13.5px; font-weight: 600;">
                 {{ session('error') }}
             </div>
         @endif
 
         @if($errors->any())
-            <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:13px;">
-                <ul style="margin:0; padding-left:16px;">
+            <div style="background:#fff5f5; border:1px solid #fecaca; color:#be123c; padding:12px 16px; border-radius:12px; margin-bottom:20px; font-size:13.5px; font-weight: 600;">
+                <ul style="margin:0; padding-left:20px;">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -837,7 +826,7 @@
                             </td>
                             <td class="note-container">
                                 @if($att && $att->note)
-                                    <span style="color: #475569; font-weight: 500;">{{ $att->note }}</span>
+                                    <span style="color: var(--text-mid); font-weight: 600;">{{ $att->note }}</span>
                                 @else
                                     <span class="note-empty">--</span>
                                 @endif
@@ -932,15 +921,17 @@
                 <input type="hidden" name="attendance_date" value="{{ $selectedDate }}">
                 <input type="hidden" name="status" value="izin">
 
-                <div style="margin-bottom: 16px; background: #faf8f5; padding: 12px; border-radius: 8px; border: 1px solid #e7e5e4;">
-                    <span style="font-size:12px; color:#64748b; font-weight:700; text-transform: uppercase;">Nama Karyawan</span>
-                    <div style="font-size:15px; color:#1c1917; font-weight:800; margin-top:4px;" id="izin-emp-name"></div>
+                <div style="margin-bottom: 16px; background: #fffdfa; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+                    <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform: uppercase; letter-spacing: 0.5px;">Nama Karyawan</span>
+                    <div style="font-size:15px; color:var(--text-main); font-weight:800; margin-top:4px;" id="izin-emp-name"></div>
                 </div>
 
                 <div>
                     <label for="izin-note" class="modal-label">Alasan Izin <span style="color:#dc2626;">*</span></label>
                     <textarea name="note" id="izin-note" class="modal-textarea" required
-                              placeholder="Masukkan alasan izin karyawan secara detail (wajib)..."></textarea>
+                              placeholder="Masukkan alasan izin karyawan secara detail (wajib)..."
+                              style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; resize: vertical; min-height: 85px;"
+                              onfocus="this.style.borderColor='var(--brown-500)'" onblur="this.style.borderColor='var(--border)'"></textarea>
                 </div>
 
                 <div class="modal-footer">

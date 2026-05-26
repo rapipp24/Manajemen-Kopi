@@ -1,57 +1,23 @@
 <x-layouts.admin>
     <x-slot name="title">Tambah Karyawan Gudang</x-slot>
 
-    <style>
-        .page-header { margin-bottom: 20px; }
-        .page-header h1 { font-size: 20px; font-weight: 700; color: #1c1917; margin: 0; }
-        .page-header p  { font-size: 13px; color: #78716c; margin: 4px 0 0 0; }
-
-        .btn-back {
-            display: inline-flex; align-items: center; gap: 6px;
-            color: #78716c; text-decoration: none; font-size: 13px; font-weight: 600;
-            margin-bottom: 16px;
-        }
-        .btn-back:hover { color: #1c1917; }
-
-        .form-card {
-            background: #fff; border: 1px solid #e7e5e4; border-radius: 12px;
-            padding: 28px; max-width: 520px;
-        }
-
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 12.5px; font-weight: 700; color: #44403c; margin-bottom: 6px; }
-        .form-control {
-            width: 100%; padding: 10px 14px; border: 1px solid #d6d3d1; border-radius: 8px;
-            font-size: 13.5px; color: #1c1917; background: #fff;
-            transition: border-color 0.15s, box-shadow 0.15s; box-sizing: border-box;
-        }
-        .form-control:focus { border-color: #92400e; outline: none; box-shadow: 0 0 0 3px rgba(146,64,14,0.12); }
-        .form-control.is-invalid { border-color: #ef4444; }
-        .invalid-feedback { color: #dc2626; font-size: 12px; margin-top: 4px; display: block; }
-
-        .toggle-row { display: flex; align-items: center; gap: 12px; }
-        .toggle-label { font-size: 13.5px; color: #1c1917; }
-
-        .btn-submit {
-            background: #92400e; color: #fff; border: none; padding: 11px 28px;
-            border-radius: 9px; font-size: 13.5px; font-weight: 700; cursor: pointer;
-            transition: background 0.15s;
-        }
-        .btn-submit:hover { background: #78350f; }
-    </style>
-
-    <a href="{{ route('admin.warehouse-employees.index') }}" class="btn-back">
-        ← Kembali ke Daftar Karyawan
+    <a href="{{ route('admin.warehouse-employees.index') }}" 
+       style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-size: 13.5px; font-weight: 700; margin-bottom: 20px; transition: color 0.15s;"
+       onmouseover="this.style.color='var(--text-main)'" onmouseout="this.style.color='var(--text-muted)'">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Kembali ke Daftar Karyawan
     </a>
 
-    <div class="page-header">
-        <h1>Tambah Karyawan Gudang</h1>
-        <p>Tambahkan data karyawan gudang baru ke master data.</p>
+    <div style="margin-bottom: 24px;">
+        <h1 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0;">Tambah Karyawan Gudang</h1>
+        <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0;">Tambah data karyawan gudang baru untuk absensi.</p>
     </div>
 
     @if($errors->any())
-        <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:12px 16px; border-radius:8px; margin-bottom:20px; font-size:13px;">
-            <ul style="margin:0; padding-left:16px;">
+        <div style="background:#fff5f5; border:1px solid #fecaca; color:#be123c; padding:12px 16px; border-radius:12px; margin-bottom:20px; font-size:13.5px; font-weight: 600;">
+            <ul style="margin:0; padding-left:20px;">
                 @foreach($errors->all() as $err)
                     <li>{{ $err }}</li>
                 @endforeach
@@ -59,54 +25,67 @@
         </div>
     @endif
 
-    <div class="form-card">
+    <div style="background: white; border-radius: 16px; border: 1px solid var(--border); padding: 28px; max-width: 520px; box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);">
         <form action="{{ route('admin.warehouse-employees.store') }}" method="POST">
             @csrf
 
-            <div class="form-group">
-                <label class="form-label" for="name">Nama Karyawan <span style="color:#dc2626;">*</span></label>
-                <input type="text" name="name" id="name"
-                       class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}"
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12.5px; font-weight: 700; color: var(--text-mid); margin-bottom: 6px;" for="name">Nama Karyawan <span style="color:#dc2626;">*</span></label>
+                <input type="text" name="name" id="name" required
                        placeholder="Contoh: Budi Santoso"
-                       value="{{ old('name') }}" required>
+                       value="{{ old('name') }}"
+                       style="width: 100%; padding: 10px 14px; border: 1px solid {{ $errors->has('name') ? '#ef4444' : 'var(--border)' }}; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.15s;"
+                       onfocus="this.style.borderColor='var(--brown-500)'" onblur="this.style.borderColor='var(--border)'">
                 @error('name')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span>
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="phone">No HP <span style="color:#a8a29e; font-weight:400;">(Opsional)</span></label>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12.5px; font-weight: 700; color: var(--text-mid); margin-bottom: 6px;" for="phone">No HP <span style="color:var(--text-muted); font-weight:400;">(Opsional)</span></label>
                 <input type="text" name="phone" id="phone"
-                       class="form-control {{ $errors->has('phone') ? 'is-invalid' : '' }}"
                        placeholder="Contoh: 08123456789"
-                       value="{{ old('phone') }}">
+                       value="{{ old('phone') }}"
+                       style="width: 100%; padding: 10px 14px; border: 1px solid {{ $errors->has('phone') ? '#ef4444' : 'var(--border)' }}; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.15s;"
+                       onfocus="this.style.borderColor='var(--brown-500)'" onblur="this.style.borderColor='var(--border)'">
                 @error('phone')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span>
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="note">Catatan <span style="color:#a8a29e; font-weight:400;">(Opsional)</span></label>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12.5px; font-weight: 700; color: var(--text-mid); margin-bottom: 6px;" for="note">Catatan <span style="color:var(--text-muted); font-weight:400;">(Opsional)</span></label>
                 <textarea name="note" id="note" rows="3"
-                          class="form-control {{ $errors->has('note') ? 'is-invalid' : '' }}"
-                          placeholder="Catatan tambahan jika diperlukan.">{{ old('note') }}</textarea>
+                          placeholder="Catatan tambahan jika diperlukan."
+                          style="width: 100%; padding: 10px 14px; border: 1px solid {{ $errors->has('note') ? '#ef4444' : 'var(--border)' }}; border-radius: 10px; font-size: 14px; resize: vertical; outline: none; transition: border-color 0.15s;"
+                          onfocus="this.style.borderColor='var(--brown-500)'" onblur="this.style.borderColor='var(--border)'">{{ old('note') }}</textarea>
                 @error('note')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                    <span style="color: #dc2626; font-size: 12px; margin-top: 4px; display: block;">{{ $message }}</span>
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Status</label>
-                <div class="toggle-row">
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 12.5px; font-weight: 700; color: var(--text-mid); margin-bottom: 6px;">Status</label>
+                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
                     <input type="hidden" name="is_active" value="0">
-                    <input type="checkbox" name="is_active" id="is_active" value="1"
-                           {{ old('is_active', '1') == '1' ? 'checked' : '' }}
-                           style="width:18px; height:18px; cursor:pointer; accent-color:#92400e;">
-                    <label for="is_active" class="toggle-label">Karyawan aktif</label>
-                </div>
+                    <input type="checkbox" name="is_active" id="is_active" value="1" checked
+                           style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--brown-500);">
+                    <span style="font-size: 13.5px; font-weight: 700; color: var(--text-main);">Karyawan aktif</span>
+                </label>
             </div>
 
-            <button type="submit" class="btn-submit" id="btn-simpan-karyawan">Simpan Karyawan</button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="submit" 
+                        style="flex: 2; padding: 12px; background: var(--brown-500); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; box-shadow: 0 4px 12px rgba(146, 64, 14, 0.15);"
+                        onmouseover="this.style.background='var(--brown-700)'" onmouseout="this.style.background='var(--brown-500)'">
+                    Simpan Karyawan
+                </button>
+                <a href="{{ route('admin.warehouse-employees.index') }}" 
+                   style="flex: 1; padding: 12px; background: var(--cream-100); color: var(--text-mid); border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; transition: all 0.2s;"
+                   onmouseover="this.style.background='var(--cream-200)'" onmouseout="this.style.background='var(--cream-100)'">
+                    Batal
+                </a>
+            </div>
         </form>
     </div>
 </x-layouts.admin>

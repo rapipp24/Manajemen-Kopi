@@ -2,43 +2,46 @@
     <x-slot name="title">Stok Bahan Baku</x-slot>
 
     <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
-        <p style="color: #64748b; font-size: 14px;">Kelola daftar dan stok bahan baku kopi Anda.</p>
+        <p style="color: var(--text-muted); font-size: 14px;">Kelola daftar dan stok bahan baku kopi Anda.</p>
         <a href="{{ route('admin.raw-materials.create') }}" 
-           style="background: #92400e; color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;">
+           style="background: var(--brown-500); color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; transition: background 0.15s; box-shadow: 0 4px 12px rgba(146, 64, 14, 0.15);"
+           onmouseover="this.style.background='var(--brown-700)'" onmouseout="this.style.background='var(--brown-500)'">
             + Tambah Bahan Baku
         </a>
     </div>
 
-    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="font-size: 15px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-                <span style="width: 4px; height: 16px; background: #92400e; border-radius: 2px;"></span>
+    <div style="background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(120, 53, 15, 0.02);">
+        <div style="padding: 20px 24px; border-bottom: 1.5px solid var(--border); background: #fffdfb; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                <span style="width: 4px; height: 16px; background: var(--brown-500); border-radius: 2px;"></span>
                 Daftar Bahan Baku
             </h3>
             <form action="{{ route('admin.raw-materials.index') }}" method="GET" style="display: flex; gap: 8px;">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari bahan..." 
-                       style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; min-width: 200px; outline: none; transition: border-color 0.2s;">
-                <button type="submit" style="background: #92400e; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">Cari</button>
+                       style="padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; min-width: 200px; outline: none; transition: border-color 0.2s;"
+                       onfocus="this.style.borderColor='var(--brown-500)'" onblur="this.style.borderColor='var(--border)'">
+                <button type="submit" style="background: var(--brown-500); color: white; border: none; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s;"
+                        onmouseover="this.style.background='var(--brown-700)'" onmouseout="this.style.background='var(--brown-500)'">Cari</button>
             </form>
         </div>
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
-                <tr style="background: #f1f5f9; border-bottom: 1px solid #e2e8f0;">
-                    <th style="padding: 14px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Bahan Baku</th>
-                    <th style="padding: 14px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Stok Saat Ini</th>
-                    <th style="padding: 14px 20px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Status</th>
-                    <th style="padding: 14px 20px; text-align: right; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Aksi</th>
+                <tr style="background: #fffdfb; border-bottom: 1.5px solid var(--border);">
+                    <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Bahan Baku</th>
+                    <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Stok Saat Ini</th>
+                    <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Status</th>
+                    <th style="padding: 14px 20px; text-align: right; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($materials as $material)
-                <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
+                <tr style="border-bottom: 1px solid #fcf6ee; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#fffdfb'" onmouseout="this.style.backgroundColor='transparent'">
                     <td style="padding: 16px 20px;">
-                        <div style="font-size: 14px; font-weight: 700; color: #1e293b;">{{ $material->name }}</div>
-                        <div style="font-size: 12px; font-family: monospace; color: #94a3b8; margin-top: 2px;">{{ $material->code }}</div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">{{ $material->name }}</div>
+                        <div style="font-size: 12px; font-family: monospace; color: var(--text-muted); margin-top: 2px;">{{ $material->code }}</div>
                     </td>
                     <td style="padding: 16px 20px;">
-                        <div style="font-size: 15px; font-weight: 800; color: #1e293b;">
+                        <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">
                             @php
                                 $stock = $material->current_stock;
                                 $unit = $material->unit->code ?? 'kg';
@@ -53,41 +56,44 @@
                             @endphp
                             {{ $displayStock }}
                         </div>
-                        <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
                             Batas Aman: {{ number_format($material->minimum_stock, 2, ',', '.') }} {{ $unit }}
                         </div>
                     </td>
                     <td style="padding: 16px 20px;">
                         @if($material->current_stock <= 0)
-                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #1e293b; color: #f8fafc; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid #0f172a;">
-                                <span style="width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></span>
+                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #fff5f5; color: #be123c; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid #fecaca;">
+                                <span style="width: 5px; height: 5px; background: #be123c; border-radius: 50%;"></span>
                                 HABIS
                             </span>
                         @elseif($material->current_stock <= $material->minimum_stock)
-                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #fff7ed; color: #c2410c; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid #fed7aa;">
-                                <span style="width: 6px; height: 6px; background: #f97316; border-radius: 50%;"></span>
+                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #fffbeb; color: var(--brown-500); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid #fde68a;">
+                                <span style="width: 5px; height: 5px; background: var(--brown-500); border-radius: 50%;"></span>
                                 MENIPIS
                             </span>
                         @else
-                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid #dcfce7;">
-                                <span style="width: 6px; height: 6px; background: #22c55e; border-radius: 50%;"></span>
+                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid #bbf7d0;">
+                                <span style="width: 5px; height: 5px; background: #166534; border-radius: 50%;"></span>
                                 AMAN
                             </span>
                         @endif
                     </td>
                     <td style="padding: 16px 20px; text-align: right;">
-                        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                        <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
                             <a href="{{ route('admin.raw-materials.movements', $material->id) }}" 
-                               style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s;">
+                               style="background: var(--cream-100); border: 1px solid var(--border); color: var(--text-mid); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.2s;"
+                               onmouseover="this.style.background='var(--cream-200)'" onmouseout="this.style.background='var(--cream-100)'">
                                 Riwayat
                             </a>
                             <a href="{{ route('admin.raw-materials.edit', $material->id) }}" 
-                               style="background: #f0f9ff; border: 1px solid #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none;">
+                               style="color: #0284c7; text-decoration: none; font-size: 13.5px; font-weight: 600;"
+                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                 Edit
                             </a>
                             <form action="{{ route('admin.raw-materials.destroy', $material->id) }}" method="POST" onsubmit="return confirm('Hapus bahan baku ini?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" style="background: #fff1f2; border: 1px solid #ffe4e6; color: #be123c; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13.5px; font-weight: 600; padding: 0;"
+                                        onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                     Hapus
                                 </button>
                             </form>
@@ -96,9 +102,12 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" style="padding: 60px; text-align: center; color: #94a3b8; font-size: 14px;">
-                        <div style="margin-bottom: 8px;">No raw materials found.</div>
-                        <a href="{{ route('admin.raw-materials.create') }}" style="color: #92400e; text-decoration: underline;">Add your first material</a>
+                    <td colspan="4" style="padding: 48px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; margin: 0 auto 12px; opacity: 0.35; color: var(--text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                        </svg>
+                        <div style="margin-bottom: 8px;">Belum ada data bahan baku yang terdaftar.</div>
+                        <a href="{{ route('admin.raw-materials.create') }}" style="color: var(--brown-500); font-weight: 700; text-decoration: underline;">Tambah Pertama Kali</a>
                     </td>
                 </tr>
                 @endforelse
@@ -106,7 +115,9 @@
         </table>
     </div>
 
+    @if($materials->hasPages())
     <div style="margin-top: 20px;">
         {{ $materials->links() }}
     </div>
+    @endif
 </x-layouts.admin>

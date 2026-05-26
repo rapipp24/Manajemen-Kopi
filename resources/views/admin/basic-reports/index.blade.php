@@ -226,7 +226,7 @@
                 <p style="font-size: 13.5px; color: #9e7c62;">Analisis data operasional, stok, dan penjualan retail</p>
             </div>
 
-            @if($activeTab !== 'stock')
+            @if($activeTab !== 'stock' && $activeTab !== 'stok')
             <form id="filter-form" method="GET" action="{{ route('admin.basic-reports.index') }}">
                 <input type="hidden" name="type" value="{{ $activeTab }}">
                 
@@ -262,7 +262,7 @@
                 Produksi Kopi
             </a>
             <a href="{{ route('admin.basic-reports.index', ['type' => 'stock', 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-               class="tab-btn {{ $activeTab === 'stock' ? 'active' : '' }}">
+               class="tab-btn {{ ($activeTab === 'stock' || $activeTab === 'stok') ? 'active' : '' }}">
                 Stok Aktual
             </a>
             <a href="{{ route('admin.basic-reports.index', ['type' => 'sale', 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
@@ -276,7 +276,7 @@
         </div>
 
         <!-- Helper Text Laporan Stok -->
-        @if($activeTab === 'stock')
+        @if($activeTab === 'stock' || $activeTab === 'stok')
             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 16px; padding: 14px 20px; font-size: 13px; color: #b45309; display: flex; align-items: center; gap: 10px;">
                 <svg style="width: 20px; height: 20px; flex-shrink: 0; color: #b45309;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span><strong>Catatan:</strong> Laporan stok di bawah ini menunjukkan kondisi fisik saat ini secara real-time dan tidak dipengaruhi oleh filter rentang tanggal di atas.</span>
@@ -378,7 +378,7 @@
             @endif
 
             <!-- 3. STOK AKTUAL -->
-            @if($activeTab === 'stock')
+            @if($activeTab === 'stock' || $activeTab === 'stok')
                 <table class="report-table">
                     <thead>
                         <tr>
