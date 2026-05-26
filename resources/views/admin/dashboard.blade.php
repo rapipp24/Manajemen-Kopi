@@ -72,7 +72,7 @@
         /* ── Stats Row ── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
 
@@ -210,17 +210,98 @@
 
         <!-- 2. Stats Grid -->
         <div class="stats-grid">
-            <div class="premium-card">
-                <p class="label-small">Bahan Baku</p>
-                <h3 class="val-large">{{ $stats['raw_material_count'] }} <span style="font-size: 13px; color: #94a3b8; font-weight: 500;">Jenis</span></h3>
+            <!-- Card Bahan Baku -->
+            <div class="premium-card" style="display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 28px; background: #ffffff; border-radius: 24px; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02); position: relative; overflow: hidden;">
+                <!-- Decorative Subtle Background Pattern -->
+                <div style="position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: rgba(120, 53, 15, 0.02); border-radius: 50%; pointer-events: none;"></div>
+                
+                <div>
+                    <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px;">Bahan Baku</span>
+                    <div style="display: flex; align-items: baseline; gap: 8px; margin: 12px 0 16px 0;">
+                        <h3 style="font-size: 36px; font-weight: 850; color: #1e293b; margin: 0; line-height: 1;">{{ $stats['raw_material_count'] }}</h3>
+                        <span style="font-size: 14px; font-weight: 700; color: #64748b;">Jenis Terdaftar</span>
+                    </div>
+                    
+                    @php
+                        $rawMaterialCount = $stats['raw_material_count'] ?? 0;
+                        $criticalCount = $stats['critical_materials_count'] ?? 0;
+                        $rawAvailability = $rawMaterialCount > 0 ? round((($rawMaterialCount - $criticalCount) / $rawMaterialCount) * 100) : 100;
+                    @endphp
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            @if($criticalCount > 0)
+                                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 99px; color: #ef4444; font-size: 11px; font-weight: 700;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444;"></span>
+                                    {{ $criticalCount }} Bahan Kritis
+                                </div>
+                            @else
+                                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 99px; color: #059669; font-size: 11px; font-weight: 700;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+                                    Stok Sangat Aman
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Progress Bar Ketersediaan -->
+                        <div style="margin-top: 4px; width: 100%; min-width: 200px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 4px;">
+                                <span>Rasio Aman</span>
+                                <span>{{ $rawAvailability }}%</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; overflow: hidden;">
+                                <div style="width: {{ $rawAvailability }}%; height: 100%; background: {{ $rawAvailability == 100 ? '#10b981' : ($rawAvailability >= 70 ? '#f59e0b' : '#ef4444') }}; border-radius: 99px; transition: width 0.5s ease-in-out;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Icon Section -->
+                <div style="width: 72px; height: 72px; border-radius: 20px; background: #fffbeb; border: 1.5px solid #fde68a; display: flex; align-items: center; justify-content: center; color: #78350f; box-shadow: 0 4px 12px rgba(120, 53, 15, 0.05); position: relative; z-index: 2;">
+                    <!-- Sack of Coffee Beans (SVG) -->
+                    <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="premium-card">
-                <p class="label-small">Barang Jadi</p>
-                <h3 class="val-large">{{ $stats['product_count'] }} <span style="font-size: 13px; color: #94a3b8; font-weight: 500;">Produk</span></h3>
-            </div>
-            <div class="premium-card">
-                <p class="label-small">Order Masuk</p>
-                <h3 class="val-large">{{ $stats['order_count'] }} <span style="font-size: 13px; color: #94a3b8; font-weight: 500;">Order</span></h3>
+
+            <!-- Card Barang Jadi -->
+            <div class="premium-card" style="display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 28px; background: #ffffff; border-radius: 24px; border: 1.5px solid #f1f5f9; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02); position: relative; overflow: hidden;">
+                <!-- Decorative Subtle Background Pattern -->
+                <div style="position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: rgba(120, 53, 15, 0.02); border-radius: 50%; pointer-events: none;"></div>
+                
+                <div>
+                    <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px;">Barang Jadi</span>
+                    <div style="display: flex; align-items: baseline; gap: 8px; margin: 12px 0 16px 0;">
+                        <h3 style="font-size: 36px; font-weight: 850; color: #1e293b; margin: 0; line-height: 1;">{{ $stats['product_count'] }}</h3>
+                        <span style="font-size: 14px; font-weight: 700; color: #64748b;">Produk Aktif</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 99px; color: #2563eb; font-size: 11px; font-weight: 700;">
+                                <svg style="width: 12px; height: 12px; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                </svg>
+                                Siap Kirim
+                            </div>
+                        </div>
+                        
+                        <!-- Info Stok Global Detail -->
+                        <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
+                            <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Total Volume Fisik</span>
+                            <span style="font-size: 16px; font-weight: 800; color: #78350f;">{{ number_format($stats['total_product_stock'], 0, ',', '.') }} <span style="font-size: 12px; color: #94a3b8; font-weight: 600;">Pcs</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Icon Section -->
+                <div style="width: 72px; height: 72px; border-radius: 20px; background: #faf5ff; border: 1.5px solid #e9d5ff; display: flex; align-items: center; justify-content: center; color: #6b21a8; box-shadow: 0 4px 12px rgba(107, 33, 168, 0.05); position: relative; z-index: 2;">
+                    <!-- Package/Cup SVG -->
+                    <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                </div>
             </div>
         </div>
 
@@ -231,7 +312,7 @@
                 <!-- Sales Chart -->
                 <div class="table-card">
                     <div class="table-header">
-                        <h3 style="font-size: 15px; font-weight: 700; color: #1e293b;">Grafik Penjualan</h3>
+                        <h3 style="font-size: 15px; font-weight: 700; color: #1e293b;">Grafik Tren Uang Masuk</h3>
                         <span style="font-size: 11px; font-weight: 700; color: #94a3b8; background: #f8fafc; padding: 4px 10px; border-radius: 8px;">PERIODE TERPILIH</span>
                     </div>
                     <div style="padding: 24px;">
@@ -247,14 +328,14 @@
                 </div>
 
                 <!-- Alert Stok Kritis -->
-                @if($low_stock_materials->count() > 0 || $out_of_stock_products->count() > 0)
                 <div class="table-card" style="border-left: 6px solid #ef4444;">
                     <div class="table-header" style="background: #fff1f2; border-bottom: 1px solid #fecaca;">
                         <h3 style="color: #991b1b; font-size: 14px; font-weight: 700;">Peringatan Stok Kritis</h3>
                         <span style="font-size: 10px; font-weight: 800; color: #ef4444; background: white; padding: 2px 8px; border-radius: 6px;">PERLU TINDAKAN</span>
                     </div>
                     <div style="padding: 0;">
-                        @foreach($low_stock_materials as $material)
+                        <!-- Bahan Baku Hampir Habis -->
+                        @forelse($low_stock_materials as $material)
                         <div class="order-row">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></div>
@@ -268,8 +349,14 @@
                                 <p style="font-size: 10px; color: #cbd5e1;">Min: {{ number_format($material->minimum_stock, 0) }}</p>
                             </div>
                         </div>
-                        @endforeach
-                        @foreach($out_of_stock_products as $product)
+                        @empty
+                        <div style="padding: 16px 24px; color: #94a3b8; font-size: 12px; font-weight: 500; border-bottom: 1px solid #f8fafc;">
+                            Tidak ada bahan baku yang hampir habis.
+                        </div>
+                        @endforelse
+
+                        <!-- Produk Jadi Kosong -->
+                        @forelse($out_of_stock_products as $product)
                         <div class="order-row">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div style="width: 8px; height: 8px; border-radius: 50%; background: #b91c1c;"></div>
@@ -282,71 +369,46 @@
                                 <span style="font-size: 10px; font-weight: 800; background: #fee2e2; color: #b91c1c; padding: 2px 8px; border-radius: 4px;">HABIS</span>
                             </div>
                         </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-
-                <!-- Latest Orders -->
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3 style="font-size: 15px; font-weight: 700; color: #1e293b;">Pesanan Perlu Diproses</h3>
-                        <a href="{{ route('admin.sales-orders.index') }}" style="font-size: 12px; font-weight: 700; color: #92400e; text-decoration: none;">Kelola Pesanan →</a>
-                    </div>
-                    <div style="padding: 0;">
-                        @forelse($latest_orders as $order)
-                        <div class="order-row">
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div style="width: 40px; height: 40px; border-radius: 12px; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 1px solid #f1f5f9;">
-                                    <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                </div>
-                                <div>
-                                    <p style="font-size: 13px; font-weight: 700; color: #1e293b;">{{ $order->order_number }}</p>
-                                    <p style="font-size: 11px; color: #94a3b8;">{{ $order->user->name ?? 'Member' }} • {{ $order->created_at->diffForHumans() }}</p>
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <p style="font-size: 13px; font-weight: 800; color: #1e293b;">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
-                                <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; background: #fffbeb; color: #92400e; padding: 2px 8px; border-radius: 10px; border: 1px solid #fef3c7;">{{ $order->status }}</span>
-                            </div>
-                        </div>
                         @empty
-                        <div style="padding: 48px 24px; text-align: center; color: #cbd5e1; display: flex; flex-direction: column; align-items: center; gap: 12px;">
-                            <div style="width: 56px; height: 56px; border-radius: 50%; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 24px; height: 24px; opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                            </div>
-                            <p style="font-size: 13px; font-weight: 500; color: #94a3b8;">Tidak ada pesanan yang perlu diproses.</p>
+                        <div style="padding: 16px 24px; color: #94a3b8; font-size: 12px; font-weight: 500;">
+                            Tidak ada produk jadi yang kosong.
                         </div>
                         @endforelse
                     </div>
                 </div>
+
             </div>
 
             <!-- Right Column: Info Cards & Actions -->
             <div class="content-section">
                 <!-- Today Summary Card -->
+                <div class="premium-card" style="border-left: 6px solid #78350f; background: #fffdfa; border: 1.5px solid #fef3c7; box-shadow: 0 4px 20px rgba(120, 53, 15, 0.05);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; border-bottom: 1.5px solid #fef3c7; padding-bottom: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 10px; background: #fffbeb; display: flex; align-items: center; justify-content: center; color: #78350f; border: 1px solid #fde68a;">
+                            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 style="font-size: 14px; font-weight: 800; color: #78350f; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Ringkasan Hari Ini</h3>
+                    </div>
 
-                <!-- Quick Actions -->
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <p class="label-small">Aksi Cepat</p>
-                    <a href="{{ route('admin.raw-material-receipts.create') }}" class="action-pill">
-                        <div style="width: 32px; height: 32px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #1d4ed8;">
-                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </div>
-                        <span>Terima Bahan Baku</span>
-                    </a>
-                    <a href="#" class="action-pill">
-                        <div style="width: 32px; height: 32px; border-radius: 8px; background: #f0fdf4; display: flex; align-items: center; justify-content: center; color: #16a34a;">
-                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                        </div>
-                        <span>Mulai Produksi</span>
-                    </a>
-                    <a href="{{ route('admin.sales.create') }}" class="action-pill">
-                        <div style="width: 32px; height: 32px; border-radius: 8px; background: #fff7ed; display: flex; align-items: center; justify-content: center; color: #c2410c;">
-                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        </div>
-                        <span>Input Penjualan</span>
-                    </a>
+                    <!-- Total Uang Masuk Hari Ini -->
+                    <div style="padding-bottom: 16px;">
+                        <p class="label-small" style="color: #94a3b8; font-size: 10px; margin-bottom: 4px; font-weight: 800;">Total Uang Masuk</p>
+                        <h4 style="font-size: 22px; font-weight: 800; color: #1e293b; margin: 0; letter-spacing: -0.5px;">
+                            Rp {{ number_format($today_cash_in, 0, ',', '.') }}
+                        </h4>
+                        <span style="font-size: 11px; color: #64748b; font-weight: 500; display: block; margin-top: 4px; line-height: 1.4;">Pembayaran admin + setoran sales disetujui</span>
+                    </div>
+
+                    <div style="height: 1px; background: #f1f5f9; margin: 4px 0 16px 0;"></div>
+
+                    <!-- Produksi Hari Ini -->
+                    <div style="padding-bottom: 4px;">
+                        <p class="label-small" style="color: #94a3b8; font-size: 10px; margin-bottom: 4px; font-weight: 800;">Produksi Kopi</p>
+                        <h4 style="font-size: 22px; font-weight: 800; color: #1e293b; margin: 0; letter-spacing: -0.5px;">
+                            {{ number_format($today_production_output, 0, ',', '.') }} <span style="font-size: 13px; color: #94a3b8; font-weight: 500;">pcs</span>
+                        </h4>
+                        <span style="font-size: 11px; color: #64748b; font-weight: 500; display: block; margin-top: 4px; line-height: 1.4;">{{ $today_production_count }} batch selesai hari ini</span>
+                    </div>
                 </div>
 
                 <!-- Help Banner -->

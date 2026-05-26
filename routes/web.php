@@ -49,6 +49,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return "Halaman Pesanan Admin";
     })->name('orders');
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
+    Route::get('/basic-reports', [\App\Http\Controllers\Admin\BasicReportController::class, 'index'])->name('basic-reports.index');
+    Route::get('/basic-reports/export-excel', [\App\Http\Controllers\Admin\BasicReportController::class, 'exportExcel'])->name('basic-reports.export-excel');
+    Route::get('/basic-reports/export-pdf', [\App\Http\Controllers\Admin\BasicReportController::class, 'exportPdf'])->name('basic-reports.export-pdf');
 
     // Sales Orders (Pengajuan Barang dari Sales)
     Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');

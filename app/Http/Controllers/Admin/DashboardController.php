@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\RawMaterial;
 use App\Models\Product;
-use App\Models\Order;
-use App\Models\Sale;
+use App\Models\SalesOrder;
+use App\Models\ProductionBatch;
 use App\Models\Supplier;
 use App\Models\SalePayment;
 use App\Models\SalesDeposit;
@@ -30,11 +29,22 @@ class DashboardController extends Controller
             ->sum('amount');
         $currentCashIn = $currentAdminPayments + $currentSalesDeposits;
 
+        // Count bahan baku hampir habis untuk info helper
+        $criticalMaterialsCount = RawMaterial::whereRaw('current_stock <= minimum_stock')
+            ->where('is_active', true)
+            ->count();
+
+        // Total volume fisik produk jadi (pcs/pack) untuk info helper
+        $totalProductStock = Product::where('is_active', true)
+            ->sum('current_stock');
+
         $stats = [
-            'raw_material_count' => RawMaterial::count(),
-            'product_count'      => Product::count(),
-            'order_count'        => Order::whereBetween('created_at', [$startDate, $endDate])->count(),
-            'total_sales'        => $currentCashIn, // mapping total_sales to currentCashIn to prevent view error
+            'raw_material_count'       => RawMaterial::count(),
+            'product_count'            => Product::count(),
+            'order_count'              => SalesOrder::whereBetween('created_at', [$startDate, $endDate])->count(), // Menggunakan SalesOrder
+            'total_sales'              => $currentCashIn, 
+            'critical_materials_count' => $criticalMaterialsCount,
+            'total_product_stock'      => $totalProductStock,
         ];
 
         // 2. Previous Period: Total Uang Masuk (for trend comparison)
@@ -92,7 +102,7 @@ class DashboardController extends Controller
             $chartValues[] = (int)$totalVal;
         }
 
-        // 1. Stok Bahan Baku Kritis (Di bawah stok minimal)
+        // 4. Stok Bahan Baku Kritis (Di bawah stok minimal)
         $low_stock_materials = RawMaterial::with('unit')
             ->whereRaw('current_stock <= minimum_stock')
             ->where('is_active', true)
@@ -100,31 +110,40 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // 2. Stok Produk Habis (0)
+        // 5. Stok Produk Habis (0)
         $out_of_stock_products = Product::with('unit')
             ->where('current_stock', '<=', 0)
             ->where('is_active', true)
             ->take(5)
             ->get();
 
-        // 3. Pesanan Baru (Status Pending/Waiting)
-        $latest_orders = Order::with('user')
-            ->whereIn('status', ['pending', 'waiting', 'process'])
+        // 6. Pengajuan Barang Sales Baru (Status 'menunggu')
+        $latest_orders = SalesOrder::with(['sales', 'customer'])
+            ->where('status', 'menunggu')
             ->latest()
             ->take(5)
             ->get();
 
-        // 4. Penjualan Hari Ini
-        $today_sales = Sale::whereDate('created_at', now()->today())->sum('total_amount');
-        $today_count = Sale::whereDate('created_at', now()->today())->count();
+        // 7. Ringkasan Harian (Today Summary)
+        // Produksi Hari Ini dari ProductionBatch
+        $today_production_count = ProductionBatch::whereDate('production_date', Carbon::today())->count();
+        $today_production_output = ProductionBatch::whereDate('production_date', Carbon::today())->sum('total_output');
+
+        // Total Kas Masuk Hari Ini = SalePayment Hari Ini + SalesDeposit Disetujui Hari Ini
+        $todayAdminPayments = SalePayment::whereDate('payment_date', Carbon::today())->sum('amount');
+        $todaySalesDeposits = SalesDeposit::where('status', 'disetujui')
+            ->whereDate('payment_date', Carbon::today())
+            ->sum('amount');
+        $today_cash_in = $todayAdminPayments + $todaySalesDeposits;
 
         return view('admin.dashboard', compact(
             'stats', 
             'low_stock_materials', 
             'out_of_stock_products', 
             'latest_orders',
-            'today_sales',
-            'today_count',
+            'today_production_count',
+            'today_production_output',
+            'today_cash_in',
             'chartLabels',
             'chartValues',
             'startDate',

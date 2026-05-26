@@ -23,35 +23,160 @@
         .btn-a5 { background: #1e293b; color: white; border-color: #0f172a; }
         .btn-a5:hover { background: #0f172a; color: white; }
 
-        /* ═══════════════ PRINT STYLES ═══════════════ */
+        /* ═══════════════ PRINT STYLES (Epson LX-310 Dot-Matrix Optimized) ═══════════════ */
         @media print {
-            @page { margin: 0; }
-            body { margin: 0; padding: 1.2cm 1.2cm 0 1.2cm; background: white !important; }
-            .sidebar, .topbar, .btn-action, .btn-back, .no-print, .btn-a5 { display: none !important; }
-            .main-wrapper { margin: 0 !important; padding: 0 !important; }
-            .card { border: none !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
-            .card-header { background: white !important; padding: 0 0 15px 0 !important; border-bottom: 2px solid #000 !important; }
-            .card-body { padding: 15px 0 !important; }
-            .grand-total-box { background: #eee !important; color: #000 !important; border: 1px solid #000 !important; }
-            .print-header { display: block !important; margin-bottom: 20px; text-align: center; }
-            .print-footer { display: flex !important; justify-content: space-between; margin-top: 30px; page-break-inside: avoid; }
-            .signature-box { text-align: center; width: 200px; }
-            .signature-line { margin-top: 50px; border-top: 1px solid #000; padding-top: 5px; font-weight: 700; }
-            
-            /* A5 Adjustments */
-            .is-a5 { width: 100%; min-height: auto; padding: 0; margin: 0; }
-            .is-a5 .info-value { font-size: 13px; }
-            .is-a5 .item-table td, .is-a5 .item-table th { padding: 6px 8px; font-size: 12px; }
-            .is-a5 .grand-total-box { padding: 10px; margin-top: 10px; }
-            .is-a5 .print-header h1 { font-size: 18px; }
-            .is-a5 .signature-line { margin-top: 40px; }
+            @page {
+                size: auto;
+                margin: 0.4cm;
+            }
+            body {
+                font-family: 'Courier New', Courier, monospace !important;
+                font-size: 11px !important;
+                color: #000 !important;
+                background: white !important;
+                margin: 0 !important;
+                padding: 10px !important;
+                line-height: 1.3 !important;
+            }
+            .sidebar, .topbar, .btn-action, .btn-back, .no-print, .btn-a5, .alert-print-area {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+            }
+            .main-wrapper {
+                margin: 0 !important;
+                padding: 0 !important;
+                min-height: auto !important;
+            }
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                max-width: 680px !important;
+            }
+            .card-header {
+                background: white !important;
+                padding: 0 0 10px 0 !important;
+                border-bottom: 1px dashed #000 !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: flex-end !important;
+            }
+            .card-header h1 {
+                font-size: 13px !important;
+                font-weight: bold !important;
+                color: #000 !important;
+            }
+            .card-header span {
+                font-size: 12px !important;
+                font-weight: bold !important;
+                color: #000 !important;
+            }
+            .card-body {
+                padding: 10px 0 !important;
+            }
+            .info-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 15px !important;
+                margin-bottom: 15px !important;
+                border-bottom: 1px dashed #000 !important;
+                padding-bottom: 10px !important;
+            }
+            .info-label {
+                font-size: 10px !important;
+                color: #444 !important;
+                font-weight: bold !important;
+                margin-bottom: 2px !important;
+            }
+            .info-value {
+                font-size: 11px !important;
+                font-weight: bold !important;
+                color: #000 !important;
+            }
+            .item-table th {
+                background: transparent !important;
+                padding: 4px 8px !important;
+                font-size: 10.5px !important;
+                color: #000 !important;
+                border-top: 1px dashed #000 !important;
+                border-bottom: 1px dashed #000 !important;
+            }
+            .item-table td {
+                padding: 4px 8px !important;
+                font-size: 10.5px !important;
+                border-bottom: 1px dashed #eee !important;
+                color: #000 !important;
+            }
+            .item-table tr:last-child td {
+                border-bottom: none !important;
+            }
+            .grand-total-box {
+                background: transparent !important;
+                color: #000 !important;
+                border-top: 1px dashed #000 !important;
+                border-bottom: 1px dashed #000 !important;
+                border-left: none !important;
+                border-right: none !important;
+                border-radius: 0 !important;
+                padding: 6px 8px !important;
+                margin-top: 15px !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+            .grand-total-box span:first-child {
+                font-size: 11px !important;
+                font-weight: bold !important;
+            }
+            .grand-total-box span:last-child {
+                font-size: 14px !important;
+                font-weight: bold !important;
+            }
+            .print-header {
+                display: block !important;
+                margin-bottom: 15px !important;
+                text-align: center !important;
+                border-bottom: 1px dashed #000 !important;
+                padding-bottom: 8px !important;
+            }
+            .print-header h1 {
+                font-size: 14px !important;
+                font-weight: bold !important;
+                margin: 0 0 4px 0 !important;
+                color: #000 !important;
+            }
+            .print-header p {
+                font-size: 10px !important;
+                margin: 0 !important;
+                color: #000 !important;
+            }
+            .print-footer {
+                display: flex !important;
+                justify-content: space-between !important;
+                margin-top: 25px !important;
+                page-break-inside: avoid !important;
+            }
+            .signature-box {
+                text-align: center !important;
+                width: 180px !important;
+                font-size: 11px !important;
+            }
+            .signature-line {
+                margin-top: 45px !important;
+                border-top: 1px solid #000 !important;
+                padding-top: 4px !important;
+                font-weight: bold !important;
+                font-size: 11px !important;
+            }
         }
         
         .print-header, .print-footer { display: none; }
-
-        @media print {
-            .alert-print-area { display: none !important; visibility: hidden !important; height: 0 !important; margin: 0 !important; padding: 0 !important; border: none !important; }
-        }
     </style>
 
 

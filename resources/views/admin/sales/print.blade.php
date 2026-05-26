@@ -5,276 +5,267 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nota Penjualan {{ $sale->invoice_number }}</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        
+        /* ── CONFIG UNTUK EPSON LX-310 DOT MATRIX CONTINUOUS FORM ── */
         @page {
-            size: A4;
-            margin: 0;
+            size: auto;
+            margin: 0.4cm 0.4cm 0.4cm 0.4cm;
         }
-        
+
         body {
-            font-family: 'Inter', sans-serif;
-            color: #1e293b;
-            margin: 0;
-            padding: 40px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            color: #000;
             background: #fff;
-            line-height: 1.5;
+            margin: 0;
+            padding: 10px;
+            line-height: 1.3;
         }
 
         .invoice-box {
-            max-width: 800px;
-            margin: auto;
+            max-width: 680px; /* Cocok untuk lebar continuous form 9.5 inci (sekitar 76 char per baris) */
+            margin: 0;
             padding: 0;
         }
 
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 40px;
-            border-bottom: 3px solid #0f172a;
-            padding-bottom: 20px;
+        /* Header Section */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
         }
 
-        .brand-info h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: -1px;
+        .header-table td {
+            padding: 0;
+            vertical-align: top;
         }
 
-        .brand-info p {
-            margin: 4px 0 0;
-            font-size: 13px;
-            color: #64748b;
-            font-weight: 500;
+        .brand-name {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .brand-sub {
+            font-size: 10px;
         }
 
         .invoice-title {
             text-align: right;
-        }
-
-        .invoice-title h2 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 700;
-            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
             text-transform: uppercase;
         }
 
-        .invoice-title .inv-number {
-            font-size: 16px;
-            font-weight: 800;
-            color: #0f172a;
-            font-family: monospace;
-            margin-top: 4px;
-        }
-
-        .info-container {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .info-block h3 {
+        .invoice-num {
             font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #94a3b8;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 6px;
+            font-weight: bold;
         }
 
+        /* Divider lines menggunakan border tipis standar */
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 6px 0;
+        }
+
+        .double-divider {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            height: 2px;
+            margin: 6px 0;
+        }
+
+        /* Info Grid - 2 Column Table untuk Spasial Efisien */
         .info-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 8px;
         }
 
         .info-table td {
-            padding: 4px 0;
-            font-size: 13px;
+            padding: 2px 0;
             vertical-align: top;
+            font-size: 10.5px;
         }
 
-        .label {
-            color: #64748b;
-            font-weight: 600;
-            width: 100px;
+        .info-label {
+            width: 80px;
         }
 
-        .value {
-            color: #1e293b;
-            font-weight: 700;
-        }
-
+        /* Items Table */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-bottom: 8px;
         }
 
         .items-table th {
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 12px 15px;
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 4px;
+            font-size: 10.5px;
+            font-weight: bold;
             text-align: left;
-            border-bottom: 2px solid #e2e8f0;
         }
 
         .items-table td {
-            padding: 15px;
-            font-size: 13px;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 4px;
+            font-size: 10.5px;
+            border-bottom: 1px dashed #eee; /* Garis pembantu tipis antar item */
         }
 
         .items-table tr:last-child td {
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: none;
         }
 
         .text-right { text-align: right !important; }
         .text-center { text-align: center !important; }
 
-        .summary-section {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 50px;
+        /* Summary Section */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
         }
 
-        .summary-box {
-            width: 300px;
+        .summary-table td {
+            padding: 2px 4px;
+            font-size: 11px;
         }
 
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 14px;
-        }
-
-        .total-row {
-            border-top: 2px solid #0f172a;
-            margin-top: 8px;
-            padding-top: 12px;
-            font-weight: 800;
-            font-size: 18px;
-            color: #0f172a;
-        }
-
-        .signature-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 100px;
-            margin-top: 60px;
-            text-align: center;
-        }
-
-        .signature-box p {
+        .total-label {
+            font-weight: bold;
             font-size: 12px;
-            color: #64748b;
-            margin-bottom: 60px;
+        }
+
+        .total-val {
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Signature Blocks */
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            page-break-inside: avoid;
+        }
+
+        .signature-table td {
+            text-align: center;
+            width: 50%;
+            font-size: 11px;
+            padding-bottom: 45px; /* Spasi untuk tanda tangan fisik */
         }
 
         .signature-line {
-            border-top: 1px solid #1e293b;
-            width: 180px;
+            width: 160px;
             margin: 0 auto;
-            font-weight: 700;
-            padding-top: 5px;
-            font-size: 13px;
+            border-top: 1px solid #000;
+            font-weight: bold;
+            padding-top: 2px;
         }
 
         .footer-note {
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px dashed #cbd5e1;
+            margin-top: 25px;
             text-align: center;
-            font-size: 11px;
-            color: #94a3b8;
+            font-size: 9.5px;
+            border-top: 1px dashed #000;
+            padding-top: 6px;
             font-style: italic;
         }
 
+        /* ── CSS KHUSUS PRINT ── */
         @media print {
-            body { padding: 20px; }
-            .no-print { display: none !important; }
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Tombol Aksi di Layar Monitor (Disembunyikan saat dicetak) -->
     <div class="no-print" style="position: fixed; top: 20px; right: 20px; z-index: 100;">
-        <button onclick="window.print()" style="padding: 12px 24px; background: #0f172a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-            Cetak Sekarang
+        <button onclick="window.print()" style="padding: 10px 20px; background: #92400e; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-family: monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            CETAK NOTA (PRINT)
         </button>
     </div>
 
     <div class="invoice-box">
-        <header class="header-section">
-            <div class="brand-info">
-                <h1>{{ $settings['shop_name'] }}</h1>
-                <p>{{ $settings['shop_address'] }}</p>
-                <p>Telp: {{ $settings['shop_phone'] }} | Email: {{ $settings['shop_email'] }}</p>
-            </div>
-            <div class="invoice-title">
-                <h2>Invoice</h2>
-                <div class="inv-number">{{ $sale->invoice_number }}</div>
-            </div>
-        </header>
+        <!-- Header Usaha -->
+        <table class="header-table">
+            <tr>
+                <td style="width: 60%;">
+                    <div class="brand-name">{{ $settings['shop_name'] }}</div>
+                    <div class="brand-sub">{{ $settings['shop_address'] }}</div>
+                    <div class="brand-sub">Telp: {{ $settings['shop_phone'] }}</div>
+                </td>
+                <td style="width: 40%; text-align: right;">
+                    <div class="invoice-title">INVOICE PENJUALAN</div>
+                    <div class="invoice-num">{{ $sale->invoice_number }}</div>
+                </td>
+            </tr>
+        </table>
 
-        <section class="info-container">
-            <div class="info-block">
-                <h3>Informasi Member</h3>
-                <table class="info-table">
-                    <tr>
-                        <td class="label">Nama</td>
-                        <td class="value">{{ $sale->customer->name ?? 'Umum' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Telepon</td>
-                        <td class="value">{{ $sale->customer->phone ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Alamat</td>
-                        <td class="value">{{ $sale->customer->address ?? '-' }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="info-block">
-                <h3>Detail Transaksi</h3>
-                <table class="info-table">
-                    <tr>
-                        <td class="label">Tanggal</td>
-                        <td class="value">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d F Y') }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Status</td>
-                        <td class="value">
-                            @if($sale->payment_status === 'lunas') LUNAS
-                            @elseif($sale->payment_status === 'sebagian') DP / SEBAGIAN
-                            @else BELUM BAYAR
-                            @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">Metode</td>
-                        <td class="value">{{ strtoupper($sale->payment_method) }}</td>
-                    </tr>
-                </table>
-            </div>
-        </section>
+        <div class="divider"></div>
 
+        <!-- Informasi Transaksi & Pelanggan -->
+        <table class="info-table">
+            <tr>
+                <!-- Kolom Kiri: Informasi Pelanggan -->
+                <td style="width: 50%;">
+                    <table>
+                        <tr>
+                            <td class="info-label" style="color: #444;">Pelanggan:</td>
+                            <td style="font-weight: bold;">{{ $sale->customer->name ?? $sale->customer_name }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label" style="color: #444;">Telepon  :</td>
+                            <td>{{ $sale->customer->phone ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label" style="color: #444;">Alamat   :</td>
+                            <td>{{ $sale->customer->address ?? '-' }}</td>
+                        </tr>
+                    </table>
+                </td>
+                <!-- Kolom Kanan: Detail Transaksi -->
+                <td style="width: 50%;">
+                    <table style="margin-left: auto;">
+                        <tr>
+                            <td class="info-label" style="color: #444;">Tanggal :</td>
+                            <td style="font-weight: bold;">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d-m-Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label" style="color: #444;">Metode  :</td>
+                            <td style="font-weight: bold;">{{ strtoupper($sale->payment_method) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label" style="color: #444;">Status  :</td>
+                            <td style="font-weight: bold;">
+                                @if($sale->payment_status === 'lunas') LUNAS
+                                @elseif($sale->payment_status === 'sebagian') DP/SEBAGIAN
+                                @else BELUM BAYAR
+                                @endif
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Rincian Produk Dipesan -->
         <table class="items-table">
             <thead>
                 <tr>
-                    <th width="5%" class="text-center">No</th>
-                    <th width="45%">Deskripsi Produk</th>
-                    <th width="15%" class="text-right">Harga</th>
-                    <th width="10%" class="text-center">Qty</th>
-                    <th width="25%" class="text-right">Subtotal</th>
+                    <th style="width: 5%; text-align: center;">No</th>
+                    <th style="width: 45%;">Nama Produk</th>
+                    <th style="width: 15%; text-align: right;">Harga</th>
+                    <th style="width: 10%; text-align: center;">Qty</th>
+                    <th style="width: 25%; text-align: right;">Subtotal</th>
                 </tr>
             </thead>
             <tbody>
@@ -282,48 +273,63 @@
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
                     <td>
-                        <div style="font-weight: 700; color: #0f172a;">{{ $item->product->name ?? '-' }}</div>
+                        <span style="font-weight: bold;">{{ $item->product->name ?? '-' }}</span>
                         @if($item->product->variant)
-                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Varian: {{ $item->product->variant }}</div>
+                            <span style="font-size: 9.5px; color: #555;">({{ $item->product->variant }})</span>
                         @endif
                     </td>
-                    <td class="text-right">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($item->price, 0, ',', '.') }}</td>
                     <td class="text-center">{{ number_format($item->qty) }}</td>
-                    <td class="text-right" style="font-weight: 600;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                    <td class="text-right" style="font-weight: bold;">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div class="summary-section">
-            <div class="summary-box">
-                <div class="summary-row">
-                    <span style="color: #64748b; font-weight: 600;">Total Item</span>
-                    <span style="font-weight: 700;">{{ $sale->items->sum('qty') }} Pcs</span>
-                </div>
-                <div class="summary-row total-row">
-                    <span>GRAND TOTAL</span>
-                    <span>Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</span>
-                </div>
-            </div>
-        </div>
+        <div class="divider"></div>
 
-        <div style="font-size: 13px; color: #1e293b; margin-top: 20px;">
-            <strong>Catatan:</strong><br>
-            {{ $sale->note ?: 'Tidak ada catatan tambahan.' }}
-        </div>
+        <!-- Bagian Summary & Total -->
+        <table class="summary-table">
+            <tr>
+                <td style="width: 50%; vertical-align: top;">
+                    <strong>Catatan:</strong> {{ $sale->note ?: 'Tidak ada.' }}
+                </td>
+                <td style="width: 50%; vertical-align: top;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="text-align: right; color: #444;">Total Qty:</td>
+                            <td style="text-align: right; font-weight: bold; width: 100px;">{{ $sale->items->sum('qty') }} Pcs</td>
+                        </tr>
+                        <tr>
+                            <td class="total-label" style="text-align: right;">GRAND TOTAL:</td>
+                            <td class="total-val" style="text-align: right;">Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
 
-        <section class="signature-section">
-            <div class="signature-box">
-                <p>Member,</p>
-                <div class="signature-line">{{ $sale->customer->name ?? '.......................' }}</div>
-            </div>
-            <div class="signature-box">
-                <p>Hormat Kami,</p>
-                <div class="signature-line">{{ $sale->creator->name ?? 'Administrator' }}</div>
-            </div>
-        </section>
+        <!-- Area Tanda Tangan Administratif -->
+        <table class="signature-table">
+            <tr>
+                <td>
+                    Penerima / Member
+                </td>
+                <td>
+                    Hormat Kami,
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="signature-line">{{ $sale->customer->name ?? '.......................' }}</div>
+                </td>
+                <td>
+                    <div class="signature-line">{{ $sale->creator->name ?? 'Admin Gudang' }}</div>
+                </td>
+            </tr>
+        </table>
 
+        <!-- Catatan Kaki Nota -->
         <footer class="footer-note">
             {{ $settings['footer_note'] }}
         </footer>
