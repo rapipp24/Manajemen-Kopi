@@ -399,7 +399,7 @@
                     </div>
                     <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Pusat Bantuan</h4>
                     <p style="font-size: 11px; color: #94a3b8; margin-bottom: 16px;">Butuh panduan penggunaan sistem Manajemen Kopi?</p>
-                    <a href="#" target="_blank" style="font-size: 12px; font-weight: 700; color: #475569; text-decoration: none; display: inline-block; padding: 8px 16px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">Pelajari Sekarang</a>
+                    <a href="{{ route('admin.help.index') }}" style="font-size: 12px; font-weight: 700; color: #475569; text-decoration: none; display: inline-block; padding: 8px 16px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">Pelajari Sekarang</a>
                 </div>
             </div>
         </div>

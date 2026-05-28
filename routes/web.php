@@ -77,6 +77,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
+    // Pusat Bantuan
+    Route::get('/help', [\App\Http\Controllers\Admin\HelpController::class, 'index'])->name('help.index');
+
     // Karyawan Gudang & Absensi Manual
     Route::resource('warehouse-employees', \App\Http\Controllers\Admin\WarehouseEmployeeController::class)
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
