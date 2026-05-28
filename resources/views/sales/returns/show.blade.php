@@ -1,126 +1,188 @@
 <x-layouts.user>
     <x-slot name="title">Detail Return {{ $return->return_number }}</x-slot>
 
-    <a href="{{ route('sales.returns.index') }}"
-       style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:18px;">
-        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Kembali ke Daftar Return
+    <style>
+        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
+        .back-link:hover { color:var(--text); }
+
+        /* ── Page heading ──────────────────── */
+        .return-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
+        .return-number  { font-size:17px;font-weight:700;color:var(--text);font-family:monospace;letter-spacing:0.02em; }
+        
+        .badge { display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;line-height:1.3;text-transform:uppercase;letter-spacing:0.04em; }
+        .badge-pending  { background:#fffbeb;color:#b45309;border:1px solid #fef3c7; }
+        .badge-approved { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
+        .badge-canceled { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
+
+        /* ── Layout ──────────────────────── */
+        .layout { display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start; }
+
+        /* ── Card ────────────────────────── */
+        .card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
+        .card-header { padding:13px 18px;border-bottom:1px solid var(--border);background:var(--cream); }
+        .card-header h3 { font-size:13.5px;font-weight:700;color:var(--text);margin:0; }
+
+        /* ── Table ───────────────────────── */
+        .table-scroll-container { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+        table { width:100%; border-collapse:collapse; }
+        thead tr { background:var(--cream); border-bottom:1px solid var(--border); }
+        th { padding:12px 18px; text-align:left; font-size:10px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; }
+        td { padding:14px 18px; border-bottom:1px solid var(--border); font-size:13.5px; color:var(--text); vertical-align:middle; }
+        tr:last-child td { border-bottom:none; }
+        tr:hover td { background:var(--cream); }
+
+        /* ── Info Rows ───────────────────── */
+        .info-row { display:flex;justify-content:space-between;align-items:baseline;padding:12px 18px;border-bottom:1px solid var(--border);font-size:13.5px; }
+        .info-row:last-child { border-bottom:none; }
+        .info-label { font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em; }
+        .info-value { font-size:13.5px;font-weight:600;color:var(--text);text-align:right;max-width:58%; }
+
+        .btn-secondary {
+            background:#fff;border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;
+            text-decoration:none;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;
+            transition:background 0.15s; width: 100%; justify-content: center;
+        }
+        .btn-secondary:hover { background:var(--cream); }
+
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+    </style>
+
+    <a href="{{ route('sales.returns.index') }}" class="back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Daftar Return
     </a>
 
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
-        <span style="font-size:17px;font-weight:700;color:#1c1917;font-family:monospace;">{{ $return->return_number }}</span>
-        @if($return->status === 'diterima')
-            <span style="background:#dcfce7;color:#166534;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check" style="width:12px;height:12px;"></i> DITERIMA</span>
-        @elseif($return->status === 'ditolak')
-            <span style="background:#fee2e2;color:#991b1b;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="x" style="width:12px;height:12px;"></i> DITOLAK</span>
-        @else
-            <span style="background:#fef08a;color:#854d0e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="clock" style="width:12px;height:12px;"></i> MENUNGGU VERIFIKASI</span>
-        @endif
+    @php
+        $statusMap = [
+            'menunggu' => ['badge-pending', 'Menunggu Verifikasi'],
+            'diterima' => ['badge-approved', 'Diterima'],
+            'ditolak'  => ['badge-canceled', 'Ditolak'],
+        ];
+        [$badgeCls, $badgeLbl] = $statusMap[$return->status] ?? ['badge-pending', $return->status];
+    @endphp
+
+    <div class="return-heading">
+        <span class="return-number">{{ $return->return_number }}</span>
+        <span class="badge {{ $badgeCls }}">{{ $badgeLbl }}</span>
     </div>
 
-    {{-- Helper: Penjelasan verifikasi return --}}
-    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-left:3px solid #38bdf8;border-radius:8px;padding:11px 15px;margin-bottom:20px;font-size:12px;color:#0369a1;line-height:1.6;">
-        <strong>Info:</strong> Return yang diterima akan diverifikasi oleh Admin.
-        Barang dengan kondisi <strong>Layak Jual</strong> akan masuk ke stok produk siap jual di gudang, sedangkan barang dengan kondisi <strong>Perlu Proses Ulang</strong> akan dipacking ulang oleh gudang secara manual tanpa menambah stok siap jual.
-        Kedua kondisi tersebut tetap mengurangi sisa tagihan toko Anda.
+    {{-- Info Card --}}
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12.5px;color:#1e40af;line-height:1.5; display:flex; align-items:flex-start; gap:10px;">
+        <i data-lucide="info" style="width:18px;height:18px;color:#1e40af;flex-shrink:0;margin-top:1px;"></i>
+        <div>
+            <strong>Status Return:</strong> Return barang yang dikonfirmasi oleh Admin akan otomatis memotong total sisa tagihan dari laporan pengiriman terkait.
+        </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start;">
-
+    <div class="layout">
         {{-- Kiri: Item yang direturn --}}
-        <div style="background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden;">
-            <div style="padding:13px 18px;border-bottom:1px solid #ece8e3;background:#fafaf8;">
-                <h3 style="font-size:13px;font-weight:700;color:#1c1917;margin:0;">Produk yang Dikembalikan</h3>
+        <div class="card">
+            <div class="card-header">
+                <h3>Produk yang Dikembalikan</h3>
             </div>
-            <table style="width:100%;border-collapse:collapse;">
-                <thead>
-                    <tr style="background:#fafaf8;border-bottom:1px solid #ece8e3;">
-                        <th style="padding:9px 18px;text-align:left;font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Produk</th>
-                        <th style="padding:9px 18px;text-align:center;font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Qty Return</th>
-                        <th style="padding:9px 18px;text-align:right;font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Harga/pcs</th>
-                        <th style="padding:9px 18px;text-align:right;font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Subtotal</th>
-                        <th style="padding:9px 18px;text-align:left;font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Alasan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($return->items as $item)
-                    <tr style="border-bottom:1px solid #f5f0eb;">
-                        <td style="padding:12px 18px;">
-                            <div style="font-weight:600;color:#1c1917;font-size:13px;">{{ $item->product->name }}</div>
-                        </td>
-                        <td style="padding:12px 18px;text-align:center;font-weight:700;color:#1c1917;">{{ number_format($item->qty_return, 0, ',', '.') }}</td>
-                        <td style="padding:12px 18px;text-align:right;color:#78716c;font-size:13px;">Rp {{ number_format($item->price_snapshot, 0, ',', '.') }}</td>
-                        <td style="padding:12px 18px;text-align:right;font-weight:700;color:#1c1917;">Rp {{ number_format($item->subtotal_return, 0, ',', '.') }}</td>
-                        <td style="padding:12px 18px;color:#78716c;font-size:12px;">{{ $item->reason ?? '—' }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr style="background:#fafaf8;">
-                        <td colspan="3" style="padding:12px 18px;text-align:right;font-size:10.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Total Nilai Return</td>
-                        <td style="padding:12px 18px;text-align:right;font-size:16px;font-weight:800;color:#92400e;">
-                            Rp {{ number_format($return->total_return, 0, ',', '.') }}
-                        </td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
+            
+            <div class="table-scroll-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th style="text-align:center;">Qty Return</th>
+                            <th style="text-align:right;">Harga/pcs</th>
+                            <th style="text-align:right;">Subtotal</th>
+                            <th>Alasan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($return->items as $item)
+                        <tr>
+                            <td>
+                                <div style="font-weight:700;color:var(--text);font-size:13.5px;">{{ $item->product->name }}</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px;">Kemasan: {{ $item->product->weight }} Gram</div>
+                            </td>
+                            <td style="text-align:center;font-weight:700;color:var(--text);">{{ number_format($item->qty_return, 0, ',', '.') }} pcs</td>
+                            <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($item->price_snapshot, 0, ',', '.') }}</td>
+                            <td style="text-align:right;font-weight:800;color:var(--text);">Rp {{ number_format($item->subtotal_return, 0, ',', '.') }}</td>
+                            <td style="color:var(--muted);font-size:12.5px;">{{ $item->reason ?? '—' }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:var(--cream); font-weight: 800; border-top: 1px solid var(--border);">
+                            <td colspan="3" style="text-align:right;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">Total Nilai Return</td>
+                            <td style="text-align:right;font-size:16px;font-weight:800;color:var(--brown);">
+                                Rp {{ number_format($return->total_return, 0, ',', '.') }}
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
 
         {{-- Kanan: Info return --}}
         <div style="display:flex;flex-direction:column;gap:14px;">
-            {{-- Info Return --}}
-            <div style="background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden;">
-                <div style="padding:13px 16px;border-bottom:1px solid #ece8e3;background:#fafaf8;">
-                    <h3 style="font-size:13px;font-weight:700;color:#1c1917;margin:0;">Info Return</h3>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Info Return</h3>
                 </div>
-                <div style="padding:0;">
-                    <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #f5f0eb;">
-                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Laporan</span>
-                        <span style="font-size:12px;font-weight:600;color:#1c1917;font-family:monospace;">{{ $return->deliveryReport->report_number }}</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #f5f0eb;">
-                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Tgl Return</span>
-                        <span style="font-size:12px;font-weight:600;color:#1c1917;">{{ $return->return_date->format('d M Y') }}</span>
-                    </div>
-                    @if($return->status === 'diterima')
-                    <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #f5f0eb;align-items:center;">
-                        <span style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;">Kondisi Barang</span>
+                
+                <div class="info-row">
+                    <span class="info-label">Laporan</span>
+                    <span class="info-value" style="font-family:monospace;font-size:13px;">{{ $return->deliveryReport->report_number }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tgl Return</span>
+                    <span class="info-value">{{ $return->return_date->format('d M Y') }}</span>
+                </div>
+                @if($return->status === 'diterima')
+                <div class="info-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                    <span class="info-label">Kondisi Barang</span>
+                    <span class="info-value" style="width:100%; text-align:left; margin-top:2px;">
                         @if($return->return_condition === 'layak_jual')
-                            <span style="background:#dcfce7;color:#166534;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> Layak Jual</span>
+                            <span class="badge badge-approved" style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> Layak Jual</span>
                         @elseif($return->return_condition === 'perlu_proses_ulang')
-                            <span style="background:#fefce8;color:#a16207;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Proses Ulang</span>
+                            <span class="badge badge-pending" style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Proses Ulang</span>
                         @else
-                            <span style="background:#f5f5f4;color:#78716c;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;">Belum Diisi</span>
+                            <span style="color:var(--muted); font-style:italic; font-size:12.5px;">Belum Diisi</span>
                         @endif
-                    </div>
-                    @endif
-                    @if($return->note)
-                    <div style="padding:10px 16px;border-bottom:1px solid #f5f0eb;">
-                        <div style="font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;margin-bottom:4px;">Catatan</div>
-                        <div style="font-size:12px;color:#57534e;font-style:italic;">{{ $return->note }}</div>
-                    </div>
-                    @endif
-                    @if($return->status === 'ditolak' && $return->rejection_reason)
-                    <div style="padding:10px 16px;background:#fff5f5;">
-                        <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;margin-bottom:4px;">Alasan Ditolak</div>
-                        <div style="font-size:12px;color:#991b1b;">{{ $return->rejection_reason }}</div>
-                    </div>
-                    @endif
-                    @if($return->approver)
-                    <div style="padding:10px 16px;background:#f0fdf4;">
-                        <div style="font-size:11px;font-weight:700;color:#166534;text-transform:uppercase;margin-bottom:4px;">
-                            {{ $return->status === 'diterima' ? 'Diterima oleh' : 'Diproses oleh' }}
-                        </div>
-                        <div style="font-size:12px;font-weight:600;color:#166534;">{{ $return->approver->name }}</div>
-                        <div style="font-size:11px;color:#86efac;">{{ $return->approved_at?->format('d M Y, H:i') }}</div>
-                    </div>
-                    @endif
+                    </span>
                 </div>
+                @endif
+                @if($return->note)
+                <div class="info-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                    <span class="info-label">Catatan</span>
+                    <span class="info-value" style="width:100%; text-align:left; font-weight:normal; font-style:italic; color:var(--muted); margin-top:2px;">
+                        "{{ $return->note }}"
+                    </span>
+                </div>
+                @endif
+                @if($return->status === 'ditolak' && $return->rejection_reason)
+                <div class="info-row" style="flex-direction:column; align-items:flex-start; gap:4px; background:#fff5f5;">
+                    <span class="info-label" style="color:#991b1b;">Alasan Ditolak</span>
+                    <span class="info-value" style="width:100%; text-align:left; font-weight:600; color:#991b1b; margin-top:2px;">
+                        {{ $return->rejection_reason }}
+                    </span>
+                </div>
+                @endif
             </div>
 
-            <a href="{{ route('sales.delivery-reports.show', $return->deliveryReport) }}"
-               style="display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#fff;border:1px solid #d6d3d1;color:#57534e;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:12.5px;font-weight:600;text-align:center;width:100%;box-sizing:border-box;">
-                <i data-lucide="file-text" style="width:14px;height:14px;"></i> Lihat Laporan Pengiriman
+            @if($return->approver)
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Diverifikasi Oleh</h3>
+                    </div>
+                    <div style="padding:16px; font-size:13px;">
+                        <div style="font-weight:700; color:var(--brown);">{{ $return->approver->name }}</div>
+                        <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">
+                            Pada {{ $return->approved_at?->format('d M Y, H:i') }}
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <a href="{{ route('sales.delivery-reports.show', $return->deliveryReport) }}" class="btn-secondary">
+                <i data-lucide="file-text" style="width:14px;height:14px;"></i> Laporan Pengiriman
             </a>
         </div>
     </div>

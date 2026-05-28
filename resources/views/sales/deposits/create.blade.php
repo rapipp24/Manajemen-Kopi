@@ -2,52 +2,72 @@
     <x-slot name="title">Kirim Setoran</x-slot>
 
     <style>
+        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
+        .back-link:hover { color:var(--text); }
+
         .page-header { margin-bottom:24px; }
-        .page-title  { font-size:20px;font-weight:700;color:#1c1917;letter-spacing:-0.03em; }
-        .page-desc   { font-size:13px;color:#78716c;margin-top:3px; }
+        .page-title  { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
+        .page-desc   { font-size:13.5px;color:var(--muted);margin-top:4px; }
 
-        .btn-secondary {
-            background:#fff;border:1px solid #ece8e3;color:#44403c;padding:9px 16px;border-radius:9px;
-            text-decoration:none;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;
-            transition:background 0.15s;
-        }
-        .btn-secondary:hover { background:#fafaf8; }
-
-        .form-card { background:#fff;border:1px solid #ece8e3;border-radius:12px;padding:24px;max-width:600px; }
+        .form-card { background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;max-width:600px;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
 
         .form-group { margin-bottom:18px; }
-        .form-label { display:block;font-size:12.5px;font-weight:700;color:#44403c;margin-bottom:6px; }
+        .form-label { display:block;font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:6px; }
         .form-control {
-            width:100%;padding:10px 14px;border:1px solid #d6d3d1;border-radius:8px;
-            font-size:13.5px;color:#1c1917;background:#fff;transition:border-color 0.15s,box-shadow 0.15s;
+            width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;
+            font-size:13.5px;color:var(--text);background:#fff;transition:border-color 0.15s,box-shadow 0.15s;
         }
-        .form-control:focus { border-color:#92400e;outline:none;box-shadow:0 0 0 3px rgba(146,64,14,0.15); }
-
-        .alert-error {
-            background:#fef2f2;border:1px solid #fecaca;color:#991b1b;
-            padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:20px;
-        }
+        .form-control:focus { border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(197, 160, 89, 0.15); }
 
         .summary-box {
-            background:#fdf9f5;border:1px solid #f5ebe0;border-radius:10px;
+            background:var(--cream);border:1px solid var(--border);border-radius:10px;
             padding:16px;margin-top:14px;display:none;
         }
         .summary-row { display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px; }
-        .summary-row:last-child { margin-bottom:0;padding-top:6px;border-top:1px dashed #e7dcd0;font-weight:700; }
+        .summary-row:last-child { margin-bottom:0;padding-top:8px;border-top:1px dashed var(--border);font-weight:700; }
+
+        /* Custom File Upload Styling (Camera PWA Friendly) */
+        .custom-file-upload {
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: var(--cream);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .custom-file-upload:hover {
+            border-color: var(--accent);
+        }
+        .custom-file-upload input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-icon {
+            width: 28px; height: 28px; color: var(--accent); margin-bottom: 6px;
+        }
+        .upload-text {
+            display: block; font-size: 13px; font-weight: 700; color: var(--text);
+        }
+        .upload-info {
+            display: block; font-size: 11px; color: var(--muted); margin-top: 2px;
+        }
 
         .btn-submit {
-            background:#92400e;color:#fff;border:none;padding:11px 24px;border-radius:9px;
-            font-size:13.5px;font-weight:700;cursor:pointer;transition:background 0.15s;
+            background:var(--brown);color:#fff;border:none;padding:12px 24px;border-radius:8px;
+            font-size:14px;font-weight:700;cursor:pointer;transition:background 0.15s;
             display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:8px;
+            box-shadow: 0 2px 4px rgba(42, 23, 14, 0.1);
         }
-        .btn-submit:hover { background:#78350f; }
+        .btn-submit:hover { background:var(--brown-hover); }
     </style>
 
-    <div style="margin-bottom:16px;">
-        <a href="{{ route('sales.deposits.index') }}" class="btn-secondary">
-            ← Kembali ke Daftar
-        </a>
-    </div>
+    <a href="{{ route('sales.deposits.index') }}" class="back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Daftar
+    </a>
 
     <div class="page-header">
         <h1 class="page-title">Kirim Setoran Baru</h1>
@@ -55,7 +75,7 @@
     </div>
 
     @if($errors->any() || session('error'))
-        <div class="alert-error">
+        <div style="background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:20px;">
             @if(session('error'))
                 {{ session('error') }}
             @else
@@ -92,20 +112,20 @@
             <!-- Detail Laporan Preview Box -->
             <div id="report_summary" class="summary-box">
                 <div class="summary-row">
-                    <span style="color:#78716c;">Toko Tujuan</span>
-                    <span id="sum_toko" style="font-weight:600;color:#1c1917;">-</span>
+                    <span style="color:var(--muted);">Toko Tujuan</span>
+                    <span id="sum_toko" style="font-weight:600;color:var(--text);">-</span>
                 </div>
                 <div class="summary-row">
-                    <span style="color:#78716c;">Total Tagihan</span>
-                    <span id="sum_total" style="color:#1c1917;">Rp 0</span>
+                    <span style="color:var(--muted);">Total Tagihan</span>
+                    <span id="sum_total" style="color:var(--text);">Rp 0</span>
                 </div>
                 <div class="summary-row">
-                    <span style="color:#78716c;">Total Dibayar (Lunas/DP Terverifikasi)</span>
-                    <span id="sum_paid" style="color:#166534;">Rp 0</span>
+                    <span style="color:var(--muted);">Total Dibayar (DP/Setoran Lunas)</span>
+                    <span id="sum_paid" style="color:#166534; font-weight:600;">Rp 0</span>
                 </div>
                 <div class="summary-row">
-                    <span style="color:#92400e;">Sisa Tagihan Toko</span>
-                    <span id="sum_remaining" style="color:#92400e;">Rp 0</span>
+                    <span style="color:var(--text);">Sisa Tagihan Toko</span>
+                    <span id="sum_remaining" style="color:var(--brown); font-weight:700;">Rp 0</span>
                 </div>
             </div>
 
@@ -114,7 +134,7 @@
                 <input type="text" id="amount_display" class="form-control" 
                        placeholder="Contoh: 50.000" required>
                 <input type="hidden" name="amount" id="amount" value="{{ old('amount') }}">
-                <span style="font-size:11px;color:#78716c;margin-top:4px;display:block;">
+                <span style="font-size:11px;color:var(--muted);margin-top:4px;display:block;">
                     *Nominal tidak boleh melebihi sisa tagihan toko.
                 </span>
             </div>
@@ -135,10 +155,18 @@
 
             <div class="form-group" id="proof_upload_group" style="display:none;">
                 <label class="form-label" for="payment_proof">Upload / Foto Bukti Pembayaran <span style="color:#dc2626;">*</span></label>
-                <input type="file" name="payment_proof" id="payment_proof" class="form-control"
-                       accept="image/*,.pdf" capture="environment">
-                <span style="font-size:11.5px;color:#78716c;margin-top:4px;display:block;">
-                    Untuk transfer bank, foto bukti pembayaran atau upload file bukti transfer. Maksimal 2MB.
+                
+                <div class="custom-file-upload">
+                    <input type="file" name="payment_proof" id="payment_proof" accept="image/*,.pdf" capture="environment">
+                    <div id="upload_area">
+                        <i data-lucide="camera" class="upload-icon"></i>
+                        <span class="upload-text">Ambil Foto Bukti atau Pilih File</span>
+                        <span class="upload-info">JPG, PNG, WEBP, atau PDF (Maks. 2MB)</span>
+                    </div>
+                </div>
+
+                <span style="font-size:11.5px;color:var(--muted);margin-top:6px;display:block;">
+                    Untuk transfer bank, foto bukti pembayaran atau upload file bukti transfer.
                 </span>
             </div>
 
@@ -148,7 +176,7 @@
             </div>
 
             <button type="submit" class="btn-submit">
-                Ajukan Setoran Sekarang →
+                Ajukan Setoran Sekarang <i data-lucide="chevron-right" style="width:16px;height:16px;margin-left:4px;"></i>
             </button>
         </form>
     </div>
@@ -167,6 +195,7 @@
             const methodSelect = document.getElementById('payment_method');
             const proofGroup = document.getElementById('proof_upload_group');
             const proofInput = document.getElementById('payment_proof');
+            const uploadArea = document.getElementById('upload_area');
 
             function formatRupiah(num) {
                 return 'Rp ' + Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -201,6 +230,12 @@
                     proofGroup.style.display = 'none';
                     proofInput.removeAttribute('required');
                     proofInput.value = ''; // Reset value
+                    uploadArea.innerHTML = `
+                        <i data-lucide="camera" class="upload-icon"></i>
+                        <span class="upload-text">Ambil Foto Bukti atau Pilih File</span>
+                        <span class="upload-info">JPG, PNG, WEBP, atau PDF (Maks. 2MB)</span>
+                    `;
+                    lucide.createIcons();
                 }
             }
 
@@ -221,6 +256,17 @@
                 }
             });
 
+            proofInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    uploadArea.innerHTML = `
+                        <i data-lucide="check-circle" class="upload-icon" style="color:#166534;"></i>
+                        <span class="upload-text" style="color:#166534;">File Terpilih</span>
+                        <span class="upload-info" style="font-weight:600;color:var(--text);">${this.files[0].name}</span>
+                    `;
+                    lucide.createIcons();
+                }
+            });
+
             selectEl.addEventListener('change', updatePreview);
             methodSelect.addEventListener('change', toggleProofField);
 
@@ -230,3 +276,4 @@
         });
     </script>
 </x-layouts.user>
+

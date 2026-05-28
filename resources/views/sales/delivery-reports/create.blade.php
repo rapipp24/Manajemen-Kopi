@@ -2,107 +2,111 @@
     <x-slot name="title">Buat Laporan Pengiriman</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:16px; }
-        .back-link:hover { color:#1c1917; }
-        .page-title { font-size:20px;font-weight:700;color:#1c1917;letter-spacing:-0.03em;margin-bottom:3px; }
-        .page-desc  { font-size:13px;color:#78716c;margin-bottom:24px; }
+        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:16px;transition:color 0.15s; }
+        .back-link:hover { color:var(--text); }
+        .page-title { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px; }
+        .page-desc  { font-size:13.5px;color:var(--muted);margin-bottom:24px; }
 
         .empty-stok {
-            background:#fdf9f5;border:1px solid #ece8e3;border-radius:12px;
-            padding:24px;text-align:center;
+            background:#fff;border:1px solid var(--border);border-radius:12px;
+            padding:32px 24px;text-align:center;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
         }
-        .empty-stok-emoji { font-size:36px;opacity:0.3;margin-bottom:12px; }
-        .empty-stok strong { display:block;font-size:15px;color:#1c1917;margin-bottom:6px; }
-        .empty-stok p { font-size:13px;color:#78716c;max-width:350px;margin:0 auto 16px;line-height:1.5; }
+        .empty-stok-emoji { font-size:38px;opacity:0.3;margin-bottom:12px; }
+        .empty-stok strong { display:block;font-size:15px;color:var(--text);margin-bottom:6px; }
+        .empty-stok p { font-size:13.5px;color:var(--muted);max-width:350px;margin:0 auto 18px;line-height:1.5; }
         .empty-stok-link {
-            display:inline-block;background:#92400e;color:#fff;font-weight:600;font-size:13px;
-            padding:9px 18px;border-radius:8px;text-decoration:none;transition:background 0.15s;
+            display:inline-block;background:var(--brown);color:#fff;font-weight:700;font-size:13px;
+            padding:9.5px 18px;border-radius:8px;text-decoration:none;transition:all 0.15s ease-in-out;
+            box-shadow:0 2px 4px rgba(42,23,14,0.1);
         }
-        .empty-stok-link:hover { background:#78350f; }
+        .empty-stok-link:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
 
         /* ── Layout ──────────────────────── */
-        .layout { display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start; }
+        .layout { display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start; }
 
         /* ── Card ────────────────────────── */
-        .card { background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden; }
-        .card + .card { margin-top:14px; }
-        .card-header { padding:13px 18px;border-bottom:1px solid #f5f0eb;background:#fafaf8; }
-        .card-header h3 { font-size:13px;font-weight:700;color:#1c1917;margin:0; }
+        .card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
+        .card + .card { margin-top:16px; }
+        .card-header { padding:14px 18px;border-bottom:1px solid var(--border);background:var(--cream); }
+        .card-header h3 { font-size:13.5px;font-weight:700;color:var(--text);margin:0; }
         .card-body { padding:16px 18px; }
 
-        .field { margin-bottom:13px; }
+        .field { margin-bottom:14px; }
         .field:last-child { margin-bottom:0; }
-        label { display:block;font-size:11.5px;font-weight:600;color:#57534e;margin-bottom:4px; }
-        .opt-label { font-weight:400;color:#a8a29e; }
+        label { display:block;font-size:11.5px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px; }
+        .opt-label { font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0; }
 
         input[type="text"], input[type="tel"], input[type="date"], select, textarea {
-            width:100%;padding:8px 11px;border:1px solid #d6d3d1;border-radius:8px;
-            font-size:13px;font-family:inherit;background:#fff;color:#1c1917;
-            transition:border-color 0.12s,box-shadow 0.12s;
+            width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+            font-size:13px;font-family:inherit;background:#fff;color:var(--text);
+            transition:border-color 0.15s,box-shadow 0.15s;
         }
         input:focus, select:focus, textarea:focus {
-            outline:none;border-color:#92400e;box-shadow:0 0 0 3px rgba(146,64,14,0.09);
+            outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(197,160,89,0.12);
         }
-        .err { font-size:11px;color:#dc2626;margin-top:3px; }
+        .err { font-size:11.5px;color:#dc2626;margin-top:4px;font-weight:500; }
 
-        /* Toggle toko */
+        /* Segmented Toko Toggle */
         .toko-toggle {
-            display:flex;gap:0;border:1px solid #d6d3d1;border-radius:8px;
-            overflow:hidden;margin-bottom:14px;
+            display:flex;background:var(--brown-light);padding:3px;border-radius:8px;
+            margin-bottom:16px;border:1px solid var(--border);
         }
         .toko-toggle button {
-            flex:1;padding:8px;font-size:12px;font-weight:600;border:none;
-            background:#fafaf8;color:#78716c;cursor:pointer;font-family:inherit;transition:all 0.12s;
+            flex:1;padding:8px 12px;font-size:12.5px;font-weight:600;border:none;
+            background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all 0.2s ease-in-out;
+            border-radius:6px;
         }
-        .toko-toggle button.active { background:#92400e;color:#fff; }
-        .toko-toggle button:first-child { border-right:1px solid #d6d3d1; }
+        .toko-toggle button.active { background:var(--brown);color:#fff;box-shadow:0 2px 6px rgba(42,23,14,0.15); }
 
         .hint-box {
-            background:#fdfcfb;border:1px dashed #d6d3d1;border-radius:8px;
-            padding:10px 12px;font-size:11.5px;color:#78716c;margin-bottom:14px;
-            text-align:center;
+            background:var(--cream);border:1px dashed var(--border);border-radius:8px;
+            padding:10px 12px;font-size:12px;color:var(--muted);margin-bottom:14px;
+            text-align:center;font-weight:500;
         }
 
         /* Items table */
         .items-table { width:100%;border-collapse:collapse; }
         .items-table th {
-            padding:10px 12px;font-size:10px;font-weight:700;color:#b9a99a;
-            text-transform:uppercase;letter-spacing:0.07em;background:#fafaf8;
-            border-bottom:1px solid #ece8e3;text-align:left;
+            padding:12px 14px;font-size:10px;font-weight:800;color:var(--muted);
+            text-transform:uppercase;letter-spacing:0.07em;background:var(--cream);
+            border-bottom:1px solid var(--border);text-align:left;
         }
-        .items-table td { padding:10px 8px;border-bottom:1px solid #f5f0eb;vertical-align:middle; }
-        .items-table select, .items-table input[type="number"] { padding:7px 9px;font-size:12.5px; }
+        .items-table td { padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle; }
+        .items-table select, .items-table input[type="number"] { padding:8px 10px;font-size:13px; }
 
-        .stok-hint     { font-size:11px;color:#78716c;font-weight:600;margin-top:2px; }
-        .stok-warn-txt { color:#dc2626;font-weight:700;font-size:10.5px;margin-top:2px; }
+        .stok-hint     { font-size:11.5px;color:#166534;font-weight:700;margin-top:4px; }
+        .stok-warn-txt { color:#991b1b;font-weight:700;font-size:11px;margin-top:4px; }
 
-        .btn-remove { background:none;border:none;color:#d6d3d1;cursor:pointer;font-size:20px;line-height:1;padding:0 4px;transition:color 0.12s; }
+        .btn-remove { background:none;border:none;color:#d6d3d1;cursor:pointer;font-size:22px;line-height:1;padding:0 4px;transition:color 0.12s; }
         .btn-remove:hover { color:#ef4444; }
 
         .btn-add-row {
-            margin:12px 18px;background:none;border:1px dashed #d6d3d1;color:#78716c;
-            padding:8px 12px;border-radius:8px;font-size:12.5px;font-weight:600;
-            cursor:pointer;transition:all 0.12s;font-family:inherit;
+            margin:16px 18px;background:none;border:1px dashed var(--border);color:var(--muted);
+            padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;
+            cursor:pointer;transition:all 0.15s;font-family:inherit;
         }
-        .btn-add-row:hover { border-color:#92400e;color:#92400e;background:#fdf9f5; }
+        .btn-add-row:hover { border-color:var(--brown);color:var(--brown);background:var(--cream); }
 
         .total-row {
             display:flex;justify-content:space-between;align-items:center;
-            padding:14px 18px;border-top:1px solid #ece8e3;background:#fafaf8;
+            padding:14px 18px;border-top:1px solid var(--border);background:var(--cream);
         }
-        .total-label { font-size:11px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.07em; }
-        .total-value { font-size:20px;font-weight:800;color:#92400e;letter-spacing:-0.02em; }
+        .total-label { font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em; }
+        .total-value { font-size:21px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
 
         .btn-submit {
-            width:100%;padding:12px;background:#92400e;color:#fff;border:none;
-            border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;
-            transition:background 0.15s,box-shadow 0.15s;font-family:inherit;
-            box-shadow:0 1px 3px rgba(146,64,14,0.25);
+            width:100%;padding:12px;background:var(--brown);color:#fff;border:none;
+            border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;
+            transition:all 0.15s ease-in-out;font-family:inherit;
+            box-shadow:0 2px 4px rgba(42,23,14,0.1);
         }
-        .btn-submit:hover:not(:disabled) { background:#78350f;box-shadow:0 3px 8px rgba(146,64,14,0.3); }
+        .btn-submit:hover:not(:disabled) { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
         .btn-submit:disabled { background:#e7e5e4;color:#a8a29e;cursor:not-allowed;box-shadow:none; }
 
-        @media (max-width: 680px) { .layout { grid-template-columns: 1fr; } }
+        @media (max-width: 767px) {
+            .layout { grid-template-columns: 1fr; }
+            .items-table { min-width: 650px; } /* Prevent squishing and allow smooth thumb scroll on mobile! */
+        }
     </style>
 
     <a href="{{ route('sales.delivery-reports.index') }}" class="back-link">← Kembali ke Riwayat</a>

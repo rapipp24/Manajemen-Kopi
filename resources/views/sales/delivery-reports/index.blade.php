@@ -3,73 +3,140 @@
 
     <style>
         /* ── Page Header ─────────────────────── */
-        .page-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px; }
-        .page-title  { font-size:20px;font-weight:700;color:#1c1917;letter-spacing:-0.03em; }
-        .page-desc   { font-size:13px;color:#78716c;margin-top:3px; }
+        .page-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px; }
+        .page-title  { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
+        .page-desc   { font-size:13.5px;color:var(--muted);margin-top:4px; }
 
         .btn-primary {
-            background:#92400e;color:#fff;padding:9px 18px;border-radius:9px;
-            text-decoration:none;font-size:13px;font-weight:600;
-            display:inline-flex;align-items:center;gap:7px;
-            transition:background 0.15s,box-shadow 0.15s;white-space:nowrap;
-            box-shadow:0 1px 3px rgba(146,64,14,0.25);
+            background:var(--brown);color:#fff;padding:9.5px 18px;border-radius:8px;
+            text-decoration:none;font-size:13px;font-weight:700;
+            display:inline-flex;align-items:center;gap:8px;
+            transition:all 0.15s ease-in-out;white-space:nowrap;
+            box-shadow:0 2px 4px rgba(42,23,14,0.1);
         }
-        .btn-primary:hover { background:#78350f;box-shadow:0 3px 8px rgba(146,64,14,0.3); }
+        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
 
         /* ── Stok Card ───────────────────────── */
         .stok-card {
-            background:#fff;border:1px solid #ece8e3;border-radius:12px;
-            padding:16px 20px;margin-bottom:18px;
+            background:#fff;border:1px solid var(--border);border-radius:12px;
+            padding:18px 20px;margin-bottom:20px;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
         }
         .stok-card-header {
-            display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;
+            display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
         }
-        .stok-card-title { font-size:12px;font-weight:700;color:#57534e;text-transform:uppercase;letter-spacing:0.07em; }
-        .stok-ajukan { font-size:12px;color:#92400e;font-weight:600;text-decoration:none; }
+        .stok-card-title { font-size:12px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:0.07em; }
+        .stok-ajukan { font-size:12.5px;color:var(--accent);font-weight:700;text-decoration:none; }
         .stok-ajukan:hover { text-decoration:underline; }
 
-        .stok-list { display:flex;flex-wrap:wrap;gap:8px; }
+        .stok-list { display:flex;flex-wrap:wrap;gap:10px; }
 
-        /* Each stock item as a small card */
+        /* Each stock item */
         .stok-item {
-            display:flex;align-items:center;gap:10px;
-            background:#fdf9f5;border:1px solid #ece8e3;border-radius:8px;
-            padding:8px 14px;min-width:180px;
+            display:flex;align-items:center;gap:12px;
+            background:var(--cream);border:1px solid var(--border);border-radius:8px;
+            padding:10px 16px;min-width:180px;
         }
-        .stok-item-qty  { font-size:18px;font-weight:800;color:#92400e;letter-spacing:-0.02em;line-height:1; }
+        .stok-item-qty  { font-size:20px;font-weight:800;color:var(--brown);letter-spacing:-0.02em;line-height:1; }
         .stok-item-info { display:flex;flex-direction:column;gap:1px; }
-        .stok-item-name { font-size:12.5px;font-weight:600;color:#1c1917;line-height:1.2; }
-        .stok-item-unit { font-size:11px;color:#78716c;font-weight:500; }
+        .stok-item-name { font-size:13px;font-weight:700;color:var(--text);line-height:1.2; }
+        .stok-item-unit { font-size:11px;color:var(--muted);font-weight:600; }
 
         .stok-empty-note {
-            font-size:13px;color:#a8a29e;
-            padding:10px 0 2px;
+            font-size:13.5px;color:var(--muted);
+            padding:8px 0 2px;
         }
 
         /* ── Table Card ──────────────────────── */
-        .table-card { background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden; }
-        .table-title { padding:14px 18px;border-bottom:1px solid #f5f0eb;font-size:13px;font-weight:700;color:#1c1917; }
+        .table-card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
+        .table-title { padding:14px 18px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
 
         table { width:100%;border-collapse:collapse; }
-        thead tr { background:#fafaf8;border-bottom:1px solid #ece8e3; }
-        th { padding:10px 16px;text-align:left;font-size:10px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.07em; }
-        td { padding:13px 16px;border-bottom:1px solid #f5f0eb;font-size:13px;color:#44403c;vertical-align:middle; }
+        thead tr { background:var(--cream);border-bottom:1px solid var(--border); }
+        th { padding:12px 18px;text-align:left;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em; }
+        td { padding:14px 18px;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text);vertical-align:middle; }
         tr:last-child td { border-bottom:none; }
-        tr:hover td { background:#fdfcfb; }
+        tr:hover td { background:var(--cream); }
 
-        .btn-link { font-size:12.5px;font-weight:600;color:#92400e;text-decoration:none; }
-        .btn-link:hover { text-decoration:underline; }
+        .btn-link { font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;transition:color 0.15s; }
+        .btn-link:hover { color:var(--brown); text-decoration:underline; }
+
+        /* Status Pills */
+        .badge-status {
+            font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;
+        }
+        .badge-lunas { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
+        .badge-dp { background:#fffbeb;color:#b45309;border:1px solid #fef3c7; }
+        .badge-piutang { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
 
         /* ── Empty ───────────────────────────── */
-        .empty-wrap { padding:56px 20px;text-align:center; }
-        .empty-emoji { font-size:34px;margin-bottom:10px;opacity:0.25; }
-        .empty-title { font-size:14px;font-weight:600;color:#78716c;margin-bottom:8px; }
-        .empty-cta { font-size:13px;color:#92400e;font-weight:600;text-decoration:none; }
+        .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border:1px solid var(--border); border-radius:12px; }
+        .empty-emoji { font-size:36px;margin-bottom:10px;opacity:0.3; }
+        .empty-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px; }
+        .empty-cta { font-size:13px;color:var(--accent);font-weight:700;text-decoration:none; }
         .empty-cta:hover { text-decoration:underline; }
 
+        /* ── Desktop/Mobile Dual Layout ──────── */
+        .desktop-only { display: block; }
+        .mobile-only { display: none; }
+
+        .mobile-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
+        }
+        .mobile-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .mobile-card-num {
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text);
+        }
+        .mobile-card-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .mobile-card-label {
+            color: var(--muted);
+            font-weight: 500;
+        }
+        .mobile-card-val {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .mobile-card-actions {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+            text-align: right;
+            opacity: 0.9;
+        }
+
         /* ── Responsive ──────────────────────── */
-        @media (max-width:640px) {
-            .stok-item { min-width:140px; }
+        @media (max-width: 767px) {
+            .desktop-only { display: none !important; }
+            .mobile-only { display: block !important; }
+            .stok-list {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 10px;
+                padding-bottom: 8px;
+            }
+            .stok-item {
+                flex-shrink: 0;
+                min-width: 170px;
+            }
         }
     </style>
 
@@ -116,8 +183,8 @@
         @endif
     </div>
 
-    {{-- ── Tabel Riwayat ──────────────────────── --}}
-    <div class="table-card">
+    {{-- ── Tabel Riwayat: Desktop ──────────────── --}}
+    <div class="table-card desktop-only">
         <div class="table-title">Semua Laporan Pengiriman</div>
         <table>
             <thead>
@@ -133,25 +200,25 @@
                 @forelse($reports as $r)
                 <tr>
                     <td>
-                        <span style="font-family:monospace;font-weight:700;color:#1c1917;font-size:12px;">{{ $r->report_number }}</span>
+                        <span style="font-family:monospace;font-weight:700;color:var(--text);font-size:12px;">{{ $r->report_number }}</span>
                     </td>
                     <td style="font-weight:600;">{{ $r->toko_name }}</td>
                     <td>
                         @if($r->payment_status === 'lunas')
-                            <span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:600;padding:4px 8px;border-radius:6px;">Lunas</span>
+                            <span class="badge-status badge-lunas">Lunas</span>
                         @elseif($r->payment_status === 'dp')
-                            <span style="background:#fef08a;color:#854d0e;font-size:11px;font-weight:600;padding:4px 8px;border-radius:6px;">DP</span>
+                            <span class="badge-status badge-dp">DP</span>
                         @else
-                            <span style="background:#fee2e2;color:#991b1b;font-size:11px;font-weight:600;padding:4px 8px;border-radius:6px;">Belum Bayar</span>
+                            <span class="badge-status badge-piutang">Belum Bayar</span>
                         @endif
                     </td>
-                    <td>{{ \Carbon\Carbon::parse($r->delivery_date)->format('d M Y') }}</td>
+                    <td style="color:var(--muted); font-weight: 500;">{{ \Carbon\Carbon::parse($r->delivery_date)->format('d M Y') }}</td>
                     <td><a href="{{ route('sales.delivery-reports.show', $r) }}" class="btn-link">Lihat →</a></td>
                 </tr>
                 @empty
                 <tr>
                     <td colspan="5">
-                        <div class="empty-wrap">
+                        <div class="empty-wrap" style="border:none;">
                             <div class="empty-emoji">🚚</div>
                             <div class="empty-title">Belum ada laporan pengiriman</div>
                             <a href="{{ route('sales.delivery-reports.create') }}" class="empty-cta">Buat Laporan Pertama →</a>
@@ -162,7 +229,46 @@
             </tbody>
         </table>
         @if($reports->hasPages())
-            <div style="padding:10px 16px;border-top:1px solid #f5f0eb;">{{ $reports->links() }}</div>
+            <div style="padding:10px 16px;border-top:1px solid var(--border);">{{ $reports->links() }}</div>
+        @endif
+    </div>
+
+    <!-- Mobile View (Card List) -->
+    <div class="mobile-only">
+        @forelse($reports as $r)
+            <div class="mobile-card">
+                <div class="mobile-card-header">
+                    <span class="mobile-card-num">{{ $r->report_number }}</span>
+                    @if($r->payment_status === 'lunas')
+                        <span class="badge-status badge-lunas">Lunas</span>
+                    @elseif($r->payment_status === 'dp')
+                        <span class="badge-status badge-dp">DP</span>
+                    @else
+                        <span class="badge-status badge-piutang">Belum Bayar</span>
+                    @endif
+                </div>
+                <div class="mobile-card-row">
+                    <span class="mobile-card-label">Toko:</span>
+                    <span class="mobile-card-val">{{ $r->toko_name }}</span>
+                </div>
+                <div class="mobile-card-row">
+                    <span class="mobile-card-label">Tanggal:</span>
+                    <span class="mobile-card-val">{{ \Carbon\Carbon::parse($r->delivery_date)->format('d M Y') }}</span>
+                </div>
+                <div class="mobile-card-actions">
+                    <a href="{{ route('sales.delivery-reports.show', $r) }}" class="btn-link">Lihat Detail →</a>
+                </div>
+            </div>
+        @empty
+            <div class="empty-wrap">
+                <div class="empty-emoji">🚚</div>
+                <div class="empty-title">Belum ada laporan pengiriman</div>
+                <a href="{{ route('sales.delivery-reports.create') }}" class="empty-cta">Buat Laporan Pertama →</a>
+            </div>
+        @endforelse
+
+        @if($reports->hasPages())
+            <div style="margin-top:12px;">{{ $reports->links() }}</div>
         @endif
     </div>
 

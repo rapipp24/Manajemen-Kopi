@@ -2,83 +2,87 @@
     <x-slot name="title">Buat Pengajuan Barang</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:18px; }
-        .back-link:hover { color:#1c1917; }
+        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:18px;transition:color 0.15s; }
+        .back-link:hover { color:var(--text); }
 
-        .page-title { font-size:20px;font-weight:700;color:#1c1917;letter-spacing:-0.03em;margin-bottom:3px; }
-        .page-desc  { font-size:13px;color:#78716c;margin-bottom:22px; }
+        .page-title { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px; }
+        .page-desc  { font-size:13.5px;color:var(--muted);margin-bottom:24px; }
 
         /* ── Layout ──────────────────────────── */
-        .layout { display:grid;grid-template-columns:296px 1fr;gap:16px;align-items:start; }
+        .layout { display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start; }
 
         /* ── Card ────────────────────────────── */
-        .card { background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden; }
-        .card + .card { margin-top:14px; }
-        .card-header { padding:13px 18px;border-bottom:1px solid #f5f0eb;background:#fafaf8; }
-        .card-header h3 { font-size:13px;font-weight:700;color:#1c1917;margin:0; }
-        .card-header p  { font-size:11.5px;color:#78716c;margin:2px 0 0; }
+        .card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.02); }
+        .card + .card { margin-top:16px; }
+        .card-header { padding:14px 18px;border-bottom:1px solid var(--border);background:var(--cream); }
+        .card-header h3 { font-size:13.5px;font-weight:700;color:var(--text);margin:0; }
+        .card-header p  { font-size:11.5px;color:var(--muted);margin:3px 0 0;font-weight:500; }
         .card-body { padding:16px 18px; }
 
         /* ── Form fields ─────────────────────── */
-        .field { margin-bottom:13px; }
+        .field { margin-bottom:14px; }
         .field:last-child { margin-bottom:0; }
-        label { display:block;font-size:11.5px;font-weight:600;color:#57534e;margin-bottom:4px; }
+        label { display:block;font-size:11.5px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px; }
         select, textarea, input[type="number"] {
-            width:100%;padding:8px 11px;border:1px solid #d6d3d1;border-radius:8px;
-            font-size:13px;font-family:inherit;background:#fff;color:#1c1917;
-            transition:border-color 0.12s,box-shadow 0.12s;
+            width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+            font-size:13px;font-family:inherit;background:#fff;color:var(--text);
+            transition:border-color 0.15s,box-shadow 0.15s;
         }
         select:focus, textarea:focus, input:focus {
-            outline:none;border-color:#92400e;box-shadow:0 0 0 3px rgba(146,64,14,0.09);
+            outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(197,160,89,0.12);
         }
 
         /* ── Add-item button ─────────────────── */
         .btn-add {
-            width:100%;padding:9px;background:#1c1917;color:#fff;
+            width:100%;padding:10px;background:var(--brown);color:#fff;
             border:none;border-radius:8px;font-size:13px;font-weight:700;
-            cursor:pointer;margin-top:6px;transition:background 0.12s;font-family:inherit;
+            cursor:pointer;margin-top:6px;transition:all 0.15s ease-in-out;font-family:inherit;
         }
-        .btn-add:hover { background:#2d2825; }
+        .btn-add:hover { background:var(--brown-hover); }
 
         /* ── Item list ───────────────────────── */
-        .item-empty { padding:44px 20px;text-align:center; }
-        .item-empty-emoji { font-size:28px;opacity:0.2;margin-bottom:8px; }
-        .item-empty p { font-size:12.5px;color:#a8a29e;line-height:1.5; }
+        .item-empty { padding:48px 20px;text-align:center; }
+        .item-empty-emoji { font-size:32px;opacity:0.25;margin-bottom:8px; }
+        .item-empty p { font-size:13px;color:var(--muted);line-height:1.5; }
 
         .item-row {
-            display:flex;align-items:center;gap:10px;
-            padding:11px 18px;border-bottom:1px solid #f5f0eb;
+            display:flex;align-items:center;gap:12px;
+            padding:12px 18px;border-bottom:1px solid var(--border);
+            transition: background 0.15s;
         }
+        .item-row:hover { background: var(--cream); }
         .item-row:last-child { border-bottom:none; }
-        .item-name { flex:1;font-size:13px;font-weight:600;color:#1c1917;line-height:1.3; }
-        .item-qty  { font-size:12.5px;font-weight:700;color:#57534e;min-width:26px;text-align:center; }
-        .item-est  { font-size:12px;color:#78716c;min-width:80px;text-align:right; }
-        .item-del  { background:none;border:none;color:#d6d3d1;cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;transition:color 0.12s; }
+        .item-name { flex:1;font-size:13.5px;font-weight:700;color:var(--text);line-height:1.4; }
+        .item-qty  { font-size:13px;font-weight:700;color:var(--text);min-width:32px;text-align:center;background:var(--brown-light);padding:2px 6px;border-radius:4px; }
+        .item-est  { font-size:13px;font-weight:700;color:var(--text);min-width:90px;text-align:right; }
+        .item-del  { background:none;border:none;color:#d6d3d1;cursor:pointer;font-size:20px;line-height:1;padding:2px 4px;transition:color 0.12s; }
         .item-del:hover { color:#ef4444; }
 
         /* ── Total & Submit ──────────────────── */
         .total-row {
             display:flex;justify-content:space-between;align-items:center;
-            padding:13px 18px;border-top:1px solid #ece8e3;background:#fafaf8;
+            padding:14px 18px;border-top:1px solid var(--border);background:var(--cream);
         }
-        .total-label { font-size:11px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:0.06em; }
-        .total-value { font-size:19px;font-weight:800;color:#92400e;letter-spacing:-0.02em; }
+        .total-label { font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
+        .total-value { font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
 
         .btn-submit {
-            width:100%;padding:11px;background:#92400e;color:#fff;border:none;
-            border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;
-            transition:background 0.12s,box-shadow 0.12s;font-family:inherit;
-            box-shadow:0 1px 3px rgba(146,64,14,0.25);
+            width:100%;padding:12px;background:var(--brown);color:#fff;border:none;
+            border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;
+            transition:all 0.15s ease-in-out;font-family:inherit;
+            box-shadow:0 2px 4px rgba(42,23,14,0.1);
         }
-        .btn-submit:hover { background:#78350f;box-shadow:0 3px 8px rgba(146,64,14,0.3); }
+        .btn-submit:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
 
         .badge-count {
-            background:#92400e;color:#fff;
-            padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;margin-left:5px;
+            background:var(--brown);color:#fff;
+            padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-left:6px;
         }
 
         /* ── Responsive ──────────────────────── */
-        @media (max-width:680px) { .layout { grid-template-columns:1fr; } }
+        @media (max-width:767px) { 
+            .layout { grid-template-columns:1fr; } 
+        }
     </style>
 
     <a href="{{ route('sales.orders.index') }}" class="back-link">← Kembali</a>

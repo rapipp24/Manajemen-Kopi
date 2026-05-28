@@ -2,60 +2,66 @@
     <x-slot name="title">Detail Pengajuan {{ $order->order_number }}</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none;margin-bottom:18px; }
-        .back-link:hover { color:#1c1917; }
+        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
+        .back-link:hover { color:var(--text); }
 
         /* ── Page heading ──────────────────── */
-        .order-heading { display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap; }
-        .order-number  { font-size:17px;font-weight:700;color:#1c1917;font-family:monospace;letter-spacing:0.02em; }
-        .badge { display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700; }
-        .badge-pending  { background:#fef3c7;color:#92400e; }
-        .badge-approved { background:#f0fdf4;color:#16a34a; }
-        .badge-done     { background:#eff6ff;color:#1d4ed8; }
-        .badge-canceled { background:#fef2f2;color:#dc2626; }
+        .order-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
+        .order-number  { font-size:17px;font-weight:700;color:var(--text);font-family:monospace;letter-spacing:0.02em; }
+        
+        .badge { display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;line-height:1.3;text-transform:uppercase;letter-spacing:0.04em; }
+        .badge-pending  { background:#fffbeb;color:#b45309;border:1px solid #fef3c7; }
+        .badge-approved { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
+        .badge-done     { background:#eff6ff;color:#1d4ed8;border:1px solid #dbeafe; }
+        .badge-canceled { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
 
         /* ── Layout ──────────────────────── */
-        .layout { display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start; }
+        .layout { display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start; }
 
         /* ── Card ────────────────────────── */
-        .card { background:#fff;border:1px solid #ece8e3;border-radius:12px;overflow:hidden; }
-        .card-header { padding:13px 18px;border-bottom:1px solid #f5f0eb;background:#fafaf8; }
-        .card-header h3 { font-size:13px;font-weight:700;color:#1c1917;margin:0; }
+        .card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
+        .card-header { padding:13px 18px;border-bottom:1px solid var(--border);background:var(--cream); }
+        .card-header h3 { font-size:13.5px;font-weight:700;color:var(--text);margin:0; }
 
         /* ── Table ───────────────────────── */
-        table { width:100%;border-collapse:collapse; }
-        th { padding:9px 18px;font-size:10px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid #f5f0eb;text-align:left; }
-        td { padding:13px 18px;border-bottom:1px solid #f5f0eb;font-size:13px; }
+        .table-scroll-container { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+        table { width:100%; border-collapse:collapse; }
+        thead tr { background:var(--cream); border-bottom:1px solid var(--border); }
+        th { padding:12px 18px; text-align:left; font-size:10px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; }
+        td { padding:14px 18px; border-bottom:1px solid var(--border); font-size:13.5px; color:var(--text); vertical-align:middle; }
         tr:last-child td { border-bottom:none; }
-        tr:hover td { background:#fdfcfb; }
+        tr:hover td { background:var(--cream); }
 
         /* ── Info panel ──────────────────── */
-        .info-row { display:flex;justify-content:space-between;align-items:baseline;padding:11px 16px;border-bottom:1px solid #f5f0eb; }
+        .info-row { display:flex;justify-content:space-between;align-items:baseline;padding:12px 18px;border-bottom:1px solid var(--border);font-size:13.5px; }
         .info-row:last-child { border-bottom:none; }
-        .info-label { font-size:11px;font-weight:700;color:#b9a99a;text-transform:uppercase;letter-spacing:0.05em; }
-        .info-value { font-size:13px;font-weight:600;color:#1c1917;text-align:right;max-width:58%; }
+        .info-label { font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em; }
+        .info-value { font-size:13.5px;font-weight:600;color:var(--text);text-align:right;max-width:58%; }
 
         /* ── Timeline ────────────────────── */
         .timeline { padding:14px 16px;display:flex;flex-direction:column;gap:12px; }
         .tl-row { display:flex;gap:10px;align-items:flex-start; }
         .tl-dot {
             width:9px;height:9px;border-radius:50%;
-            background:#e7e5e4;flex-shrink:0;margin-top:3px;
+            background:var(--border);flex-shrink:0;margin-top:3px;
             transition:background 0.2s;
         }
         .tl-dot.done { background:#16a34a; }
         .tl-text { flex:1; }
-        .tl-label { font-size:12.5px;color:#44403c;font-weight:500; }
-        .tl-time  { font-size:11.5px;color:#a8a29e;margin-top:1px; }
+        .tl-label { font-size:12.5px;color:var(--text);font-weight:600; }
+        .tl-time  { font-size:11.5px;color:var(--muted);margin-top:1px; }
 
         /* ── Note box ────────────────────── */
-        .note-box { padding:12px 18px;background:#fafaf8;border-top:1px solid #f5f0eb;font-size:12.5px;color:#78716c;font-style:italic; }
+        .note-box { padding:12px 18px;background:var(--cream);border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);font-style:italic; }
 
-        /* ── Responsive ──────────────────── */
-        @media (max-width:680px) { .layout { grid-template-columns:1fr; } }
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+        }
     </style>
 
-    <a href="{{ route('sales.orders.index') }}" class="back-link">← Kembali ke Riwayat</a>
+    <a href="{{ route('sales.orders.index') }}" class="back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Riwayat
+    </a>
 
     @php
         $statusMap = [
@@ -73,44 +79,47 @@
     </div>
 
     <div class="layout">
-
         {{-- Kiri: Daftar Produk --}}
         <div class="card">
-            <div class="card-header"><h3>Daftar Barang yang Diminta</h3></div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Produk</th>
-                        <th>Kemasan</th>
-                        <th style="text-align:center;">Qty</th>
-                        <th style="text-align:right;">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($order->items as $item)
-                    <tr>
-                        <td style="font-weight:600;color:#1c1917;">{{ $item->product->name }}</td>
-                        <td>
-                            <span style="background:#fdf3e7;border:1px solid #f0d9b5;color:#7a5c3e;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;">
-                                {{ $item->product->weight }} Gram
-                            </span>
-                        </td>
-                        <td style="text-align:center;font-weight:700;color:#1c1917;">{{ $item->qty }}</td>
-                        <td style="text-align:right;color:#78716c;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" style="text-align:right;font-size:10.5px;font-weight:700;color:#b9a99a;text-transform:uppercase;padding-top:12px;letter-spacing:0.06em;">
-                            Total Estimasi
-                        </td>
-                        <td style="text-align:right;font-size:17px;font-weight:800;color:#92400e;padding-top:12px;letter-spacing:-0.02em;">
-                            Rp {{ number_format($order->total, 0, ',', '.') }}
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="card-header">
+                <h3>Daftar Barang yang Diminta</h3>
+            </div>
+            <div class="table-scroll-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th>Kemasan</th>
+                            <th style="text-align:center;">Qty</th>
+                            <th style="text-align:right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($order->items as $item)
+                        <tr>
+                            <td style="font-weight:700;color:var(--text);">{{ $item->product->name }}</td>
+                            <td>
+                                <span style="background:var(--cream);border:1px solid var(--border);color:var(--text);font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;">
+                                    {{ $item->product->weight }} Gram
+                                </span>
+                            </td>
+                            <td style="text-align:center;font-weight:700;color:var(--text);">{{ $item->qty }} pcs</td>
+                            <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:var(--cream); font-weight:800; border-top: 1px solid var(--border);">
+                            <td colspan="3" style="text-align:right;font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">
+                                Total Estimasi
+                            </td>
+                            <td style="text-align:right;font-size:17px;font-weight:800;color:var(--brown);letter-spacing:-0.02em;">
+                                Rp {{ number_format($order->total, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
             @if($order->catatan)
             <div class="note-box">"{{ $order->catatan }}"</div>
             @endif
@@ -118,9 +127,10 @@
 
         {{-- Kanan: Info & Status --}}
         <div style="display:flex;flex-direction:column;gap:14px;">
-
             <div class="card">
-                <div class="card-header"><h3>Informasi Pengajuan</h3></div>
+                <div class="card-header">
+                    <h3>Informasi Pengajuan</h3>
+                </div>
                 <div class="info-row">
                     <span class="info-label">Tujuan</span>
                     <span class="info-value">{{ $order->customer->name ?? 'Stok Sales' }}</span>
@@ -132,7 +142,9 @@
             </div>
 
             <div class="card">
-                <div class="card-header"><h3>Status Persetujuan</h3></div>
+                <div class="card-header">
+                    <h3>Status Persetujuan</h3>
+                </div>
                 <div class="timeline">
                     <div class="tl-row">
                         <div class="tl-dot done"></div>
@@ -157,8 +169,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </x-layouts.user>
