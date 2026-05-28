@@ -93,18 +93,18 @@
                 margin-top: 16px !important;
             }
             body:not(.is-lx310-active) .item-table th {
-                background: #f8fafc !important;
-                padding: 10px 14px !important;
+                background: transparent !important;
+                padding: 10px 12px !important;
                 font-size: 10px !important;
                 color: #475569 !important;
-                border-top: 1px solid #e2e8f0 !important;
-                border-bottom: 2px solid #cbd5e1 !important;
+                border-top: none !important;
+                border-bottom: 1.5px solid #334155 !important;
                 text-transform: uppercase !important;
-                font-weight: 800 !important;
+                font-weight: 700 !important;
                 letter-spacing: 0.5px !important;
             }
             body:not(.is-lx310-active) .item-table td {
-                padding: 12px 14px !important;
+                padding: 12px 12px !important;
                 font-size: 11px !important;
                 border-bottom: 1px solid #e2e8f0 !important;
                 color: #1e293b !important;
@@ -115,13 +115,14 @@
             
             /* Grand Total Box styling for A4 Print */
             body:not(.is-lx310-active) .grand-total-box {
-                background: #fffbeb !important; /* Soft coffee tint cream */
-                color: #78350f !important;
-                border: 1px solid #fef3c7 !important;
-                border-left: 5px solid #d97706 !important; /* Elegant warm coffee gold left border */
-                border-radius: 8px !important;
-                padding: 16px 20px !important;
-                margin-top: 24px !important;
+                background: transparent !important;
+                color: #0f172a !important;
+                border: none !important;
+                border-top: 1.5px solid #0f172a !important;
+                border-bottom: 1.5px solid #0f172a !important;
+                border-radius: 0 !important;
+                padding: 12px 12px !important;
+                margin-top: 20px !important;
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: center !important;
@@ -129,15 +130,25 @@
             }
             body:not(.is-lx310-active) .grand-total-box span:first-child {
                 font-size: 11px !important;
-                font-weight: 800 !important;
+                font-weight: 700 !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.5px !important;
-                color: #b45309 !important;
+                color: #334155 !important;
             }
             body:not(.is-lx310-active) .grand-total-box span:last-child {
-                font-size: 20px !important;
+                font-size: 18px !important;
                 font-weight: 800 !important;
-                color: #78350f !important;
+                color: #0f172a !important;
+            }
+            
+            /* Receipt Note Box for A4 Print */
+            body:not(.is-lx310-active) .receipt-note-box {
+                background: transparent !important;
+                border: none !important;
+                border-left: 3px solid #64748b !important;
+                border-radius: 0 !important;
+                padding: 4px 12px !important;
+                margin-bottom: 20px !important;
             }
             
             /* Footer and Signatures for A4 Print */
@@ -336,6 +347,15 @@
                 font-size: 10px !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
+            
+            body.is-lx310-active #printArea.is-lx310 .receipt-note-box {
+                background: transparent !important;
+                border: none !important;
+                border-left: 1px dashed #000 !important;
+                border-radius: 0 !important;
+                padding: 4px 6px !important;
+                margin-bottom: 10px !important;
+            }
         }
         
         .print-header, .print-footer, .print-only-a4 { display: none !important; }
@@ -369,41 +389,41 @@
         </div>
 
         <!-- Header Khusus Cetak A4 (Arsip Resmi) -->
-        <div class="print-only-a4" style="margin-bottom: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 12px; border-bottom: 2px solid #0f172a;">
+        <div class="print-only-a4" style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 12px; border-bottom: 1.5px solid #0f172a;">
                 <div>
-                    <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
-                    <p style="font-size: 11px; color: #475569; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
+                    <h2 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
+                    <p style="font-size: 10px; color: #475569; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
                 </div>
                 <div style="text-align: right;">
-                    <h1 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">LAPORAN PENERIMAAN BARANG</h1>
-                    <p style="font-size: 10px; color: #475569; margin: 4px 0 0 0; font-weight: 500; font-family: 'Inter', sans-serif;">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
+                    <h1 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">LAPORAN PENERIMAAN BARANG</h1>
+                    <p style="font-size: 9.5px; color: #475569; margin: 4px 0 0 0; font-weight: 500; font-family: 'Inter', sans-serif;">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Informasi Transaksi A4 (Arsip Resmi) -->
-        <div class="print-only-a4" style="margin-bottom: 24px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 24px;">
+        <div class="print-only-a4" style="margin-bottom: 24px; padding: 12px 0 16px 0; border-bottom: 1px solid #cbd5e1;">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start;">
                 <div>
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Nomor Transaksi</span>
-                    <span style="font-size: 15px; font-weight: 800; color: #b45309;">{{ $receipt->receipt_number }}</span>
+                    <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Nomor Transaksi</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #0f172a;">{{ $receipt->receipt_number }}</span>
                 </div>
                 <div>
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Supplier</span>
-                    <span style="font-size: 12px; font-weight: 700; color: #0f172a;">{{ $receipt->supplier->name }}</span>
+                    <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Supplier</span>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #1e293b;">{{ $receipt->supplier->name }}</span>
                 </div>
                 <div>
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Tanggal Terima</span>
-                    <span style="font-size: 12px; font-weight: 600; color: #0f172a;">{{ date('d F Y', strtotime($receipt->receipt_date)) }}</span>
+                    <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Tanggal Terima</span>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #1e293b;">{{ date('d F Y', strtotime($receipt->receipt_date)) }}</span>
                 </div>
                 <div>
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">No. Nota / Surat Jalan</span>
-                    <span style="font-size: 12px; font-weight: 600; color: #0f172a;">
+                    <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">No. Nota / Surat Jalan</span>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #1e293b;">
                         @if($receipt->reference_number)
-                            <span style="background: #f0f9ff; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">{{ $receipt->reference_number }}</span>
+                            <span>{{ $receipt->reference_number }}</span>
                         @else
-                            <span style="color: #94a3b8; font-style: italic;">Tidak ada nota</span>
+                            <span style="color: #64748b; font-style: italic; font-weight: normal;">-</span>
                         @endif
                     </span>
                 </div>
@@ -443,7 +463,7 @@
             </div>
 
             @if($receipt->note)
-                <div style="margin-bottom: 32px; padding: 16px; background: #fcfaf8; border-radius: 8px; border-left: 4px solid #e7d8c5;">
+                <div class="receipt-note-box" style="margin-bottom: 32px; padding: 16px; background: #fcfaf8; border-radius: 8px; border-left: 4px solid #e7d8c5;">
                     <div class="info-label" style="margin-bottom: 4px;">Catatan Tambahan</div>
                     <div style="font-size: 14px; color: var(--text-mid); line-height: 1.5;">{{ $receipt->note }}</div>
                 </div>
