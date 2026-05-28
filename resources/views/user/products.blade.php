@@ -107,54 +107,59 @@
         /* ── Grid ────────────────────────────── */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
         }
 
         /* ── Product Card ────────────────────── */
         .product-card {
-            background: linear-gradient(180deg, #ffffff 0%, var(--cream) 100%);
+            background: #ffffff;
             border: 1px solid var(--border);
-            border-top: 3px solid var(--accent); /* Subtle premium gold top accent line */
-            border-radius: 12px;
-            padding: 18px 20px 20px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 2px solid rgba(197, 160, 89, 0.5); /* Subtle gold top accent line */
+            border-radius: 10px;
+            padding: 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            box-shadow: 0 2px 4px rgba(42, 23, 14, 0.02), 0 1px 1px rgba(42, 23, 14, 0.01);
+            box-shadow: 0 1px 3px rgba(42, 23, 14, 0.02);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             height: 100%;
-            min-height: 220px; /* Force uniform card heights for perfect grid alignment */
+            min-height: 160px; /* Reduced min-height to make it compact */
         }
 
         .product-card:hover {
             border-color: var(--accent);
-            box-shadow: 0 12px 24px -10px rgba(42, 23, 14, 0.12), 0 2px 4px rgba(42, 23, 14, 0.03);
-            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(42, 23, 14, 0.05);
+            transform: translateY(-2px);
         }
 
         .product-card.out-of-stock {
-            opacity: 0.9; /* Subtle treatment for out-of-stock items, readable and clean */
-            background: linear-gradient(180deg, #fdfdfd 0%, #f7f6f2 100%);
+            opacity: 0.95; /* Faded very subtly, card remains highly readable */
+        }
+
+        .product-card-top {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .product-category {
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             color: #8c7355; /* Muted warm brown */
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 6px;
+            margin-bottom: 2px;
             display: inline-block;
         }
 
         .product-name {
-            font-size: 16px;
+            font-size: 14.5px;
             font-weight: 700;
             color: var(--text);
-            line-height: 1.4;
-            margin-bottom: 8px;
+            line-height: 1.35;
+            margin-bottom: 2px;
             letter-spacing: -0.01em;
         }
 
@@ -162,57 +167,61 @@
         .product-weight {
             display: inline-flex;
             align-items: center;
-            font-size: 11px;
+            width: fit-content;
+            font-size: 10px;
             font-weight: 600;
             color: var(--muted);
-            background: #ffffff;
+            background: var(--cream);
             border: 1px solid var(--border);
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-bottom: 16px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
         }
 
         .product-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 12px 0 14px;
-            opacity: 0.4; /* Soft and thin */
+            display: none; /* Hide old visual divider line to avoid empty spaces */
+        }
+
+        .product-card-bottom {
+            border-top: 1px solid rgba(234, 227, 210, 0.6); /* Bottom area top border, soft and integrated */
+            padding-top: 10px;
+            margin-top: auto; /* Push bottom area fully down without stretching empty spaces */
         }
 
         .product-footer {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
         }
 
         .product-price-label {
-            font-size: 9.5px;
+            font-size: 9px;
             color: var(--muted);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .product-price {
-            font-size: 16px;
+            font-size: 14.5px;
             font-weight: 800;
             color: var(--brown);
             letter-spacing: -0.02em;
-            line-height: 1.1;
+            line-height: 1;
         }
 
         .product-stock {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 26px;
-            font-size: 11px;
+            height: 24px;
+            font-size: 10.5px;
             font-weight: 700;
-            padding: 0 10px;
-            border-radius: 6px;
+            padding: 0 8px;
+            border-radius: 4px;
             white-space: nowrap;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.01em;
         }
         .stock-ok   { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
         .stock-low  { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
@@ -221,23 +230,23 @@
         /* ── Empty ───────────────────────────── */
         .empty-wrap {
             text-align: center;
-            padding: 64px 20px;
+            padding: 48px 20px;
             background: #ffffff;
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
         }
-        .empty-emoji { font-size: 38px; margin-bottom: 12px; opacity: 0.3; }
-        .empty-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-        .empty-desc  { font-size: 13px; color: var(--muted); }
+        .empty-emoji { font-size: 32px; margin-bottom: 8px; opacity: 0.3; }
+        .empty-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .empty-desc  { font-size: 12.5px; color: var(--muted); }
 
         #empty-state-search {
             display: none;
             text-align: center;
-            padding: 64px 20px;
+            padding: 48px 20px;
             background: #ffffff;
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
         }
 

@@ -29,24 +29,32 @@
 
         /* ── Table Card ──────────────────────── */
         .table-card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
-        .table-title { padding:14px 18px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
+        .table-title { padding:12px 16px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
 
         table { width:100%;border-collapse:collapse; }
         thead tr { background:var(--cream);border-bottom:1px solid var(--border); }
-        th { padding:12px 18px;text-align:left;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em; }
-        td { padding:14px 18px;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text);vertical-align:middle; }
+        th { padding:10px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
+        td { padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle; }
         tr:last-child td { border-bottom:none; }
-        tr:hover td { background:var(--cream); }
+        tr:hover td { background:#faf8f5; }
 
         /* ── Status Badge ────────────────────── */
-        .badge { display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;line-height:1.3;text-transform:uppercase;letter-spacing:0.04em; }
-        .badge-pending  { background:#fffbeb;color:#b45309;border:1px solid #fef3c7; }
-        .badge-approved { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
+        .badge {
+            display:inline-flex;align-items:center;justify-content:center;
+            padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;
+            line-height:1.2;text-transform:uppercase;letter-spacing:0.04em;
+        }
+        .badge-pending  { background:#fffbeb;color:#d97706;border:1px solid #fde68a; }
+        .badge-approved { background:#ecfdf5;color:#047857;border:1px solid #a7f3d0; }
         .badge-done     { background:#eff6ff;color:#1d4ed8;border:1px solid #dbeafe; }
-        .badge-canceled { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
+        .badge-canceled { background:#fef2f2;color:#b91c1c;border:1px solid #fecaca; }
 
-        .btn-link { font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;transition:color 0.15s; }
-        .btn-link:hover { color:var(--brown); text-decoration:underline; }
+        .btn-link {
+            font-size:12.5px;font-weight:700;color:var(--brown);
+            text-decoration:none;transition:color 0.15s, opacity 0.15s;
+            display:inline-flex;align-items:center;gap:4px;cursor:pointer;
+        }
+        .btn-link:hover { color:var(--accent); text-decoration:underline; }
 
         /* ── Empty ───────────────────────────── */
         .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border-radius:12px; border:1px solid var(--border); }
@@ -63,7 +71,7 @@
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 16px;
+            padding: 12px 14px;
             margin-bottom: 12px;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
         }
@@ -71,19 +79,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .mobile-card-num {
             font-family: monospace;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--text);
         }
         .mobile-card-row {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 6px;
+            font-size: 12.5px;
+            margin-bottom: 4px;
         }
         .mobile-card-label {
             color: var(--muted);
@@ -94,11 +102,12 @@
             color: var(--text);
         }
         .mobile-card-actions {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(234, 227, 210, 0.5);
             text-align: right;
-            opacity: 0.9;
+            display: flex;
+            justify-content: flex-end;
         }
 
         /* ── Responsive ──────────────────────── */
@@ -179,7 +188,11 @@
                         <span class="badge {{ $cls }}">{{ $lbl }}</span>
                     </td>
                     <td style="color:var(--muted); font-weight: 500;">{{ $order->created_at->format('d M Y') }}</td>
-                    <td><a href="{{ route('sales.orders.show', $order) }}" class="btn-link">Lihat →</a></td>
+                    <td>
+                        <a href="{{ route('sales.orders.show', $order) }}" class="btn-link">
+                            Lihat <i data-lucide="chevron-right" style="width:12px;height:12px;"></i>
+                        </a>
+                    </td>
                 </tr>
                 @empty
                 <tr>
@@ -219,7 +232,9 @@
                     <span class="mobile-card-val">{{ $order->created_at->format('d M Y') }}</span>
                 </div>
                 <div class="mobile-card-actions">
-                    <a href="{{ route('sales.orders.show', $order) }}" class="btn-link">Lihat Detail →</a>
+                    <a href="{{ route('sales.orders.show', $order) }}" class="btn-link">
+                        Lihat Detail <i data-lucide="chevron-right" style="width:13px;height:13px;"></i>
+                    </a>
                 </div>
             </div>
         @empty
