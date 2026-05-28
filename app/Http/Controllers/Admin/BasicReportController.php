@@ -126,13 +126,8 @@ class BasicReportController extends Controller
 
             switch ($type) {
                 case 'raw_material':
-                    // Header Laporan
-                    fputcsv($file, ['LAPORAN PEMBELIAN BAHAN BAKU', '', '', '', '', ''], ';');
-                    fputcsv($file, ['Periode:', $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y'), '', '', '', ''], ';');
-                    fputcsv($file, [], ';');
-
-                    // Header Tabel (Pecah Qty & Satuan, Nominal angka mentah)
-                    fputcsv($file, ['Tanggal', 'Supplier', 'Bahan Baku', 'Qty', 'Satuan', 'Total Harga'], ';');
+                    // Header Tabel (Row 1)
+                    fputcsv($file, ['Tanggal', 'Supplier', 'Bahan', 'Qty', 'Satuan', 'Total'], ';');
 
                     // Data
                     $items = RawMaterialReceiptItem::whereHas('receipt', function ($q) use ($startDate, $endDate) {
@@ -155,14 +150,15 @@ class BasicReportController extends Controller
                             ], ';');
                         }
                     }
+
+                    // Metadata/Catatan di bawah tabel
+                    fputcsv($file, [], ';');
+                    fputcsv($file, ['Catatan', 'LAPORAN PEMBELIAN BAHAN BAKU periode ' . $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y')], ';');
                     break;
 
                 case 'production':
-                    fputcsv($file, ['LAPORAN PRODUKSI KOPI', '', '', '', ''], ';');
-                    fputcsv($file, ['Periode:', $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y'), '', '', ''], ';');
-                    fputcsv($file, [], ';');
-
-                    fputcsv($file, ['Tanggal', 'Nomor Batch', 'Bahan Digunakan', 'Hasil Produksi (gr)', 'Susut (gr)'], ';');
+                    // Header Tabel (Row 1)
+                    fputcsv($file, ['Tanggal', 'Nomor Batch', 'Bahan Digunakan', 'Hasil Produksi', 'Satuan Hasil', 'Susut'], ';');
 
                     $batches = ProductionBatch::whereBetween('production_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
                         ->with(['items.rawMaterial.unit'])
@@ -170,7 +166,7 @@ class BasicReportController extends Controller
                         ->get();
 
                     if ($batches->isEmpty()) {
-                        fputcsv($file, ['Tidak ada data pada periode ini', '', '', '', ''], ';');
+                        fputcsv($file, ['Tidak ada data pada periode ini', '', '', '', '', ''], ';');
                     } else {
                         foreach ($batches as $batch) {
                             $materialsStr = $batch->items->map(function ($item) {
@@ -182,18 +178,19 @@ class BasicReportController extends Controller
                                 $batch->batch_number,
                                 $materialsStr,
                                 $batch->total_output, // Qty mentah (gr)
+                                'gr', // Satuan hasil
                                 $batch->shrinkage // Susut mentah (gr)
                             ], ';');
                         }
                     }
+
+                    // Metadata/Catatan di bawah tabel
+                    fputcsv($file, [], ';');
+                    fputcsv($file, ['Catatan', 'LAPORAN PRODUKSI KOPI periode ' . $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y')], ';');
                     break;
 
                 case 'stock':
-                    fputcsv($file, ['LAPORAN STOK AKTUAL (REAL-TIME)', '', '', '', ''], ';');
-                    fputcsv($file, ['Kondisi per tanggal:', now()->format('d-m-Y H:i'), '', '', ''], ';');
-                    fputcsv($file, ['* Catatan: Laporan stok menunjukkan kondisi saat ini, bukan histori berdasarkan filter tanggal.', '', '', '', ''], ';');
-                    fputcsv($file, [], ';');
-
+                    // Header Tabel (Row 1)
                     fputcsv($file, ['Tipe Item', 'Nama Item', 'Stok Saat Ini', 'Satuan', 'Status'], ';');
 
                     $raws = RawMaterial::with('unit')->orderBy('name')->get();
@@ -224,15 +221,15 @@ class BasicReportController extends Controller
                             ], ';');
                         }
                     }
+
+                    // Metadata/Catatan di bawah tabel
+                    fputcsv($file, [], ';');
+                    fputcsv($file, ['Catatan', 'Laporan stok menunjukkan kondisi saat ini, bukan histori berdasarkan filter tanggal.'], ';');
                     break;
 
                 case 'sale':
-                    fputcsv($file, ['LAPORAN PENJUALAN RETAIL/DIRECT ADMIN', '', '', ''], ';');
-                    fputcsv($file, ['Periode:', $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y'), '', '', ''], ';');
-                    fputcsv($file, ['* Catatan: Penjualan dari Sales Lapangan disetorkan terpisah (tidak masuk direct invoice).', '', '', ''], ';');
-                    fputcsv($file, [], ';');
-
-                    fputcsv($file, ['Tanggal Penjualan', 'Nomor Invoice', 'Customer', 'Total Penjualan'], ';');
+                    // Header Tabel (Row 1)
+                    fputcsv($file, ['Tanggal', 'Invoice', 'Customer', 'Total'], ';');
 
                     $sales = Sale::whereBetween('sale_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
                         ->with('customer')
@@ -251,14 +248,15 @@ class BasicReportController extends Controller
                             ], ';');
                         }
                     }
+
+                    // Metadata/Catatan di bawah tabel
+                    fputcsv($file, [], ';');
+                    fputcsv($file, ['Catatan', 'LAPORAN PENJUALAN RETAIL/DIRECT ADMIN periode ' . $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y') . '. Penjualan dari Sales Lapangan disetorkan terpisah.'], ';');
                     break;
 
                 case 'order':
-                    fputcsv($file, ['LAPORAN PENGAJUAN BARANG SALES', '', '', '', ''], ';');
-                    fputcsv($file, ['Periode:', $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y'), '', '', ''], ';');
-                    fputcsv($file, [], ';');
-
-                    fputcsv($file, ['Tanggal Pengajuan', 'Sales Pengaju', 'Produk Detail', 'Status Pengajuan', 'Total Nilai'], ';');
+                    // Header Tabel (Row 1)
+                    fputcsv($file, ['Tanggal', 'User', 'Produk', 'Status', 'Total'], ';');
 
                     $orders = SalesOrder::whereBetween('created_at', [$startDate, $endDate])
                         ->with(['sales', 'items.product'])
@@ -274,7 +272,7 @@ class BasicReportController extends Controller
                             })->implode(', ');
 
                             fputcsv($file, [
-                                $order->created_at->format('d-m-Y H:i'),
+                                Carbon::parse($order->created_at)->format('d-m-Y'),
                                 $order->sales->name ?? '—',
                                 $productsStr,
                                 ucfirst($order->status),
@@ -282,6 +280,10 @@ class BasicReportController extends Controller
                             ], ';');
                         }
                     }
+
+                    // Metadata/Catatan di bawah tabel
+                    fputcsv($file, [], ';');
+                    fputcsv($file, ['Catatan', 'LAPORAN PENGAJUAN BARANG SALES periode ' . $startDate->format('d-m-Y') . ' s/d ' . $endDate->format('d-m-Y')], ';');
                     break;
             }
 
