@@ -88,7 +88,7 @@ class PackingController extends Controller
      */
     public function create()
     {
-        $products    = Product::where('is_active', true)->orderBy('name')->get();
+        $products    = Product::with('productCategory')->where('is_active', true)->orderBy('name')->get();
         $curahStocks = $this->getCurahStockAll(); // array per jenis
 
         return view('admin.packings.create', compact('products', 'curahStocks'));
@@ -111,10 +111,26 @@ class PackingController extends Controller
 
         $curahType = $request->curah_type;
 
-        // ── 2. Hitung total berat yang akan dipakai (kg) ─────────────────────
+        // ── 2. Hitung total berat & validasi kesesuaian jenis curah dengan jenis produk ──────────
         $totalBeratKg = 0;
         foreach ($request->items as $item) {
-            $product = Product::find($item['product_id']);
+            $product = Product::with('productCategory')->find($item['product_id']);
+            
+            if (!$product->productCategory) {
+                return back()->withInput()->with(
+                    'error',
+                    "Kategori untuk produk \"{$product->name}\" tidak ditemukan."
+                );
+            }
+            
+            $productCategoryName = trim($product->productCategory->name);
+            if (strcasecmp($productCategoryName, trim($curahType)) !== 0) {
+                return back()->withInput()->with(
+                    'error',
+                    "Produk hasil packing harus memiliki jenis produk yang sama dengan sumber curah."
+                );
+            }
+
             $totalBeratKg += ($item['qty_pack'] * $product->weight) / 1000;
         }
 

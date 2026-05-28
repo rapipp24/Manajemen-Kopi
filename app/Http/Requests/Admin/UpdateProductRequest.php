@@ -28,7 +28,14 @@ class UpdateProductRequest extends FormRequest
                 'string', 
                 'min:3', 
                 'max:50', 
-                'unique:products,name,' . $productId . ',id,deleted_at,NULL',
+                Rule::unique('products', 'name')
+                    ->ignore($this->route('product'))
+                    ->where(fn ($query) => $query
+                        ->where('product_category_id', $this->input('product_category_id'))
+                        ->where('weight', $this->input('weight'))
+                        ->where('unit_id', $this->input('unit_id'))
+                        ->whereNull('deleted_at')
+                    ),
                 'regex:/^[a-zA-Z0-9\s\.\(\)\-]+$/'
             ],
             'product_category_id' => [
@@ -41,6 +48,13 @@ class UpdateProductRequest extends FormRequest
             'cost_price' => 'nullable|numeric|min:0',
             'price' => 'required|numeric|min:0',
             'is_active' => 'boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'Produk dengan nama, jenis, berat, dan satuan yang sama sudah ada.',
         ];
     }
 }

@@ -66,6 +66,10 @@
                 </div>
                 @error('items') <div style="color:#ef4444;font-size:13px;margin-bottom:10px;">{{ $message }}</div> @enderror
 
+                <div id="no-product-warning" style="display: none; background: #fff5f5; border: 1px solid #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
+                    ⚠ Belum ada produk untuk jenis curah ini. Tambahkan produk dengan jenis yang sesuai terlebih dahulu.
+                </div>
+
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
@@ -85,7 +89,9 @@
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}"
                                                 data-weight="{{ $product->weight }}"
-                                                data-stok="{{ $product->current_stock }}">
+                                                data-stok="{{ $product->current_stock }}"
+                                                data-category-name="{{ $product->productCategory->name ?? '' }}"
+                                                data-category-id="{{ $product->product_category_id ?? '' }}">
                                             {{ $product->name }}
                                             @if($product->variant) ({{ $product->variant }}) @endif
                                             — {{ $product->weight }}gr
@@ -141,6 +147,67 @@
         let barisIndex = 1;
         let currentCurahStock = 0;
 
+        function showProductWarning(show) {
+            const warningEl = document.getElementById('no-product-warning');
+            if (warningEl) {
+                warningEl.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        function populateProductDropdown(selectEl, selectedCategoryName) {
+            const currentValue = selectEl.value;
+            
+            // Clear existing options
+            selectEl.innerHTML = '<option value="">-- Pilih Produk --</option>';
+            
+            if (!selectedCategoryName) {
+                return;
+            }
+            
+            // Filter products
+            const filtered = Object.values(dataProducts).filter(p => {
+                const catName = p.product_category ? p.product_category.name.trim() : '';
+                return catName.toLowerCase() === selectedCategoryName.trim().toLowerCase();
+            });
+            
+            if (filtered.length === 0) {
+                selectEl.innerHTML += '<option value="" disabled>Belum ada produk untuk jenis curah ini.</option>';
+            } else {
+                filtered.forEach(p => {
+                    const selectedAttr = currentValue == p.id ? 'selected' : '';
+                    selectEl.innerHTML += `<option value="${p.id}" 
+                                                   data-weight="${p.weight}" 
+                                                   data-stok="${p.current_stock}"
+                                                   data-category-name="${p.product_category ? p.product_category.name : ''}"
+                                                   data-category-id="${p.product_category_id || ''}"
+                                                   ${selectedAttr}>
+                        ${p.name}${p.variant ? ' (' + p.variant + ')' : ''} — ${p.weight}gr
+                    </option>`;
+                });
+            }
+        }
+
+        function filterAllProductDropdowns() {
+            const type = document.getElementById('curah_type').value;
+            const selects = document.querySelectorAll('.select-produk');
+            
+            let totalMatchingProducts = 0;
+            if (type) {
+                totalMatchingProducts = Object.values(dataProducts).filter(p => {
+                    const catName = p.product_category ? p.product_category.name.trim() : '';
+                    return catName.toLowerCase() === type.trim().toLowerCase();
+                }).length;
+            }
+            
+            showProductWarning(type && totalMatchingProducts === 0);
+            
+            selects.forEach(select => {
+                populateProductDropdown(select, type);
+                hitungBaris(select);
+            });
+            hitungTotalCurah();
+        }
+
         function updateCurahStock() {
             const type = document.getElementById('curah_type').value;
             const infoBox = document.getElementById('info-stok-curah');
@@ -156,17 +223,13 @@
                 currentCurahStock = 0;
                 infoBox.style.display = 'none';
             }
-            hitungTotalCurah();
+            
+            filterAllProductDropdowns();
         }
 
         function tambahBaris() {
             const tbody = document.getElementById('tbody-items');
             const idx   = barisIndex++;
-            const opts  = Object.values(dataProducts).map(p =>
-                `<option value="${p.id}" data-weight="${p.weight}" data-stok="${p.current_stock}">
-                    ${p.name}${p.variant ? ' (' + p.variant + ')' : ''} — ${p.weight}gr
-                </option>`
-            ).join('');
 
             const tr = document.createElement('tr');
             tr.className = 'baris-item';
@@ -175,7 +238,7 @@
                     <select name="items[${idx}][product_id]" required class="select-produk"
                             style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;background:white;"
                             onchange="hitungBaris(this); hitungTotalCurah()">
-                        <option value="">-- Pilih Produk --</option>${opts}
+                        <option value="">-- Pilih Produk --</option>
                     </select>
                 </td>
                 <td style="padding:8px 6px;">
@@ -192,6 +255,10 @@
                             style="background:#fff1f2;border:1px solid #ffe4e6;color:#be123c;padding:7px 10px;border-radius:6px;font-size:12px;cursor:pointer;">✕</button>
                 </td>`;
             tbody.appendChild(tr);
+            
+            const newSelect = tr.querySelector('.select-produk');
+            const curahType = document.getElementById('curah_type').value;
+            populateProductDropdown(newSelect, curahType);
         }
 
         function hapusBaris(btn) {

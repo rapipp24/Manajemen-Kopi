@@ -20,7 +20,13 @@ class StoreProductRequest extends FormRequest
                 'string', 
                 'min:3', 
                 'max:50', 
-                'unique:products,name,NULL,id,deleted_at,NULL',
+                Rule::unique('products', 'name')
+                    ->where(fn ($query) => $query
+                        ->where('product_category_id', $this->input('product_category_id'))
+                        ->where('weight', $this->input('weight'))
+                        ->where('unit_id', $this->input('unit_id'))
+                        ->whereNull('deleted_at')
+                    ),
                 'regex:/^[a-zA-Z0-9\s\.\(\)\-]+$/'
             ],
             'product_category_id' => [
@@ -32,6 +38,13 @@ class StoreProductRequest extends FormRequest
             'unit_id' => 'required|exists:units,id',
             'cost_price' => 'nullable|numeric|min:0',
             'price' => 'required|numeric|min:0',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'Produk dengan nama, jenis, berat, dan satuan yang sama sudah ada.',
         ];
     }
 }
