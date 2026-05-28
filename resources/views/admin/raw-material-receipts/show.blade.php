@@ -25,15 +25,18 @@
 
         /* ═══════════════ PRINT STYLES ═══════════════ */
         @media print {
-            /* Gaya Cetak Default A4 (Arsip HVS Bersih & Elegan) */
+            /* ─── GAYA DEFAULT UNTUK A4 (ARSIP RESMI HVS) ─── */
             body {
                 font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-                font-size: 13px !important;
-                color: #1c1917 !important;
+                font-size: 11px !important;
+                color: #0f172a !important;
                 background: white !important;
                 margin: 0 !important;
-                padding: 20px !important;
-                line-height: 1.4 !important;
+                padding: 0 !important;
+                line-height: 1.5 !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
             }
             .sidebar, .topbar, .btn-action, .btn-back, .no-print, .btn-a5, .btn-print, .alert-print-area {
                 display: none !important;
@@ -47,125 +50,117 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 min-height: auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                display: block !important;
             }
             .card {
-                border: 1px solid #e7e5e4 !important;
+                border: none !important;
                 box-shadow: none !important;
-                margin: 0 auto !important;
-                padding: 24px !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 background: white !important;
-                max-width: 800px !important;
-                border-radius: 8px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 0 !important;
             }
-            .card-header {
-                background: #fcfaf8 !important;
-                padding: 16px 20px !important;
-                border-bottom: 1px solid #e7e5e4 !important;
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
+            
+            /* A4 Print Elements Custom Rules */
+            body:not(.is-lx310-active) .print-only-a4 {
+                display: block !important;
             }
-            .card-header h1 {
-                font-size: 16px !important;
-                font-weight: 800 !important;
-                color: #2c1a0e !important;
-            }
-            .card-header span {
-                font-size: 14px !important;
-                font-weight: bold !important;
-                color: #92400e !important;
-            }
-            .card-body {
-                padding: 20px 0 !important;
-            }
-            .info-grid {
+            body:not(.is-lx310-active) .print-only-a4-grid {
                 display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 20px !important;
-                margin-bottom: 24px !important;
-                border-bottom: 1px solid #f5f0eb !important;
-                padding-bottom: 16px !important;
             }
-            .info-label {
-                font-size: 10px !important;
-                color: #78716c !important;
-                font-weight: bold !important;
-                margin-bottom: 4px !important;
+            body:not(.is-lx310-active) .card-header {
+                display: none !important;
             }
-            .info-value {
-                font-size: 13px !important;
-                font-weight: 600 !important;
-                color: #1c1917 !important;
+            body:not(.is-lx310-active) .info-grid {
+                display: none !important;
             }
-            .item-table th {
+            body:not(.is-lx310-active) .print-header {
+                display: none !important;
+            }
+            
+            .card-body {
+                padding: 0 !important;
+            }
+            
+            /* Table Styling for A4 Print */
+            body:not(.is-lx310-active) .item-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin-top: 16px !important;
+            }
+            body:not(.is-lx310-active) .item-table th {
                 background: #f8fafc !important;
                 padding: 10px 14px !important;
-                font-size: 11px !important;
-                color: #6b4c35 !important;
-                border-bottom: 1px solid #e7e5e4 !important;
+                font-size: 10px !important;
+                color: #475569 !important;
+                border-top: 1px solid #e2e8f0 !important;
+                border-bottom: 2px solid #cbd5e1 !important;
+                text-transform: uppercase !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
             }
-            .item-table td {
+            body:not(.is-lx310-active) .item-table td {
                 padding: 12px 14px !important;
-                font-size: 13px !important;
-                border-bottom: 1px solid #f8fafc !important;
-                color: #1c1917 !important;
+                font-size: 11px !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                color: #1e293b !important;
             }
-            .item-table tr:last-child td {
-                border-bottom: none !important;
+            body:not(.is-lx310-active) .item-table tr:last-child td {
+                border-bottom: 1px solid #e2e8f0 !important;
             }
-            .grand-total-box {
-                background: #1a1512 !important;
-                color: white !important;
+            
+            /* Grand Total Box styling for A4 Print */
+            body:not(.is-lx310-active) .grand-total-box {
+                background: #fffbeb !important; /* Soft coffee tint cream */
+                color: #78350f !important;
+                border: 1px solid #fef3c7 !important;
+                border-left: 5px solid #d97706 !important; /* Elegant warm coffee gold left border */
                 border-radius: 8px !important;
                 padding: 16px 20px !important;
-                margin-top: 20px !important;
+                margin-top: 24px !important;
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: center !important;
-            }
-            .grand-total-box span:first-child {
-                font-size: 13px !important;
-                font-weight: 600 !important;
-            }
-            .grand-total-box span:last-child {
-                font-size: 20px !important;
-                font-weight: 800 !important;
-            }
-            .print-header {
-                display: block !important;
-                margin-bottom: 20px !important;
-                text-align: center !important;
-                border-bottom: 2px solid #2c1a0e !important;
-                padding-bottom: 12px !important;
-            }
-            .print-header h1 {
-                font-size: 18px !important;
-                font-weight: 800 !important;
-                margin: 0 0 6px 0 !important;
-                color: #2c1a0e !important;
-            }
-            .print-header p {
-                font-size: 12px !important;
-                margin: 0 !important;
-                color: #6b4c35 !important;
-            }
-            .print-footer {
-                display: flex !important;
-                justify-content: space-between !important;
-                margin-top: 30px !important;
                 page-break-inside: avoid !important;
             }
-            .signature-box {
-                text-align: center !important;
-                width: 200px !important;
-                font-size: 12px !important;
+            body:not(.is-lx310-active) .grand-total-box span:first-child {
+                font-size: 11px !important;
+                font-weight: 800 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                color: #b45309 !important;
             }
-            .signature-line {
-                margin-top: 50px !important;
-                border-top: 1px solid #78716c !important;
+            body:not(.is-lx310-active) .grand-total-box span:last-child {
+                font-size: 20px !important;
+                font-weight: 800 !important;
+                color: #78350f !important;
+            }
+            
+            /* Footer and Signatures for A4 Print */
+            body:not(.is-lx310-active) .print-footer {
+                display: flex !important;
+                justify-content: space-between !important;
+                margin-top: 48px !important;
+                page-break-inside: avoid !important;
+            }
+            body:not(.is-lx310-active) .signature-box {
+                text-align: center !important;
+                width: 220px !important;
+                font-size: 11px !important;
+                color: #475569 !important;
+            }
+            body:not(.is-lx310-active) .signature-line {
+                margin-top: 64px !important;
+                border-top: 1.2px solid #475569 !important;
                 padding-top: 6px !important;
-                font-weight: bold !important;
-                font-size: 12px !important;
+                font-weight: 700 !important;
+                font-size: 11.5px !important;
+                color: #0f172a !important;
+                text-transform: uppercase !important;
             }
 
             /* ═══════════════ CETAK OPTIMASI EPSON LX-310 OVERRIDES ═══════════════ */
@@ -177,9 +172,10 @@
                 margin: 0 !important;
                 padding: 5px !important;
                 line-height: 1.2 !important;
+                display: block !important;
             }
             
-            #printArea.is-lx310 {
+            body.is-lx310-active #printArea.is-lx310 {
                 border: none !important;
                 box-shadow: none !important;
                 margin: 0 !important;
@@ -187,36 +183,38 @@
                 background: white !important;
                 max-width: 100% !important;
                 width: 100% !important;
+                border-radius: 0 !important;
             }
             
-            #printArea.is-lx310 .card-header {
+            body.is-lx310-active #printArea.is-lx310 .card-header {
                 background: white !important;
                 padding: 0 0 6px 0 !important;
                 border-bottom: 1px dashed #000 !important;
                 display: flex !important;
                 justify-content: space-between !important;
                 align-items: flex-end !important;
+                margin-bottom: 12px !important;
             }
             
-            #printArea.is-lx310 .card-header h1 {
+            body.is-lx310-active #printArea.is-lx310 .card-header h1 {
                 font-size: 12px !important;
                 font-weight: bold !important;
                 color: #000 !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .card-header span {
+            body.is-lx310-active #printArea.is-lx310 .card-header span {
                 font-size: 11px !important;
                 font-weight: bold !important;
                 color: #000 !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .card-body {
+            body.is-lx310-active #printArea.is-lx310 .card-body {
                 padding: 6px 0 !important;
             }
             
-            #printArea.is-lx310 .info-grid {
+            body.is-lx310-active #printArea.is-lx310 .info-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
                 gap: 10px !important;
@@ -225,22 +223,23 @@
                 padding-bottom: 6px !important;
             }
             
-            #printArea.is-lx310 .info-label {
+            body.is-lx310-active #printArea.is-lx310 .info-label {
                 font-size: 9px !important;
                 color: #444 !important;
                 font-weight: bold !important;
                 margin-bottom: 2px !important;
                 font-family: 'Courier New', Courier, monospace !important;
+                text-transform: uppercase !important;
             }
             
-            #printArea.is-lx310 .info-value {
+            body.is-lx310-active #printArea.is-lx310 .info-value {
                 font-size: 10px !important;
                 font-weight: bold !important;
                 color: #000 !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .item-table th {
+            body.is-lx310-active #printArea.is-lx310 .item-table th {
                 background: transparent !important;
                 padding: 4px 6px !important;
                 font-size: 10px !important;
@@ -248,9 +247,11 @@
                 border-top: 1px dashed #000 !important;
                 border-bottom: 1px dashed #000 !important;
                 font-family: 'Courier New', Courier, monospace !important;
+                text-transform: uppercase !important;
+                font-weight: bold !important;
             }
             
-            #printArea.is-lx310 .item-table td {
+            body.is-lx310-active #printArea.is-lx310 .item-table td {
                 padding: 4px 6px !important;
                 font-size: 10px !important;
                 border-bottom: 1px dashed #eee !important;
@@ -258,11 +259,11 @@
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .item-table tr:last-child td {
+            body.is-lx310-active #printArea.is-lx310 .item-table tr:last-child td {
                 border-bottom: none !important;
             }
             
-            #printArea.is-lx310 .grand-total-box {
+            body.is-lx310-active #printArea.is-lx310 .grand-total-box {
                 background: transparent !important;
                 color: #000 !important;
                 border-top: 1px dashed #000 !important;
@@ -277,19 +278,20 @@
                 align-items: center !important;
             }
             
-            #printArea.is-lx310 .grand-total-box span:first-child {
+            body.is-lx310-active #printArea.is-lx310 .grand-total-box span:first-child {
                 font-size: 10px !important;
                 font-weight: bold !important;
                 font-family: 'Courier New', Courier, monospace !important;
+                text-transform: uppercase !important;
             }
             
-            #printArea.is-lx310 .grand-total-box span:last-child {
+            body.is-lx310-active #printArea.is-lx310 .grand-total-box span:last-child {
                 font-size: 13px !important;
                 font-weight: bold !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .print-header {
+            body.is-lx310-active #printArea.is-lx310 .print-header {
                 display: block !important;
                 margin-bottom: 10px !important;
                 text-align: center !important;
@@ -297,7 +299,7 @@
                 padding-bottom: 6px !important;
             }
             
-            #printArea.is-lx310 .print-header h1 {
+            body.is-lx310-active #printArea.is-lx310 .print-header h1 {
                 font-size: 13px !important;
                 font-weight: bold !important;
                 margin: 0 0 2px 0 !important;
@@ -305,28 +307,28 @@
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .print-header p {
+            body.is-lx310-active #printArea.is-lx310 .print-header p {
                 font-size: 9px !important;
                 margin: 0 !important;
                 color: #000 !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .print-footer {
+            body.is-lx310-active #printArea.is-lx310 .print-footer {
                 display: flex !important;
                 justify-content: space-between !important;
                 margin-top: 20px !important;
                 page-break-inside: avoid !important;
             }
             
-            #printArea.is-lx310 .signature-box {
+            body.is-lx310-active #printArea.is-lx310 .signature-box {
                 text-align: center !important;
                 width: 150px !important;
                 font-size: 10px !important;
                 font-family: 'Courier New', Courier, monospace !important;
             }
             
-            #printArea.is-lx310 .signature-line {
+            body.is-lx310-active #printArea.is-lx310 .signature-line {
                 margin-top: 35px !important;
                 border-top: 1px solid #000 !important;
                 padding-top: 2px !important;
@@ -336,7 +338,7 @@
             }
         }
         
-        .print-header, .print-footer { display: none; }
+        .print-header, .print-footer, .print-only-a4 { display: none !important; }
     </style>
 
 
@@ -364,6 +366,48 @@
             <h1 style="font-size: 24px; font-family: 'Inter', sans-serif; font-weight: 700; color: #000;">LAPORAN PENERIMAAN BARANG</h1>
             <p style="font-size: 14px; color: #000;">KOPI ELANG EMAS - PANEL MANAJEMEN</p>
             <p style="font-size: 12px; margin-top: 5px;">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
+        </div>
+
+        <!-- Header Khusus Cetak A4 (Arsip Resmi) -->
+        <div class="print-only-a4" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 12px; border-bottom: 2px solid #0f172a;">
+                <div>
+                    <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
+                    <p style="font-size: 11px; color: #475569; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <h1 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">LAPORAN PENERIMAAN BARANG</h1>
+                    <p style="font-size: 10px; color: #475569; margin: 4px 0 0 0; font-weight: 500; font-family: 'Inter', sans-serif;">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informasi Transaksi A4 (Arsip Resmi) -->
+        <div class="print-only-a4" style="margin-bottom: 24px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 24px;">
+                <div>
+                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Nomor Transaksi</span>
+                    <span style="font-size: 15px; font-weight: 800; color: #b45309;">{{ $receipt->receipt_number }}</span>
+                </div>
+                <div>
+                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Supplier</span>
+                    <span style="font-size: 12px; font-weight: 700; color: #0f172a;">{{ $receipt->supplier->name }}</span>
+                </div>
+                <div>
+                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Tanggal Terima</span>
+                    <span style="font-size: 12px; font-weight: 600; color: #0f172a;">{{ date('d F Y', strtotime($receipt->receipt_date)) }}</span>
+                </div>
+                <div>
+                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">No. Nota / Surat Jalan</span>
+                    <span style="font-size: 12px; font-weight: 600; color: #0f172a;">
+                        @if($receipt->reference_number)
+                            <span style="background: #f0f9ff; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">{{ $receipt->reference_number }}</span>
+                        @else
+                            <span style="color: #94a3b8; font-style: italic;">Tidak ada nota</span>
+                        @endif
+                    </span>
+                </div>
+            </div>
         </div>
 
         <div class="card-header">
@@ -502,7 +546,7 @@
             const style = getOrCreateDynamicStyle();
             style.innerHTML = `
                 @media print {
-                    @page { size: A4 portrait; margin: 0.8cm; }
+                    @page { size: A4 portrait; margin: 14mm; }
                 }
             `;
 
