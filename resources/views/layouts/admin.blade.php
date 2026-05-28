@@ -188,15 +188,62 @@
         }
 
         /* ── Responsive ──────────────────────────── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 95;
+        }
+        .sidebar-overlay.open {
+            display: block;
+        }
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #475569;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .menu-toggle:hover {
+            background: #f1f5f9;
+        }
+        .menu-toggle svg {
+            width: 22px;
+            height: 22px;
+        }
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-260px); }
             .sidebar.open { transform: translateX(0); }
-            .topbar { left: 0; }
-            .main-wrapper { margin-left: 0; }
+            .topbar { left: 0; padding: 0 16px; }
+            .menu-toggle { display: block; }
+            .main-wrapper { margin-left: 0; padding: 16px; }
+
+            /* Global Responsive Tables & Cards Patch for Mobile PWA */
+            div[style*="overflow: hidden"], 
+            div[style*="overflow:hidden"] {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Force inline grids to collapse to 1 column on mobile to prevent squeezing */
+            div[style*="display: grid"][style*="grid-template-columns"],
+            div[style*="display:grid"][style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -348,7 +395,12 @@
 
     <!-- Topbar -->
     <header class="topbar">
-        <div class="topbar-left">
+        <div class="topbar-left" style="display:flex; align-items:center; gap:12px;">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
             <h2>{{ $title ?? 'Dashboard' }}</h2>
         </div>
         <div class="topbar-right">
@@ -384,5 +436,13 @@
         {{ $slot }}
     </main>
 
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>

@@ -156,6 +156,21 @@
         /* ── Typo ── */
         .label-small { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
         .val-large { font-size: 24px; font-weight: 800; color: #1e293b; }
+
+        /* ── Responsive Spacing ── */
+        @media (max-width: 1024px) {
+            .top-section {
+                grid-template-columns: 1fr;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 
     <div class="dashboard-container">

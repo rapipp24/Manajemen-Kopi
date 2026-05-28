@@ -2,36 +2,49 @@
     <style>
         .form-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 32px;
         }
 
         .lock-icon-container {
-            width: 54px;
-            height: 54px;
-            background: #fdfae9;
+            width: 52px;
+            height: 52px;
+            background: #fdf6e3;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px;
+            margin: 0 auto 16px;
             color: #1a1512;
         }
 
         .header-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             color: #1a1512;
-            margin-bottom: 6px;
-            letter-spacing: -0.8px;
+            margin: 0 0 6px;
+            letter-spacing: -0.5px;
         }
 
         .header-sub {
             font-size: 14px;
-            color: #64748b;
+            color: #78716c;
+            margin: 0;
         }
 
+        /* ── Error Alert ─────────────────────────── */
+        .auth-error-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #dc2626;
+        }
+
+        /* ── Input Fields ────────────────────────── */
         .input-wrapper {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .input-label {
@@ -39,17 +52,17 @@
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #1a1512;
-            margin-bottom: 10px;
+            letter-spacing: 0.8px;
+            color: #57534e;
+            margin-bottom: 8px;
         }
 
         .field-container {
             position: relative;
             display: flex;
             align-items: center;
-            border-bottom: 2px solid #f1f5f9; /* Garis lebih tebal sedikit untuk kontras */
-            transition: all 0.3s ease;
+            border-bottom: 2px solid #e7e0d5;
+            transition: border-color 0.25s ease;
         }
 
         .field-container:focus-within {
@@ -59,61 +72,94 @@
         .field-icon {
             position: absolute;
             left: 0;
-            color: #94a3b8;
+            color: #a8a29e;
             width: 18px;
             height: 18px;
+            flex-shrink: 0;
         }
 
         .custom-input {
             width: 100%;
-            padding: 10px 35px 10px 30px;
+            padding: 11px 36px 11px 30px;
             border: none !important;
-            outline: none !important; /* Mematikan stroke biru browser */
-            box-shadow: none !important; /* Mematikan shadow default */
+            outline: none !important;
+            box-shadow: none !important;
             font-size: 15px;
             color: #1a1512;
             background: transparent !important;
+            min-height: 44px; /* touch target */
+            font-family: 'Inter', sans-serif;
         }
 
-        /* Fix Autofill background & stroke */
+        /* Fix Autofill */
         input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:hover,
         input:-webkit-autofill:focus {
             -webkit-text-fill-color: #1a1512;
-            -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+            -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
             transition: background-color 5000s ease-in-out 0s;
         }
 
         .password-toggle {
             position: absolute;
             right: 0;
-            color: #94a3b8;
+            color: #a8a29e;
             cursor: pointer;
             width: 20px;
             height: 20px;
             transition: color 0.2s;
+            flex-shrink: 0;
+            padding: 2px;
         }
-        
+
         .password-toggle:hover {
             color: #1a1512;
         }
 
+        /* ── Remember Me ─────────────────────────── */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+
+        .remember-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: #1a1512;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .remember-label {
+            margin-left: 10px;
+            font-size: 13px;
+            color: #78716c;
+            font-weight: 500;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+
+        /* ── Login Button ────────────────────────── */
         .login-btn {
             width: 100%;
-            padding: 16px;
+            padding: 15px;
             background: #1a1512;
             color: #ffffff;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 15px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
-            margin-top: 5px;
-            transition: all 0.3s;
+            transition: background 0.25s, transform 0.15s;
+            min-height: 50px; /* touch target */
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.2px;
         }
 
         .login-btn:hover {
@@ -121,17 +167,22 @@
             transform: translateY(-1px);
         }
 
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ── Footer Help ─────────────────────────── */
         .footer-help {
             text-align: center;
-            margin-top: 35px;
-            padding-top: 25px;
-            border-top: 1px solid #f8fafc;
+            margin-top: 28px;
+            padding-top: 22px;
+            border-top: 1px solid #f0ebe3;
         }
 
         .help-text {
             font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 12px;
+            color: #a8a29e;
+            margin-bottom: 10px;
         }
 
         .help-link {
@@ -147,6 +198,40 @@
             color: #92400e;
             font-weight: 800;
             text-decoration: none;
+        }
+
+        .forgot-link {
+            font-size: 11px;
+            font-weight: 700;
+            color: #78716c;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .forgot-link:hover {
+            color: #1a1512;
+        }
+
+        /* ── Mobile Responsive ───────────────────── */
+        @media (max-width: 640px) {
+            .form-header {
+                margin-bottom: 24px;
+            }
+            .header-title {
+                font-size: 22px;
+            }
+            .custom-input {
+                font-size: 16px; /* prevent iOS zoom on focus */
+                min-height: 48px;
+            }
+            .login-btn {
+                font-size: 16px;
+                min-height: 52px;
+                border-radius: 14px;
+            }
+            .input-wrapper {
+                margin-bottom: 18px;
+            }
         }
     </style>
 
@@ -177,7 +262,7 @@
         <div class="input-wrapper">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
                 <label class="input-label" style="margin-bottom: 0;">Kata Sandi</label>
-                <a href="{{ route('password.request') }}" style="font-size: 11px; font-weight: 700; color: #166534; text-decoration: none;">Lupa Password?</a>
+                <a href="{{ route('password.request') }}" class="forgot-link">Lupa Password?</a>
             </div>
             <div class="field-container">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
@@ -194,11 +279,9 @@
             <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
-        <div class="block mt-5">
-            <label for="remember_me" class="inline-flex items-center" style="cursor: pointer;">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-amber-800 shadow-sm focus:ring-amber-500" name="remember" style="width: 16px; height: 16px;">
-                <span class="ms-3 text-sm text-gray-500" style="font-weight: 500;">Ingat saya di perangkat ini</span>
-            </label>
+        <div class="remember-row">
+            <input id="remember_me" type="checkbox" class="remember-checkbox" name="remember">
+            <label for="remember_me" class="remember-label">Ingat saya di perangkat ini</label>
         </div>
 
         <button type="submit" class="login-btn">

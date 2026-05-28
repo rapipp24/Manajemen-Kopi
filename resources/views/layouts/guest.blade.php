@@ -29,10 +29,15 @@
 
 
         <style>
+            * {
+                box-sizing: border-box;
+            }
+
             body {
                 font-family: 'Inter', sans-serif;
                 margin: 0;
-                background-color: #f7f7e9;
+                background-color: #f5f0e8;
+                min-height: 100vh;
             }
 
             .auth-container {
@@ -116,36 +121,137 @@
                 border-top: 1px solid rgba(255,255,255,0.1);
             }
 
-            /* ── Sisi Kanan: Form ─────────────────────── */
-            .auth-side-right {
-                background-color: #f7f7e9;
+            /* ── Mobile Brand Strip ────────────────────── */
+            .mobile-brand-strip {
+                display: none;
+                background: #1a1512;
+                padding: 18px 20px;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .mobile-brand-logo {
+                width: 32px;
+                height: 32px;
+                background: rgba(245, 158, 11, 0.2);
+                border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 40px;
+                color: #f59e0b;
+                flex-shrink: 0;
+            }
+
+            .mobile-brand-text {
+                font-size: 15px;
+                font-weight: 800;
+                color: #ffffff;
+                letter-spacing: -0.3px;
+            }
+
+            .mobile-brand-sub {
+                font-size: 11px;
+                color: #9ca3af;
+                font-weight: 500;
+            }
+
+            /* ── Sisi Kanan: Form ─────────────────────── */
+            .auth-side-right {
+                background-color: #f5f0e8;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 24px;
+                overflow-y: auto;
             }
 
             .auth-card {
                 background: #ffffff;
                 width: 100%;
                 max-width: 460px;
-                padding: 56px 48px;
-                border-radius: 40px;
-                box-shadow: 0 25px 80px rgba(0,0,0,0.06);
+                padding: 52px 48px;
+                border-radius: 32px;
+                box-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
             }
 
+            /* ── Tablet: 768px - 1024px ───────────────── */
             @media (max-width: 1024px) {
                 .auth-container {
                     grid-template-columns: 1fr;
+                    min-height: 100vh;
                 }
                 .auth-side-left {
                     display: none;
+                }
+                .auth-side-right {
+                    padding: 32px 24px;
+                    align-items: flex-start;
+                    padding-top: 40px;
+                }
+                .auth-card {
+                    padding: 40px 36px;
+                    border-radius: 24px;
+                    max-width: 480px;
+                    margin: 0 auto;
+                }
+            }
+
+            /* ── Mobile: <= 640px ─────────────────────── */
+            @media (max-width: 640px) {
+                body {
+                    background-color: #ffffff;
+                }
+                .auth-container {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100vh;
+                    min-height: 100dvh;
+                }
+                .mobile-brand-strip {
+                    display: flex;
+                    flex-shrink: 0;
+                }
+                .auth-side-right {
+                    flex: 1;
+                    padding: 28px 16px 32px;
+                    background-color: #ffffff;
+                    align-items: flex-start;
+                }
+                .auth-card {
+                    padding: 28px 20px 32px;
+                    border-radius: 0;
+                    box-shadow: none;
+                    max-width: 100%;
+                    background: transparent;
+                }
+            }
+
+            /* ── Very Small: <= 375px ─────────────────── */
+            @media (max-width: 375px) {
+                .auth-side-right {
+                    padding: 20px 12px 28px;
+                }
+                .auth-card {
+                    padding: 20px 16px 28px;
                 }
             }
         </style>
     </head>
     <body>
         <div class="auth-container">
+            <!-- Mobile Brand Strip (only visible on mobile) -->
+            <div class="mobile-brand-strip">
+                <div class="mobile-brand-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="mobile-brand-text">Kopi Elang Emas</div>
+                    <div class="mobile-brand-sub">Sistem Manajemen Produksi</div>
+                </div>
+            </div>
+
             <!-- Left Side -->
             <div class="auth-side-left">
                 <div class="left-content">
