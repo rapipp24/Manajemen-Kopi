@@ -233,6 +233,42 @@
                 margin-bottom: 18px;
             }
         }
+
+        /* ── Auth Notice Card ────────────────────── */
+        .auth-notice {
+            margin-bottom: 24px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            text-align: left;
+        }
+
+        .auth-notice-success {
+            background: #f7f9f2;
+            border-color: #e1e7cf;
+            color: #4a533c;
+        }
+
+        .auth-notice-warning {
+            background: #fdf8f2;
+            border-color: #f2e2d2;
+            color: #7c5635;
+        }
+
+        .auth-notice-title {
+            font-weight: 700;
+            font-size: 13.5px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .auth-notice-text {
+            font-size: 13px;
+            line-height: 1.55;
+            opacity: 0.95;
+        }
     </style>
 
     <div class="form-header">
@@ -250,17 +286,39 @@
 
         {{-- Flash: pesan sukses registrasi atau info --}}
         @if (session('status'))
-            <div style="background:#f0fdf4; border:1px solid #86efac; border-left:3px solid #22c55e; color:#166534;
-                        padding:12px 14px; border-radius:10px; margin-bottom:20px; font-size:13px; line-height:1.5;">
-                {{ session('status') }}
+            @php
+                $status = session('status');
+                $isRegisterSuccess = str_contains($status, 'Pendaftaran berhasil');
+                $title = $isRegisterSuccess ? 'Pendaftaran berhasil' : 'Informasi';
+                $text = $isRegisterSuccess 
+                    ? 'Cek email Anda untuk verifikasi akun. Setelah itu, akun akan menunggu persetujuan Admin.' 
+                    : $status;
+            @endphp
+            <div class="auth-notice auth-notice-success">
+                <div class="auth-notice-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px; flex-shrink: 0;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ $title }}
+                </div>
+                <div class="auth-notice-text">
+                    {{ $text }}
+                </div>
             </div>
         @endif
 
         {{-- Flash: pesan warning dari kondisi akun --}}
         @if (session('warning'))
-            <div style="background:#fffbeb; border:1px solid #fcd34d; border-left:3px solid #f59e0b; color:#92400e;
-                        padding:12px 14px; border-radius:10px; margin-bottom:20px; font-size:13px; line-height:1.5;">
-                {{ session('warning') }}
+            <div class="auth-notice auth-notice-warning">
+                <div class="auth-notice-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px; flex-shrink: 0;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    Peringatan
+                </div>
+                <div class="auth-notice-text">
+                    {{ session('warning') }}
+                </div>
             </div>
         @endif
 
