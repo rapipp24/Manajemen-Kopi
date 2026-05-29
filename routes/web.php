@@ -35,6 +35,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('products', AdminProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::post('users/{user}/approve', [\App\Http\Controllers\Admin\UserController::class, 'approve'])->name('users.approve');
+    Route::post('users/{user}/reject', [\App\Http\Controllers\Admin\UserController::class, 'reject'])->name('users.reject');
 
     // Transaksi
     Route::resource('raw-material-receipts', \App\Http\Controllers\RawMaterialReceiptController::class)

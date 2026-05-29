@@ -432,6 +432,11 @@
                               d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
                     Manajemen User
+                    @if($pendingApprovalCount > 0)
+                        <span style="background: #ef4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto;">
+                            {{ $pendingApprovalCount > 99 ? '99+' : $pendingApprovalCount }}
+                        </span>
+                    @endif
                 </a>
                 <a href="{{ route('admin.warehouse-employees.index') }}"
                    class="nav-item {{ request()->routeIs('admin.warehouse-employees*') ? 'active' : '' }}">

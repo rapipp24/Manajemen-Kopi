@@ -14,6 +14,10 @@ class User extends Authenticatable implements MustVerifyEmail
     const ROLE_ADMIN = 'admin';
     const ROLE_SALES = 'sales';
 
+    const APPROVAL_PENDING  = 'pending';
+    const APPROVAL_APPROVED = 'approved';
+    const APPROVAL_REJECTED = 'rejected';
+
     protected $fillable = [
         'name',
         'email',
@@ -24,6 +28,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active',
         'google_id',
         'google_token',
+        // Approval fields
+        'approval_status',
+        'approved_at',
+        'approved_by',
+        'rejected_at',
+        'rejection_reason',
     ];
 
     protected $hidden = [
@@ -36,18 +46,63 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+            'is_active'         => 'boolean',
+            'approved_at'       => 'datetime',
+            'rejected_at'       => 'datetime',
         ];
     }
 
-    // Helper: cek apakah user adalah admin
+    // ── Role helpers ────────────────────────────────────────────────────────
+
+    /** Cek apakah user adalah admin */
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
     }
 
-    // Helper: cek apakah user adalah sales
+    /** Cek apakah user adalah sales */
     public function isSales(): bool
     {
         return $this->role === self::ROLE_SALES;
+    }
+
+    // ── Approval helpers ────────────────────────────────────────────────────
+
+    /** Cek apakah status approval sudah approved */
+    public function isApproved(): bool
+    {
+        return $this->approval_status === self::APPROVAL_APPROVED;
+    }
+
+    /** Cek apakah status approval masih pending */
+    public function isPending(): bool
+    {
+        return $this->approval_status === self::APPROVAL_PENDING;
+    }
+
+    /** Cek apakah status approval sudah rejected */
+    public function isRejected(): bool
+    {
+        return $this->approval_status === self::APPROVAL_REJECTED;
+    }
+
+    /**
+     * Cek apakah user boleh mengakses portal aplikasi.
+     * Syarat: is_active = true DAN approval_status = approved.
+     * Verifikasi email tidak dicek di sini karena sudah dihandle
+     * oleh middleware 'verified' di route dan di LoginRequest.
+     */
+    public function canAccessApplication(): bool
+    {
+        return $this->is_active === true
+            && $this->approval_status === self::APPROVAL_APPROVED;
+    }
+
+    // ── Relationships ───────────────────────────────────────────────────────
+
+    /** Admin yang menyetujui akun ini */
+    public function approvedByUser()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

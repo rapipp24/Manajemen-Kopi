@@ -32,13 +32,20 @@ class AppServiceProvider extends ServiceProvider
             $outOfStockProductCount = \App\Models\Product::where('current_stock', '<=', 0)
                 ->where('is_active', true)
                 ->count();
+
+            // Badge merah Manajemen User: Sales yang sudah verifikasi email tapi belum disetujui
+            $pendingApprovalCount = \App\Models\User::where('role', \App\Models\User::ROLE_SALES)
+                ->whereNotNull('email_verified_at')
+                ->where('approval_status', \App\Models\User::APPROVAL_PENDING)
+                ->count();
             
             $view->with([
-                'lowStockCount' => $count,
+                'lowStockCount'          => $count,
                 'pendingSalesOrderCount' => $pendingSalesCount,
-                'pendingDepositCount' => $pendingDepositCount,
-                'pendingReturnCount' => $pendingReturnCount,
-                'outOfStockProductCount' => $outOfStockProductCount
+                'pendingDepositCount'    => $pendingDepositCount,
+                'pendingReturnCount'     => $pendingReturnCount,
+                'outOfStockProductCount' => $outOfStockProductCount,
+                'pendingApprovalCount'   => $pendingApprovalCount,
             ]);
         });
     }

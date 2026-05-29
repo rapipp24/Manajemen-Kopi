@@ -146,8 +146,17 @@
                 <path d="M5.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM2.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM18.75 7.5a.75.75 0 00-1.5 0v2.25H15a.75.75 0 000 1.5h2.25V13.5a.75.75 0 001.5 0v-2.25H21a.75.75 0 000-1.5h-2.25V7.5z" />
             </svg>
         </div>
-        <h2 class="header-title">Daftar Akun Baru</h2>
-        <p class="header-sub">Bergabunglah dengan ekosistem Kopi Elang Mas</p>
+        <h2 class="header-title">Daftar Sebagai Sales</h2>
+        <p class="header-sub">Buat akun portal Sales Kopi Elang Mas</p>
+    </div>
+
+    {{-- Info proses pendaftaran --}}
+    <div style="background:#fffbeb; border:1px solid #fde68a; border-left:3px solid #f59e0b; border-radius:10px; padding:12px 14px; margin-bottom:20px; font-size:12.5px; color:#92400e; line-height:1.6;">
+        <strong>Proses Pendaftaran Sales:</strong><br>
+        1. Isi formulir dan klik Daftar<br>
+        2. Verifikasi email melalui link yang dikirim<br>
+        3. Tunggu persetujuan Admin (maks. 1×24 jam)<br>
+        4. Setelah disetujui, Anda bisa login
     </div>
 
     <form method="POST" action="{{ route('register') }}">
@@ -160,7 +169,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                <input id="name" class="custom-input" type="text" name="name" :value="old('name')" placeholder="Masukkan nama lengkap Anda" required autofocus autocomplete="name" maxlength="50" pattern="[a-zA-Z\s]+" title="Nama hanya boleh berisi huruf dan spasi" />
+                <input id="name" class="custom-input" type="text" name="name" value="{{ old('name') }}" placeholder="Contoh: Budi Santoso" required autofocus autocomplete="name" minlength="3" maxlength="255" title="Nama minimal 3 karakter, hanya huruf, spasi, titik, apostrof, atau tanda hubung" />
             </div>
             <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
@@ -172,7 +181,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
-                <input id="email" class="custom-input" type="email" name="email" :value="old('email')" placeholder="email@contoh.com" required autocomplete="username" maxlength="50" />
+                <input id="email" class="custom-input" type="email" name="email" value="{{ old('email') }}" placeholder="email@contoh.com" required autocomplete="username" maxlength="255" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
@@ -184,7 +193,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                 </svg>
-                <input id="password" class="custom-input" type="password" name="password" placeholder="Minimal 8 karakter" required autocomplete="new-password" minlength="8" />
+                <input id="password" class="custom-input" type="password" name="password" placeholder="Min. 8 karakter, huruf besar, huruf kecil & angka" required autocomplete="new-password" minlength="8" />
                 <div class="password-toggle" onclick="toggleField('password', 'eye-password')">
                     <svg id="eye-password" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -214,9 +223,9 @@
         </div>
 
         <button type="submit" class="register-btn">
-            Daftar Akun
+            Daftar & Kirim Verifikasi Email
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
         </button>
 

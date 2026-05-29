@@ -248,6 +248,22 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
+        {{-- Flash: pesan sukses registrasi atau info --}}
+        @if (session('status'))
+            <div style="background:#f0fdf4; border:1px solid #86efac; border-left:3px solid #22c55e; color:#166534;
+                        padding:12px 14px; border-radius:10px; margin-bottom:20px; font-size:13px; line-height:1.5;">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        {{-- Flash: pesan warning dari kondisi akun --}}
+        @if (session('warning'))
+            <div style="background:#fffbeb; border:1px solid #fcd34d; border-left:3px solid #f59e0b; color:#92400e;
+                        padding:12px 14px; border-radius:10px; margin-bottom:20px; font-size:13px; line-height:1.5;">
+                {{ session('warning') }}
+            </div>
+        @endif
+
         <div class="input-wrapper">
             <label class="input-label">Email atau Username</label>
             <div class="field-container">
