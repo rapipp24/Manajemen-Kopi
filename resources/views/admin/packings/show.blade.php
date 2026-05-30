@@ -73,8 +73,15 @@
                     @endphp
                     <tr style="border-bottom: 1px solid #f1f5f9;">
                         <td style="padding: 12px 20px;">
-                            <div style="font-size: 14px; font-weight: 600; color: #1e293b;">{{ $item->product->name ?? '-' }}</div>
-                            @if($item->product->variant)
+                            <div style="font-size: 14px; font-weight: 600; color: #1e293b;">
+                                {{ $item->product?->name ?? 'Produk tidak tersedia' }}
+                                @if($item->product === null)
+                                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; margin-left: 4px;">(ID: {{ $item->product_id }})</span>
+                                @elseif($item->product->trashed())
+                                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; margin-left: 4px;">(dihapus)</span>
+                                @endif
+                            </div>
+                            @if($item->product && $item->product->variant)
                                 <div style="font-size: 12px; color: #64748b;">{{ $item->product->variant }}</div>
                             @endif
                         </td>
