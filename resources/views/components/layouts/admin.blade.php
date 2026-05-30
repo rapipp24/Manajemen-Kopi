@@ -344,21 +344,170 @@
             margin-bottom: 20px;
             font-size: 13.5px;
         }
+
+        /* ═══════════════ RESPONSIVE STYLES ═══════════════ */
+        .admin-menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            transition: background-color 0.2s;
+            outline: none;
+            margin-right: 4px;
+        }
+        .admin-menu-toggle:hover {
+            background-color: var(--cream-200);
+        }
+        .admin-menu-toggle:focus-visible {
+            outline: 2px solid var(--brown-500);
+        }
+
+        .admin-sidebar-close {
+            background: none;
+            border: none;
+            color: #c4b8ab;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .admin-sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fdfaf6;
+        }
+        .admin-sidebar-close:focus-visible {
+            outline: 2px solid var(--brown-200);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 10, 7, 0.5); /* warm dark transparent */
+            backdrop-filter: blur(2px);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .sidebar-overlay.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive Table Wrapper */
+        .responsive-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .responsive-table-wrapper table {
+            min-width: 700px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        @media (max-width: 1023px) {
+            :root {
+                --sidebar-w: 0px;
+            }
+            .sidebar {
+                width: 280px;
+                max-width: 85vw;
+                height: 100vh;
+                position: fixed;
+                transform: translateX(-100%);
+                z-index: 200;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .sidebar.is-active {
+                transform: translateX(0);
+            }
+            .admin-sidebar-close {
+                display: inline-flex;
+            }
+            .topbar {
+                left: 0;
+                padding: 0 16px;
+            }
+            .admin-menu-toggle {
+                display: inline-flex;
+            }
+            .main-wrapper {
+                margin-left: 0;
+                padding: 16px;
+                width: 100%;
+                overflow-x: hidden;
+            }
+            .topbar-date {
+                display: none; /* Hide date on tablet and mobile */
+            }
+
+            /* Stack forms and details */
+            .main-wrapper form {
+                max-width: 100% !important;
+            }
+            .main-wrapper input, .main-wrapper select, .main-wrapper textarea {
+                max-width: 100% !important;
+            }
+            
+            /* Responsive Grid Override for layouts using inline CSS grids */
+            .main-wrapper div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-right {
+                gap: 8px !important;
+            }
+            .topbar-badge {
+                padding: 3px 8px !important;
+                font-size: 11px !important;
+            }
+            .main-wrapper {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
 
     <!-- ═══ SIDEBAR ═══ -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="admin-sidebar">
         <div class="sidebar-brand">
-            <div class="brand-logo">
-                <div class="brand-icon">
-                    <!-- Premium Coffee Cup SVG -->
-                    <svg style="width: 18px; height: 18px; color: #fffdfa;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 14a6 6 0 0012 0H6zM18 10h-2V7a2 2 0 00-2-2H8a2 2 0 00-2 2v3H4a2 2 0 00-2 2v2a6 6 0 0012 0h2a4 4 0 004-4v-1a3 3 0 00-3-3z"></path>
-                    </svg>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div class="brand-logo">
+                    <div class="brand-icon">
+                        <!-- Premium Coffee Cup SVG -->
+                        <svg style="width: 18px; height: 18px; color: #fffdfa;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 14a6 6 0 0012 0H6zM18 10h-2V7a2 2 0 00-2-2H8a2 2 0 00-2 2v3H4a2 2 0 00-2 2v2a6 6 0 0012 0h2a4 4 0 004-4v-1a3 3 0 00-3-3z"></path>
+                        </svg>
+                    </div>
+                    <span class="brand-name">{{ \App\Models\Setting::get('shop_name', 'Kopi Elang Emas') }}</span>
                 </div>
-                <span class="brand-name">{{ \App\Models\Setting::get('shop_name', 'Kopi Elang Emas') }}</span>
+                <button class="admin-sidebar-close" id="sidebar-close" aria-label="Tutup menu admin">
+                    <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <span class="brand-tagline">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</span>
         </div>
@@ -611,9 +760,21 @@
         </div>
     </aside>
 
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <!-- ═══ TOPBAR ═══ -->
     <header class="topbar">
-        <span class="topbar-title">{{ $title ?? 'Beranda' }}</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="admin-menu-toggle" id="sidebar-toggle" aria-label="Buka menu admin" aria-expanded="false">
+                <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <span class="topbar-title">{{ $title ?? 'Beranda' }}</span>
+        </div>
         <div class="topbar-right" style="display: flex; align-items: center; gap: 20px;">
             <span class="topbar-date" id="current-date"></span>
             <span class="topbar-badge" style="background: {{ auth()->user()->isAdmin() ? '#fef3c7' : '#e0f2fe' }}; color: {{ auth()->user()->isAdmin() ? '#92400e' : '#0369a1' }}; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
@@ -820,6 +981,84 @@
                     input.value = input.value.replace(/\./g, '');
                 });
             });
+        });
+
+        // ── Hamburger Drawer Toggle Logic ──
+        const sidebar = document.getElementById('admin-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const closeBtn = document.getElementById('sidebar-close');
+
+        function openSidebar() {
+            if (sidebar && overlay && toggleBtn) {
+                sidebar.classList.add('is-active');
+                overlay.classList.add('is-active');
+                toggleBtn.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            }
+        }
+
+        function closeSidebar() {
+            if (sidebar && overlay && toggleBtn) {
+                sidebar.classList.remove('is-active');
+                overlay.classList.remove('is-active');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (sidebar.classList.contains('is-active')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+
+        // Auto close when click a menu item on mobile
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                if (window.innerWidth < 1024) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // ── Responsive Table Auto Wrapper ──
+        document.querySelectorAll('.main-wrapper table').forEach(function(table) {
+            // Skip print layouts, SweetAlert popups, or tables already wrapped
+            if (
+                table.closest('.swal2-popup') || 
+                table.closest('.responsive-table-wrapper') || 
+                table.parentElement.style.overflowX === 'auto' ||
+                table.classList.contains('header-table') || 
+                table.classList.contains('info-table') || 
+                table.classList.contains('signature-table')
+            ) {
+                return;
+            }
+            const wrapper = document.createElement('div');
+            wrapper.className = 'responsive-table-wrapper';
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
         });
     </script>
 
