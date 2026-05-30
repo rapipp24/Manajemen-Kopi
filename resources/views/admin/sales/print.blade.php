@@ -174,11 +174,39 @@
             font-style: italic;
         }
 
+        /* ── RESPONSIVE PREVIEW KHUSUS MOBILE ── */
+        @media screen and (max-width: 768px) {
+            body {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                padding: 16px !important;
+                background: #f1f5f9;
+            }
+            .invoice-box {
+                width: 680px; /* Jaga lebar tetap agar layout continuous form tidak pecah */
+                background: white;
+                padding: 24px;
+                border: 1px solid #cbd5e1;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                border-radius: 8px;
+                margin: 0 auto;
+            }
+        }
+
         /* ── CSS KHUSUS PRINT ── */
         @media print {
             body {
                 padding: 0;
                 margin: 0;
+                background: white !important;
+            }
+            .invoice-box {
+                width: 100% !important;
+                max-width: 680px !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                background: white !important;
             }
             .no-print {
                 display: none !important;

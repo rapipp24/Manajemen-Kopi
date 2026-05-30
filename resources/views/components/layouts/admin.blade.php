@@ -473,6 +473,162 @@
             }
         }
 
+        /* ── MOBILE POLISH OVERRIDES (<= 768px) ── */
+        @media (max-width: 768px) {
+            /* 1. Global Page Header Stack */
+            .main-wrapper > div[style*="display: flex"][style*="justify-content: space-between"],
+            .main-wrapper > div[style*="display:flex"][style*="justify-content:space-between"],
+            .main-wrapper > div[style*="display: flex"][style*="justify-content:space-between"],
+            .main-wrapper > div[style*="display:flex"][style*="justify-content: space-between"],
+            .main-wrapper > div > div[style*="display: flex"][style*="justify-content: space-between"],
+            .main-wrapper > div > div[style*="display:flex"][style*="justify-content:space-between"],
+            .main-wrapper > div > div[style*="display: flex"][style*="justify-content:space-between"],
+            .main-wrapper > div > div[style*="display:flex"][style*="justify-content: space-between"] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Adjust paragraph inside page headers */
+            .main-wrapper > div[style*="display: flex"][style*="justify-content: space-between"] > p,
+            .main-wrapper > div > div[style*="display: flex"][style*="justify-content: space-between"] > p {
+                margin-bottom: 0 !important;
+            }
+
+            /* 2. Global Action Buttons full-width on mobile */
+            .main-wrapper > div[style*="display: flex"][style*="justify-content: space-between"] > a[style*="background"],
+            .main-wrapper > div[style*="display: flex"][style*="justify-content: space-between"] > button[style*="background"],
+            .main-wrapper > div > div[style*="display: flex"][style*="justify-content: space-between"] > a[style*="background"],
+            .main-wrapper > div > div[style*="display: flex"][style*="justify-content: space-between"] > button[style*="background"],
+            .main-wrapper > div[style*="display:flex"][style*="justify-content:space-between"] > a[style*="background"],
+            .main-wrapper > div[style*="display:flex"][style*="justify-content:space-between"] > button[style*="background"],
+            .main-wrapper > div > div[style*="display:flex"][style*="justify-content:space-between"] > a[style*="background"],
+            .main-wrapper > div > div[style*="display:flex"][style*="justify-content:space-between"] > button[style*="background"] {
+                width: 100% !important;
+                text-align: center !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                min-height: 44px !important;
+                box-sizing: border-box !important;
+            }
+
+            /* 3. Card Headers with titles & searches stack */
+            .main-wrapper div[style*="padding: 20px 24px"][style*="display: flex"][style*="justify-content: space-between"],
+            .main-wrapper div[style*="padding: 20px 24px"][style*="display:flex"][style*="justify-content:space-between"] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+                padding: 16px !important;
+            }
+
+            .main-wrapper div[style*="padding: 20px 24px"][style*="display: flex"][style*="justify-content: space-between"] form,
+            .main-wrapper div[style*="padding: 20px 24px"][style*="display:flex"][style*="justify-content:space-between"] form {
+                width: 100% !important;
+                display: flex !important;
+                gap: 8px !important;
+            }
+
+            .main-wrapper div[style*="padding: 20px 24px"][style*="display: flex"][style*="justify-content: space-between"] form input,
+            .main-wrapper div[style*="padding: 20px 24px"][style*="display:flex"][style*="justify-content:space-between"] form input {
+                flex: 1 !important;
+                width: 100% !important;
+            }
+
+            /* 4. Filter dropdowns and inputs stack on mobile */
+            .main-wrapper form[style*="display:flex"][style*="gap:"],
+            .main-wrapper form[style*="display: flex"][style*="gap:"],
+            .main-wrapper form[style*="display:flex"][style*="gap: 10px"],
+            .main-wrapper form[style*="display: flex"][style*="gap: 10px"] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                width: 100% !important;
+                gap: 8px !important;
+            }
+            
+            .main-wrapper form[style*="display:flex"][style*="gap:"] > select,
+            .main-wrapper form[style*="display:flex"][style*="gap:"] > input,
+            .main-wrapper form[style*="display:flex"][style*="gap:"] > button,
+            .main-wrapper form[style*="display: flex"][style*="gap:"] > select,
+            .main-wrapper form[style*="display: flex"][style*="gap:"] > input,
+            .main-wrapper form[style*="display: flex"][style*="gap:"] > button {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-height: 40px !important;
+            }
+
+            /* 5. Settings Tab Buttons Mobile layout */
+            .settings-sidebar {
+                flex-direction: column !important;
+                gap: 4px !important;
+                padding: 6px !important;
+            }
+            .settings-tab-btn {
+                padding: 8px 10px !important;
+                width: 100% !important;
+                flex: 1 1 100% !important;
+            }
+            .settings-tab-btn .tab-desc {
+                display: none !important; /* Hide description to keep tab list compact */
+            }
+            .settings-tab-btn .tab-title {
+                font-size: 12.5px !important;
+            }
+            .settings-hero {
+                padding: 16px !important;
+            }
+            .settings-hero h1 {
+                font-size: 18px !important;
+            }
+            .settings-hero p {
+                font-size: 12px !important;
+            }
+
+            /* 6. Help Center Mobile layout */
+            .help-sidebar {
+                padding: 12px !important;
+                border-radius: 12px !important;
+                margin-bottom: 20px !important;
+            }
+            .help-sidebar-title {
+                margin-bottom: 12px !important;
+                padding-bottom: 8px !important;
+                font-size: 11px !important;
+            }
+            .help-nav-list {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+            }
+            .help-nav-item {
+                flex: 1 1 auto !important;
+                width: auto !important;
+            }
+            .help-nav-item a {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+                justify-content: center !important;
+            }
+            .help-section-card {
+                padding: 16px !important;
+                border-radius: 12px !important;
+            }
+            .help-section-header {
+                margin-bottom: 16px !important;
+                padding-bottom: 10px !important;
+            }
+            .help-section-title {
+                font-size: 14px !important;
+            }
+            
+            /* Typography & Labels */
+            .main-wrapper label {
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+        }
+
         @media (max-width: 480px) {
             .topbar-right {
                 gap: 8px !important;
