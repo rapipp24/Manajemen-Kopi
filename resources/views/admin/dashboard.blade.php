@@ -41,6 +41,7 @@
             height: 200px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 50%;
+            pointer-events: none; /* Prevent blocking touch events */
         }
 
         .highlight-card .main-val {
@@ -186,7 +187,7 @@
                     <p style="font-size: 14px; opacity: 0.8; font-weight: 500; margin-bottom: 4px;">{{ $salam }}, {{ auth()->user()->name }}</p>
                     <div style="display: flex; align-items: center; gap: 12px; margin: 4px 0;">
                         <h1 id="total-sales-value" class="main-val" data-full-value="Rp {{ number_format($stats['total_sales'], 0, ',', '.') }}" style="margin: 0;">Rp ••••••••</h1>
-                        <button id="toggle-sales-visibility" style="background: rgba(255,255,255,0.1); border: none; width: 32px; height: 32px; border-radius: 10px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; outline: none;" title="Tampilkan/Sembunyikan Nominal">
+                        <button id="toggle-sales-visibility" style="background: rgba(255,255,255,0.1); border: none; width: 36px; height: 36px; border-radius: 10px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; outline: none; position: relative; z-index: 10; pointer-events: auto;" title="Tampilkan/Sembunyikan Nominal">
                             <svg id="eye-icon" style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
                             </svg>
