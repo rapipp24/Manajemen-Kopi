@@ -411,7 +411,7 @@
                 </div>
                 <div>
                     <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Supplier</span>
-                    <span style="font-size: 11.5px; font-weight: 600; color: #1e293b;">{{ $receipt->supplier->name }}</span>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #1e293b;">{{ $receipt->supplier?->name ?? 'Supplier tidak tersedia' }}</span>
                 </div>
                 <div>
                     <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Tanggal Terima</span>
@@ -444,7 +444,7 @@
             <div class="info-grid">
                 <div>
                     <div class="info-label">Supplier</div>
-                    <div class="info-value">{{ $receipt->supplier->name }}</div>
+                    <div class="info-value">{{ $receipt->supplier?->name ?? 'Supplier tidak tersedia' }}</div>
                 </div>
                 <div>
                     <div class="info-label">Tanggal Terima</div>
@@ -481,22 +481,36 @@
                 </thead>
                 <tbody>
                     @foreach($receipt->items as $item)
+                        @php
+                            // Null-safe: rawMaterial bisa null jika sudah dihapus permanen
+                            $rawMaterialName = $item->rawMaterial?->name ?? 'Bahan baku telah dihapus';
+                            $rawMaterialUnit = $item->rawMaterial?->unit?->code ?? null;
+
+                            // Logika tampil qty — null-safe jika unit tidak ada
+                            $qty = $item->qty;
+                            if ($rawMaterialUnit) {
+                                if (strtolower($rawMaterialUnit) === 'kg' && $qty >= 1000) {
+                                    $displayQty = number_format($qty / 1000, 2, ',', '.') . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">Ton</span>';
+                                } else {
+                                    $fmt = (floor($qty) == $qty) ? 0 : 2;
+                                    $displayQty = number_format($qty, $fmt, ',', '.') . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">' . $rawMaterialUnit . '</span>';
+                                }
+                            } else {
+                                // Unit tidak tersedia — tampilkan qty saja tanpa satuan
+                                $fmt = (floor($qty) == $qty) ? 0 : 2;
+                                $displayQty = number_format($qty, $fmt, ',', '.');
+                            }
+                        @endphp
                         <tr>
-                            <td style="font-weight: 600;">{{ $item->rawMaterial->name }}</td>
+                            <td style="font-weight: 600;">
+                                {{ $rawMaterialName }}
+                                @if($item->rawMaterial === null)
+                                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; margin-left: 4px;">(ID: {{ $item->raw_material_id }})</span>
+                                @elseif($item->rawMaterial->trashed())
+                                    <span style="font-size: 11px; color: #94a3b8; font-weight: 400; margin-left: 4px;">(dihapus)</span>
+                                @endif
+                            </td>
                             <td style="text-align: right;">
-                                @php
-                                    $qty = $item->qty;
-                                    $unit = $item->rawMaterial->unit->code;
-                                    
-                                    // Logika konversi Ton otomatis
-                                    if (strtolower($unit) == 'kg' && $qty >= 1000) {
-                                        $displayQty = number_format($qty / 1000, 2, ',', '.') . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">Ton</span>';
-                                    } else {
-                                        // Hilangkan desimal ,00 jika angka bulat
-                                        $fmt = (floor($qty) == $qty) ? 0 : 2;
-                                        $displayQty = number_format($qty, $fmt, ',', '.') . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">' . $unit . '</span>';
-                                    }
-                                @endphp
                                 {!! $displayQty !!}
                             </td>
                             <td style="text-align: right;">Rp {{ number_format($item->unit_price, 0, ',', '.') }}</td>
@@ -515,16 +529,16 @@
             <div class="print-footer">
                 <div class="signature-box">
                     <p>Hormat Kami,</p>
-                    <div class="signature-line">{{ $receipt->supplier->name }}</div>
+                    <div class="signature-line">{{ $receipt->supplier?->name ?? 'Supplier tidak tersedia' }}</div>
                 </div>
                 <div class="signature-box">
                     <p>Diterima Oleh,</p>
-                    <div class="signature-line">{{ $receipt->creator->name }}</div>
+                    <div class="signature-line">{{ $receipt->creator?->name ?? 'Pengguna tidak tersedia' }}</div>
                 </div>
             </div>
             
             <div class="no-print" style="margin-top: 24px; font-size: 12px; color: var(--text-muted); text-align: center;">
-                Dicatat oleh <strong>{{ $receipt->creator->name }}</strong> pada {{ $receipt->created_at->format('d/m/Y H:i') }}
+                Dicatat oleh <strong>{{ $receipt->creator?->name ?? 'Pengguna tidak tersedia' }}</strong> pada {{ $receipt->created_at->format('d/m/Y H:i') }}
             </div>
         </div>
     </div>

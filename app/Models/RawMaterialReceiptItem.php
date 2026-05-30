@@ -22,6 +22,8 @@ class RawMaterialReceiptItem extends Model
 
     public function rawMaterial(): BelongsTo
     {
-        return $this->belongsTo(RawMaterial::class);
+        // withTrashed() agar item penerimaan tetap bisa menampilkan bahan baku
+        // yang sudah soft-deleted, menjaga integritas histori transaksi.
+        return $this->belongsTo(RawMaterial::class)->withTrashed();
     }
 }
