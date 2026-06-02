@@ -83,36 +83,44 @@
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            min-width: 0;       /* Allow flex children to shrink */
         }
 
         .brand-logo-img {
-            height: 42px;
+            flex-shrink: 0;
+            max-height: 42px;
+            max-width: 48px;
             width: auto;
-            max-width: 120px;  /* Cukup untuk logo landscape — sidebar 252px desktop, 280px mobile drawer */
-            max-height: 42px;  /* Tidak melebihi brand area */
             object-fit: contain;
             border-radius: 6px;
-            flex-shrink: 0;
             display: block;
         }
 
+        .brand-text {
+            min-width: 0;       /* Allow text to shrink/wrap on small screens */
+            display: flex;
+            flex-direction: column;
+        }
+
         .brand-name {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: #fdfaf6;
-            letter-spacing: -0.3px;
-            line-height: 1.1;
+            letter-spacing: -0.2px;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
         }
 
         .brand-tagline {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #847162;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             margin-top: 2px;
-            padding-left: 0;  /* Hapus padding-left agar tidak overflow di mobile */
+            padding-left: 0;
             font-weight: 600;
+            overflow-wrap: anywhere;
         }
 
         /* Nav */
@@ -656,7 +664,11 @@
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <!-- Fallback jika logo tidak tersedia -->
                     <span style="display:none; width:36px; height:36px; background:linear-gradient(135deg,#92400e,#78350f); border-radius:8px; align-items:center; justify-content:center; color:#fffdfa; font-size:14px; font-weight:800; flex-shrink:0;">K</span>
-                    <span class="brand-name">{{ \App\Models\Setting::get('shop_name', 'Kopi Elang Emas') }}</span>
+                    <!-- Text wrapper: title + tagline sejajar di kanan logo -->
+                    <div class="brand-text">
+                        <span class="brand-name">{{ \App\Models\Setting::get('shop_name', 'Kopi Elang Emas') }}</span>
+                        <span class="brand-tagline">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</span>
+                    </div>
                 </div>
                 <button class="admin-sidebar-close" id="sidebar-close" aria-label="Tutup menu admin">
                     <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -665,7 +677,6 @@
                     </svg>
                 </button>
             </div>
-            <span class="brand-tagline">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</span>
         </div>
 
         <nav class="sidebar-nav">
