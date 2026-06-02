@@ -19,7 +19,9 @@ return [
     ],
 
     'resend' => [
-        'key' => env('RESEND_API_KEY'),
+        'key'          => env('RESEND_API_KEY'),
+        'from_address' => env('RESEND_FROM_ADDRESS', 'noreply@kopielangemas.com'),
+        'from_name'    => env('RESEND_FROM_NAME', 'Manajemen Kopi'),
     ],
 
     'ses' => [

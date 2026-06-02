@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailViaResend;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -96,6 +97,18 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->is_active === true
             && $this->approval_status === self::APPROVAL_APPROVED;
+    }
+
+    // ── Email Verification ──────────────────────────────────────────────────
+
+    /**
+     * Override pengiriman notifikasi verifikasi email.
+     * Menggunakan ResendApiMailer via HTTPS 443 (bukan SMTP).
+     * Kegagalan pengiriman email tidak menyebabkan exception — dicatat di log.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        (new VerifyEmailViaResend())->send($this);
     }
 
     // ── Relationships ───────────────────────────────────────────────────────

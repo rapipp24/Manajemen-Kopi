@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -32,6 +33,7 @@ class RegisteredUserController extends Controller
      * - approval_status = 'pending' (menunggu approval admin)
      * - Event Registered dipanggil agar Laravel mengirim email verification link.
      * - User TIDAK langsung diloginkan. Diarahkan ke halaman login dengan pesan info.
+     * - Kegagalan pengiriman email tidak menyebabkan error 500 — dicatat di log.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -83,8 +85,18 @@ class RegisteredUserController extends Controller
             'rejection_reason' => null,
         ]);
 
-        // Panggil event Registered agar Laravel email verification link dikirim
-        event(new Registered($user));
+        // Panggil event Registered agar email verifikasi dikirim via ResendApiMailer.
+        // Kegagalan pengiriman email tidak menyebabkan error 500 — akun tetap dibuat,
+        // user bisa minta kirim ulang dari halaman verify-email.
+        try {
+            event(new Registered($user));
+        } catch (\Throwable $e) {
+            Log::error('[Register] Gagal mengirim email verifikasi.', [
+                'user_id' => $user->id,
+                'email'   => $user->email,
+                'error'   => $e->getMessage(),
+            ]);
+        }
 
         // Jangan langsung login user — arahkan ke halaman login dengan pesan info
         return redirect()->route('login')->with(
