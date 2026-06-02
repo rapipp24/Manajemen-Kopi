@@ -44,8 +44,6 @@
         .badge-approved { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
         .badge-canceled { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
 
-        .btn-link { font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;transition:color 0.15s; }
-        .btn-link:hover { color:var(--brown); text-decoration:underline; }
 
         /* ── Empty ───────────────────────────── */
         .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border-radius:12px; border:1px solid var(--border); }
@@ -191,7 +189,9 @@
                         <span class="badge {{ $cls }}">{{ $lbl }}</span>
                     </td>
                     <td>
-                        <a href="{{ route('sales.returns.show', $ret) }}" class="btn-link">Lihat Detail →</a>
+                        <a href="{{ route('sales.returns.show', $ret) }}" class="sales-detail-link">
+                            Lihat Detail <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -202,7 +202,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                             </svg>
                             <div class="empty-title">Belum ada pengajuan return</div>
-                            <a href="{{ route('sales.returns.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Ajukan Return Pertama</a>
+                            <a href="{{ route('sales.returns.create') }}" class="sales-action-pill" style="margin-top: 8px;">
+                                <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Return Pertama
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -240,7 +242,9 @@
                     <span class="mobile-card-val" style="font-weight: 800; color: var(--text);">Rp {{ number_format($ret->total_return, 0, ',', '.') }}</span>
                 </div>
                 <div class="mobile-card-actions">
-                    <a href="{{ route('sales.returns.show', $ret) }}" class="btn-link">Lihat Detail →</a>
+                    <a href="{{ route('sales.returns.show', $ret) }}" class="sales-detail-link">
+                        Lihat Detail <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                    </a>
                 </div>
             </div>
         @empty
@@ -249,7 +253,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                 </svg>
                 <div class="empty-title">Belum ada pengajuan return</div>
-                <a href="{{ route('sales.returns.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Ajukan Return Pertama</a>
+                <a href="{{ route('sales.returns.create') }}" class="sales-action-pill" style="margin-top: 8px;">
+                    <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Return Pertama
+                </a>
             </div>
         @endforelse
 

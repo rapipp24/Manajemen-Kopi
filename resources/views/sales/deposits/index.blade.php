@@ -44,8 +44,6 @@
         .badge-approved { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
         .badge-canceled { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
 
-        .btn-link { font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;transition:color 0.15s; }
-        .btn-link:hover { color:var(--brown); text-decoration:underline; }
 
         /* ── Empty ───────────────────────────── */
         .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border-radius:12px; border:1px solid var(--border); }
@@ -195,7 +193,9 @@
                         <span class="badge {{ $cls }}">{{ $lbl }}</span>
                     </td>
                     <td>
-                        <a href="{{ route('sales.deposits.show', $d) }}" class="btn-link">Lihat Detail →</a>
+                        <a href="{{ route('sales.deposits.show', $d) }}" class="sales-detail-link">
+                            Lihat Detail <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -206,7 +206,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <div class="empty-title">Belum ada riwayat setoran uang</div>
-                            <a href="{{ route('sales.deposits.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Ajukan Setoran Pertama</a>
+                            <a href="{{ route('sales.deposits.create') }}" class="sales-action-pill" style="margin-top: 8px;">
+                                <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Setoran Pertama
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -244,7 +246,9 @@
                     <span class="mobile-card-val">{{ \Carbon\Carbon::parse($d->payment_date)->format('d M Y') }}</span>
                 </div>
                 <div class="mobile-card-actions">
-                    <a href="{{ route('sales.deposits.show', $d) }}" class="btn-link">Lihat Detail →</a>
+                    <a href="{{ route('sales.deposits.show', $d) }}" class="sales-detail-link">
+                        Lihat Detail <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+                    </a>
                 </div>
             </div>
         @empty
@@ -253,7 +257,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div class="empty-title">Belum ada riwayat setoran uang</div>
-                <a href="{{ route('sales.deposits.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Ajukan Setoran Pertama</a>
+                <a href="{{ route('sales.deposits.create') }}" class="sales-action-pill" style="margin-top: 8px;">
+                    <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Setoran Pertama
+                </a>
             </div>
         @endforelse
 

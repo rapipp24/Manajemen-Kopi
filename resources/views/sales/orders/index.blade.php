@@ -128,7 +128,7 @@
             <p class="page-desc">Status permintaan barang ke gudang.</p>
         </div>
         <a href="{{ route('sales.orders.create') }}" class="btn-primary">
-            + Buat Pengajuan
+            <i data-lucide="plus-circle" style="width:16px;height:16px;"></i> Buat Pengajuan
         </a>
     </div>
 
@@ -190,8 +190,8 @@
                     </td>
                     <td style="color:var(--muted); font-weight: 500;">{{ $order->created_at->format('d M Y') }}</td>
                     <td>
-                        <a href="{{ route('sales.orders.show', $order) }}" class="btn-link">
-                            Lihat <i data-lucide="chevron-right" style="width:12px;height:12px;"></i>
+                        <a href="{{ route('sales.orders.show', $order) }}" class="sales-detail-link">
+                            Lihat Detail <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
                         </a>
                     </td>
                 </tr>
@@ -203,7 +203,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
                             <div class="empty-title">Belum ada pengajuan barang</div>
-                            <a href="{{ route('sales.orders.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Buat Pengajuan Sekarang</a>
+                            <a href="{{ route('sales.orders.create') }}" class="sales-action-pill" style="margin-top: 8px;">
+                                <i data-lucide="plus" style="width:14px;height:14px;"></i> Buat Pengajuan Sekarang
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -235,8 +237,8 @@
                     <span class="mobile-card-val">{{ $order->created_at->format('d M Y') }}</span>
                 </div>
                 <div class="mobile-card-actions">
-                    <a href="{{ route('sales.orders.show', $order) }}" class="btn-link">
-                        Lihat Detail <i data-lucide="chevron-right" style="width:13px;height:13px;"></i>
+                    <a href="{{ route('sales.orders.show', $order) }}" class="sales-detail-link">
+                        Lihat Detail <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
                     </a>
                 </div>
             </div>
@@ -246,7 +248,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
                 <div class="empty-title">Belum ada pengajuan barang</div>
-                <a href="{{ route('sales.orders.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Buat Pengajuan Sekarang</a>
+                <a href="{{ route('sales.orders.create') }}" class="sales-action-pill" style="margin-top: 8px;">
+                    <i data-lucide="plus" style="width:14px;height:14px;"></i> Buat Pengajuan Sekarang
+                </a>
             </div>
         @endforelse
 

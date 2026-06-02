@@ -2,8 +2,7 @@
     <x-slot name="title">Buat Pengajuan Barang</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:18px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
+
 
         .page-title { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px; }
         .page-desc  { font-size:13.5px;color:var(--muted);margin-bottom:24px; }
@@ -98,8 +97,8 @@
         }
     </style>
 
-    <a href="{{ route('sales.orders.index') }}" class="back-link">
-        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Kembali
+    <a href="{{ route('sales.orders.index') }}" class="sales-back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali
     </a>
 
     <h1 class="page-title">Buat Pengajuan Barang</h1>

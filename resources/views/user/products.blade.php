@@ -182,6 +182,8 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            gap: 4px;
+            flex-wrap: wrap;
         }
 
         .product-price {
@@ -190,6 +192,7 @@
             color: var(--brown);
             letter-spacing: -0.02em;
             line-height: 1;
+            white-space: nowrap;
         }
 
         .product-stock {
@@ -202,6 +205,9 @@
             padding: 2px 6px;
             border-radius: 4px;
             white-space: nowrap;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .stock-ok   { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
         .stock-low  { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
@@ -221,10 +227,18 @@
 
         /* ── Responsive ──────────────────────── */
         @media (max-width: 768px) {
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .product-price { font-size: 12.5px; }
         }
-        @media (max-width: 360px) {
+        @media (max-width: 480px) {
+            /* On very narrow cards, stack price above stock badge */
+            .product-footer { flex-direction: column; align-items: flex-start; gap: 5px; }
+        }
+        @media (max-width: 430px) {
             .products-grid { grid-template-columns: 1fr; gap: 8px; }
+            /* Single column — revert to row layout with space-between */
+            .product-footer { flex-direction: row; align-items: flex-end; }
+            .product-price { font-size: 13.5px; }
         }
     </style>
 

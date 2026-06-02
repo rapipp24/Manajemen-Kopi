@@ -2,8 +2,6 @@
     <x-slot name="title">Detail Setoran {{ $deposit->deposit_number }}</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
 
         /* ── Page heading ──────────────────── */
         .deposit-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
@@ -28,12 +26,6 @@
         .info-label { font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em; }
         .info-value { font-size:13.5px;font-weight:600;color:var(--text);text-align:right;max-width:58%; }
 
-        .btn-secondary {
-            background:#fff;border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;
-            text-decoration:none;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;
-            transition:background 0.15s;
-        }
-        .btn-secondary:hover { background:var(--cream); }
 
         .alert-rejection {
             background:#fef2f2;border:1px solid #fecaca;color:#991b1b;
@@ -44,7 +36,7 @@
         @media (max-width:768px) { .layout { grid-template-columns:1fr; } }
     </style>
 
-    <a href="{{ route('sales.deposits.index') }}" class="back-link">
+    <a href="{{ route('sales.deposits.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Daftar
     </a>
 
@@ -126,14 +118,14 @@
                         @if(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'webp']))
                             <div style="margin-top: 4px;">
                                 <img src="{{ Storage::url($deposit->payment_proof_path) }}" alt="Bukti Pembayaran" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; margin-bottom: 12px;">
-                                <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" class="btn-secondary" style="width:100%; justify-content:center;">
+                                <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" class="sales-ghost-button" style="width:100%;">
                                     <i data-lucide="external-link" style="width:14px;height:14px;"></i> Lihat Gambar Penuh
                                 </a>
                             </div>
                         @else
                             <div style="padding:12px 0;">
                                 <i data-lucide="file-text" style="width:32px;height:32px;color:var(--accent);margin:0 auto 10px;display:block;"></i>
-                                <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" class="btn-secondary" style="width:100%; justify-content:center;">
+                                <a href="{{ Storage::url($deposit->payment_proof_path) }}" target="_blank" class="sales-ghost-button" style="width:100%;">
                                     <i data-lucide="download" style="width:14px;height:14px;"></i> Unduh Dokumen PDF
                                 </a>
                             </div>

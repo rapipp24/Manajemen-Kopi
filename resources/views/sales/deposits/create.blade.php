@@ -2,9 +2,6 @@
     <x-slot name="title">Kirim Setoran</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
-
         .page-header { margin-bottom:24px; }
         .page-title  { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
         .page-desc   { font-size:13.5px;color:var(--muted);margin-top:4px; }
@@ -65,7 +62,7 @@
         .btn-submit:hover { background:var(--brown-hover); }
     </style>
 
-    <a href="{{ route('sales.deposits.index') }}" class="back-link">
+    <a href="{{ route('sales.deposits.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Daftar
     </a>
 

@@ -2,8 +2,6 @@
     <x-slot name="title">Buat Laporan Pengiriman</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:16px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
         .page-title { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px; }
         .page-desc  { font-size:13.5px;color:var(--muted);margin-bottom:24px; }
 
@@ -109,7 +107,9 @@
         }
     </style>
 
-    <a href="{{ route('sales.delivery-reports.index') }}" class="back-link">← Kembali ke Riwayat</a>
+    <a href="{{ route('sales.delivery-reports.index') }}" class="sales-back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Riwayat
+    </a>
     <h1 class="page-title">Buat Laporan Pengiriman</h1>
     <p class="page-desc">Catat barang yang Anda kirimkan ke toko. Stok Anda akan berkurang otomatis setelah disimpan.</p>
 
@@ -118,7 +118,9 @@
             <div class="empty-stok-emoji">📦</div>
             <strong>Stok barang Anda kosong</strong>
             <p>Anda belum memiliki stok barang untuk dikirimkan. Ajukan permintaan barang ke gudang terlebih dahulu.</p>
-            <a href="{{ route('sales.orders.create') }}" class="empty-stok-link">+ Buat Pengajuan Barang</a>
+            <a href="{{ route('sales.orders.create') }}" class="empty-stok-link" style="display:inline-flex; align-items:center; gap:6px;">
+                <i data-lucide="plus" style="width:16px;height:16px;"></i> Buat Pengajuan Barang
+            </a>
         </div>
     @else
 

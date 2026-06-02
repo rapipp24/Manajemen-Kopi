@@ -2,8 +2,6 @@
     <x-slot name="title">Detail Return {{ $return->return_number }}</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
 
         /* ── Page heading ──────────────────── */
         .return-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
@@ -99,7 +97,7 @@
         }
     </style>
 
-    <a href="{{ route('sales.returns.index') }}" class="back-link">
+    <a href="{{ route('sales.returns.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Daftar Return
     </a>
 

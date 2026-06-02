@@ -2,9 +2,6 @@
     <x-slot name="title">Detail Pengajuan {{ $order->order_number }}</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
-
         /* ── Page heading ──────────────────── */
         .order-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
         .order-number  { font-size:17px;font-weight:700;color:var(--text);font-family:monospace;letter-spacing:0.02em; }
@@ -102,7 +99,7 @@
         }
     </style>
 
-    <a href="{{ route('sales.orders.index') }}" class="back-link">
+    <a href="{{ route('sales.orders.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Riwayat
     </a>
 

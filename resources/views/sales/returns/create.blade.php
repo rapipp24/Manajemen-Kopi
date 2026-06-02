@@ -2,8 +2,6 @@
     <x-slot name="title">Ajukan Return Barang</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
 
         .page-header { margin-bottom:24px; }
         .page-title  { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
@@ -27,12 +25,6 @@
         }
         .btn-primary:hover { background:var(--brown-hover); }
 
-        .btn-secondary {
-            background:#fff;border:1px solid var(--border);color:var(--text);padding:9px 18px;border-radius:8px;
-            text-decoration:none;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;
-            transition:background 0.15s;
-        }
-        .btn-secondary:hover { background:var(--cream); }
 
         /* Table wrap with swipe info */
         .table-scroll-container { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:8px; border:1px solid var(--border); }
@@ -61,7 +53,7 @@
         }
     </style>
 
-    <a href="{{ route('sales.returns.index') }}" class="back-link">
+    <a href="{{ route('sales.returns.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Daftar Return
     </a>
 
@@ -206,7 +198,7 @@
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:30px;">
-            <a href="{{ route('sales.returns.index') }}" class="btn-secondary">
+            <a href="{{ route('sales.returns.index') }}" class="sales-ghost-button">
                 Batal
             </a>
             <button type="submit" id="submitBtn" class="btn-primary" style="padding:0 24px;">

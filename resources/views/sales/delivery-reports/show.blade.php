@@ -2,8 +2,7 @@
     <x-slot name="title">Laporan {{ $deliveryReport->report_number }}</x-slot>
 
     <style>
-        .back-link { display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color 0.15s; }
-        .back-link:hover { color:var(--text); }
+
 
         /* ── Page heading ──────────────────── */
         .report-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
@@ -48,12 +47,6 @@
         }
         .btn-primary:hover { background:var(--brown-hover); }
 
-        .btn-secondary {
-            background:#fff;border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;
-            text-decoration:none;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;
-            transition:background 0.15s; width: 100%; justify-content: center; box-sizing:border-box;
-        }
-        .btn-secondary:hover { background:var(--cream); }
 
         /* ── Desktop/Mobile Dual Layout ──────── */
         .desktop-only { display: block; }
@@ -104,7 +97,7 @@
         }
     </style>
 
-    <a href="{{ route('sales.delivery-reports.index') }}" class="back-link">
+    <a href="{{ route('sales.delivery-reports.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Riwayat
     </a>
 
@@ -329,7 +322,7 @@
             @endif
 
             {{-- Tombol Ajukan Return --}}
-            <a href="{{ route('sales.returns.create', ['delivery_report_id' => $deliveryReport->id]) }}" class="btn-secondary">
+            <a href="{{ route('sales.returns.create', ['delivery_report_id' => $deliveryReport->id]) }}" class="sales-ghost-button" style="width:100%;">
                 <i data-lucide="corner-up-left" style="width:14px;height:14px;"></i> Ajukan Return Barang
             </a>
 

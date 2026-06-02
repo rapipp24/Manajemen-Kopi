@@ -238,6 +238,40 @@
         .flash-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
         .flash-error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
 
+        /* ── Reusable Sales Links ────────────────────── */
+        .sales-back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13.5px; font-weight: 600; color: var(--muted);
+            text-decoration: none; padding: 6px 12px; margin-left: -12px;
+            border-radius: 8px; transition: all 0.15s; margin-bottom: 20px;
+        }
+        .sales-back-link:hover { color: var(--text); background: var(--cream); }
+
+        .sales-action-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; color: var(--brown);
+            text-decoration: none; background: var(--brown-light);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 6px 14px; transition: all 0.2s;
+        }
+        .sales-action-pill:hover { background: var(--cream); color: var(--brown-hover); border-color: var(--accent); }
+
+        .sales-detail-link {
+            font-size: 12.5px; font-weight: 700; color: var(--accent);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+            transition: color 0.15s, opacity 0.15s; padding: 4px 8px; margin-right: -8px; border-radius: 6px;
+        }
+        .sales-detail-link:hover { color: var(--brown); background: var(--cream); text-decoration: none; }
+        
+        .sales-ghost-button {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12.5px; font-weight: 700; color: var(--text);
+            text-decoration: none; background: #fff;
+            border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 14px; transition: all 0.15s; justify-content: center;
+        }
+        .sales-ghost-button:hover { background: var(--cream); border-color: var(--accent); color: var(--brown); }
+
         /* ── Responsive Mobile / Drawer ──────────────── */
         .mobile-topbar {
             display: none;
@@ -412,16 +446,15 @@
         </nav>
 
         <div class="sidebar-footer">
-            <a href="{{ route('sales.settings') }}" class="user-card" style="text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
+            <div class="user-card" style="display: flex; align-items: center; gap: 10px;">
                 <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="flex:1;min-width:0;">
                     <div class="user-name" style="font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ auth()->user()->name }}</div>
                     <div class="user-label" style="display: flex; align-items: center; gap: 4px;">
                         <span>Sales</span>
-                        <i data-lucide="settings" style="width: 10px; height: 10px;"></i>
                     </div>
                 </div>
-            </a>
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="btn-logout">Keluar</button>
