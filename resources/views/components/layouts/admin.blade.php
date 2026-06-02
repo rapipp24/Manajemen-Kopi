@@ -86,16 +86,15 @@
             gap: 12px;
         }
 
-        .brand-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #92400e, #78350f);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(146, 64, 14, 0.2);
+        .brand-logo-img {
+            height: 42px;
+            width: auto;
+            max-width: 120px;  /* Cukup untuk logo landscape — sidebar 252px desktop, 280px mobile drawer */
+            max-height: 42px;  /* Tidak melebihi brand area */
+            object-fit: contain;
+            border-radius: 6px;
             flex-shrink: 0;
+            display: block;
         }
 
         .brand-name {
@@ -112,7 +111,7 @@
             text-transform: uppercase;
             letter-spacing: 0.8px;
             margin-top: 2px;
-            padding-left: 48px;
+            padding-left: 0;  /* Hapus padding-left agar tidak overflow di mobile */
             font-weight: 600;
         }
 
@@ -650,12 +649,13 @@
         <div class="sidebar-brand">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <div class="brand-logo">
-                    <div class="brand-icon">
-                        <!-- Premium Coffee Cup SVG -->
-                        <svg style="width: 18px; height: 18px; color: #fffdfa;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 14a6 6 0 0012 0H6zM18 10h-2V7a2 2 0 00-2-2H8a2 2 0 00-2 2v3H4a2 2 0 00-2 2v2a6 6 0 0012 0h2a4 4 0 004-4v-1a3 3 0 00-3-3z"></path>
-                        </svg>
-                    </div>
+                    <!-- Logo resmi Kopi Elang Emas -->
+                    <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}"
+                         alt="Kopi Elang Emas"
+                         class="brand-logo-img"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <!-- Fallback jika logo tidak tersedia -->
+                    <span style="display:none; width:36px; height:36px; background:linear-gradient(135deg,#92400e,#78350f); border-radius:8px; align-items:center; justify-content:center; color:#fffdfa; font-size:14px; font-weight:800; flex-shrink:0;">K</span>
                     <span class="brand-name">{{ \App\Models\Setting::get('shop_name', 'Kopi Elang Emas') }}</span>
                 </div>
                 <button class="admin-sidebar-close" id="sidebar-close" aria-label="Tutup menu admin">
@@ -891,15 +891,16 @@
         </nav>
 
         <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 10px;">
-            <div class="sidebar-user" style="margin-bottom: 2px;">
-                <div class="sidebar-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-                <div class="sidebar-user-info">
-                    <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
-                    <div class="sidebar-user-role">Administrator</div>
-                </div>
-            </div>
+            {{-- Profile card hidden until profile management feature is available. --}}
+            {{-- <div class="sidebar-user" style="margin-bottom: 2px;"> --}}
+            {{--     <div class="sidebar-avatar"> --}}
+            {{--         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }} --}}
+            {{--     </div> --}}
+            {{--     <div class="sidebar-user-info"> --}}
+            {{--         <div class="sidebar-user-name">{{ auth()->user()->name }}</div> --}}
+            {{--         <div class="sidebar-user-role">Administrator</div> --}}
+            {{--     </div> --}}
+            {{-- </div> --}}
             <form method="POST" action="{{ route('logout') }}" style="width: 100%;">
                 @csrf
                 <button type="submit" class="confirm-action btn-logout-footer" 
