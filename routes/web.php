@@ -110,6 +110,10 @@ Route::middleware(['auth', 'sales', 'verified'])->name('sales.')->group(function
     Route::resource('returns', \App\Http\Controllers\Sales\SalesReturnController::class)
         ->only(['index', 'create', 'store', 'show']);
 
+    // Pengaturan Akun Sales
+    Route::get('/settings', [\App\Http\Controllers\Sales\SettingsController::class, 'edit'])->name('settings');
+    Route::patch('/settings', [\App\Http\Controllers\Sales\SettingsController::class, 'update'])->name('settings.update');
+
     Route::get('/orders-placeholder', function () {
         return "Halaman Buat Pesanan Sales";
     })->name('orders-placeholder');

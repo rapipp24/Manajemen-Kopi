@@ -324,14 +324,33 @@
         <button type="button" class="menu-toggle" onclick="toggleSidebar()">
             <i data-lucide="menu"></i>
         </button>
-        <span style="font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -0.02em;">Kopi <span>Elang Emas</span></span>
-        <div class="user-avatar" style="width: 28px; height: 28px; font-size: 11px;">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+        <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+            <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}"
+                 alt="Kopi Elang Emas"
+                 style="max-height: 32px; max-width: 36px; width: auto; object-fit: contain; border-radius: 4px; display: block;"
+                 onerror="this.style.display='none';">
+            <span style="font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em;">Kopi <span style="color: var(--accent);">Elang Emas</span></span>
+        </div>
+        <a href="{{ route('sales.settings') }}" style="text-decoration: none;">
+            <div class="user-avatar" style="width: 28px; height: 28px; font-size: 11px; cursor: pointer; border: 1.5px solid var(--border);">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+        </a>
     </div>
 
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <div class="brand-name">Kopi <span>Elang Emas</span></div>
-            <div class="brand-role">PORTAL SALES</div>
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; width: 100%;">
+                <!-- Logo resmi Kopi Elang Emas -->
+                <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}"
+                     alt="Kopi Elang Emas"
+                     style="flex-shrink: 0; max-height: 42px; max-width: 48px; width: auto; object-fit: contain; border-radius: 6px; display: block;"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                <!-- Fallback jika logo tidak tersedia -->
+                <span style="display:none; width:36px; height:36px; background:linear-gradient(135deg,var(--brown),#5c2d18); border-radius:8px; align-items:center; justify-content:center; color:#fffdfa; font-size:14px; font-weight:800; flex-shrink:0;">K</span>
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                    <div class="brand-name" style="font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.2;">Kopi <span style="color: var(--accent);">Elang Emas</span></div>
+                    <div class="brand-role" style="font-size: 9px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px;">PORTAL SALES</div>
+                </div>
+            </div>
         </div>
 
         <nav class="sidebar-nav">
@@ -382,16 +401,27 @@
                <i data-lucide="corner-up-left" class="nav-icon"></i>
                 Return Barang
             </a>
+
+            <div class="nav-section">Pengaturan</div>
+
+            <a href="{{ route('sales.settings') }}"
+               class="nav-item {{ request()->routeIs('sales.settings*') ? 'active' : '' }}">
+               <i data-lucide="settings" class="nav-icon"></i>
+                Pengaturan Akun
+            </a>
         </nav>
 
         <div class="sidebar-footer">
-            <div class="user-card">
+            <a href="{{ route('sales.settings') }}" class="user-card" style="text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
                 <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="flex:1;min-width:0;">
-                    <div class="user-name">{{ auth()->user()->name }}</div>
-                    <div class="user-label">Sales</div>
+                    <div class="user-name" style="font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ auth()->user()->name }}</div>
+                    <div class="user-label" style="display: flex; align-items: center; gap: 4px;">
+                        <span>Sales</span>
+                        <i data-lucide="settings" style="width: 10px; height: 10px;"></i>
+                    </div>
                 </div>
-            </div>
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="btn-logout">Keluar</button>
