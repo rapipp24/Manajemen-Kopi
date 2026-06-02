@@ -9,7 +9,7 @@
             </div>
             <h2 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem;">Verifikasi Berhasil!</h2>
             <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.6;">
-                Akun Anda sudah aktif.<br>Silakan lihat tab baru yang sudah terbuka.
+                Email Anda berhasil diverifikasi.<br>Silakan tunggu approval admin sebelum dapat menggunakan akun.
             </p>
         </div>
     </div>
@@ -29,12 +29,17 @@
     </div>
 
     {{-- Kotak Instruksi --}}
-    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem;">
         <p style="font-size: 0.875rem; color: #4b5563; line-height: 1.7; margin: 0;">
             Kami telah mengirimkan <strong>link verifikasi</strong> ke email yang Anda daftarkan.
             Silakan buka email tersebut dan klik tombol verifikasi di dalamnya.
         </p>
     </div>
+
+    {{-- Hint link expired --}}
+    <p style="font-size: 0.8rem; color: #9ca3af; line-height: 1.6; margin-bottom: 1.25rem;">
+        Jika link verifikasi sudah kedaluwarsa, klik tombol di bawah untuk mendapatkan link baru.
+    </p>
 
     {{-- Notifikasi Kirim Ulang --}}
     @if (session('status') == 'verification-link-sent')
@@ -53,7 +58,7 @@
         <form method="POST" action="{{ route('verification.send') }}" style="flex: 1;">
             @csrf
             <button type="submit" style="width: 100%; padding: 0.625rem 1rem; background: linear-gradient(135deg, #92400e, #b45309); color: #fff; font-size: 0.875rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                Kirim Ulang Email
+                Kirim Ulang Link Verifikasi
             </button>
         </form>
 

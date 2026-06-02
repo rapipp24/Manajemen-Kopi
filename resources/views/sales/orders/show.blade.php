@@ -51,11 +51,54 @@
         .tl-label { font-size:12.5px;color:var(--text);font-weight:600; }
         .tl-time  { font-size:11.5px;color:var(--muted);margin-top:1px; }
 
-        /* ── Note box ────────────────────── */
         .note-box { padding:12px 18px;background:var(--cream);border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);font-style:italic; }
+
+        /* ── Desktop/Mobile Dual Layout ──────── */
+        .desktop-only { display: block; }
+        .mobile-only { display: none; }
+
+        .mobile-item {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .mobile-item:last-child { border-bottom: none; }
+        .mobile-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .mobile-item-title { font-weight: 700; color: var(--text); font-size: 13.5px; }
+        .mobile-item-qty { font-weight: 800; color: var(--brown); font-size: 13.5px; }
+        .mobile-item-bot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .mobile-item-weight {
+            background: var(--cream); border: 1px solid var(--border); color: var(--text);
+            font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+        }
+        .mobile-item-subtotal { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+
+        .mobile-total-row {
+            padding: 12px 14px;
+            background: var(--cream);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .mobile-total-label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .mobile-total-val { font-size: 16px; font-weight: 800; color: var(--brown); letter-spacing: -0.02em; }
 
         @media (max-width: 768px) {
             .layout { grid-template-columns: 1fr; }
+            .desktop-only { display: none !important; }
+            .mobile-only { display: block !important; }
         }
     </style>
 
@@ -84,7 +127,7 @@
             <div class="card-header">
                 <h3>Daftar Barang yang Diminta</h3>
             </div>
-            <div class="table-scroll-container">
+            <div class="table-scroll-container desktop-only">
                 <table>
                     <thead>
                         <tr>
@@ -119,6 +162,25 @@
                         </tr>
                     </tfoot>
                 </table>
+            </div>
+            
+            <div class="mobile-only">
+                @foreach($order->items as $item)
+                <div class="mobile-item">
+                    <div class="mobile-item-top">
+                        <div class="mobile-item-title">{{ $item->product->name }}</div>
+                        <div class="mobile-item-qty">{{ $item->qty }} pcs</div>
+                    </div>
+                    <div class="mobile-item-bot">
+                        <span class="mobile-item-weight">{{ $item->product->weight }} Gram</span>
+                        <span class="mobile-item-subtotal">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+                @endforeach
+                <div class="mobile-total-row">
+                    <div class="mobile-total-label">Total Estimasi</div>
+                    <div class="mobile-total-val">Rp {{ number_format($order->total, 0, ',', '.') }}</div>
+                </div>
             </div>
             @if($order->catatan)
             <div class="note-box">"{{ $order->catatan }}"</div>

@@ -107,8 +107,8 @@
         /* ── Grid ────────────────────────────── */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
         }
 
         /* ── Product Card ────────────────────── */
@@ -116,16 +116,15 @@
             background: #ffffff;
             border: 1px solid var(--border);
             border-top: 2px solid rgba(197, 160, 89, 0.5); /* Subtle gold top accent line */
-            border-radius: 10px;
-            padding: 16px;
+            border-radius: 8px;
+            padding: 12px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.02);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;
-            min-height: 160px; /* Reduced min-height to make it compact */
+            min-height: 120px;
         }
 
         .product-card:hover {
@@ -135,77 +134,59 @@
         }
 
         .product-card.out-of-stock {
-            opacity: 0.95; /* Faded very subtly, card remains highly readable */
+            opacity: 0.95;
         }
 
         .product-card-top {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
         .product-category {
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 700;
-            color: #8c7355; /* Muted warm brown */
+            color: #8c7355;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 2px;
-            display: inline-block;
+            margin: 0;
         }
 
         .product-name {
-            font-size: 14.5px;
+            font-size: 13.5px;
             font-weight: 700;
             color: var(--text);
             line-height: 1.35;
-            margin-bottom: 2px;
+            margin-top: 2px;
             letter-spacing: -0.01em;
         }
 
-        /* Weight pill - simple and clean without icon */
         .product-weight {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             color: var(--muted);
             background: var(--cream);
             border: 1px solid var(--border);
-            padding: 2px 8px;
+            padding: 1px 6px;
             border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
-        .product-divider {
-            display: none; /* Hide old visual divider line to avoid empty spaces */
+            margin: 0;
         }
 
         .product-card-bottom {
-            border-top: 1px solid rgba(234, 227, 210, 0.6); /* Bottom area top border, soft and integrated */
-            padding-top: 10px;
-            margin-top: auto; /* Push bottom area fully down without stretching empty spaces */
+            border-top: 1px solid rgba(234, 227, 210, 0.6);
+            padding-top: 8px;
+            margin-top: 8px;
         }
 
         .product-footer {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-price-label {
-            font-size: 9px;
-            color: var(--muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1px;
+            align-items: flex-end;
         }
 
         .product-price {
-            font-size: 14.5px;
-            font-weight: 800;
+            font-size: 13.5px;
+            font-weight: 850;
             color: var(--brown);
             letter-spacing: -0.02em;
             line-height: 1;
@@ -215,13 +196,12 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 24px;
-            font-size: 10.5px;
+            height: 20px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 0 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             white-space: nowrap;
-            letter-spacing: 0.01em;
         }
         .stock-ok   { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
         .stock-low  { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
@@ -230,32 +210,21 @@
         /* ── Empty ───────────────────────────── */
         .empty-wrap {
             text-align: center;
-            padding: 48px 20px;
+            padding: 32px 20px;
             background: #ffffff;
             border: 1px solid var(--border);
             border-radius: 10px;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
         }
-        .empty-emoji { font-size: 32px; margin-bottom: 8px; opacity: 0.3; }
         .empty-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
         .empty-desc  { font-size: 12.5px; color: var(--muted); }
 
-        #empty-state-search {
-            display: none;
-            text-align: center;
-            padding: 48px 20px;
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
-        }
-
         /* ── Responsive ──────────────────────── */
         @media (max-width: 768px) {
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
         }
-        @media (max-width: 480px) {
-            .products-grid { grid-template-columns: 1fr; }
+        @media (max-width: 360px) {
+            .products-grid { grid-template-columns: 1fr; gap: 8px; }
         }
     </style>
 
@@ -266,7 +235,9 @@
 
     @if($products->isEmpty())
         <div class="empty-wrap">
-            <div class="empty-emoji">📦</div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+            </svg>
             <div class="empty-title">Belum ada produk tersedia</div>
             <div class="empty-desc">Hubungi admin untuk menambahkan produk.</div>
         </div>
@@ -299,8 +270,10 @@
         </div>
 
         <!-- Empty State for Search -->
-        <div id="empty-state-search">
-            <div class="empty-emoji">🔍</div>
+        <div id="empty-state-search" style="display: none; text-align: center; padding: 32px 20px; background: #ffffff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
             <div class="empty-title">Produk tidak ditemukan</div>
             <div class="empty-desc">Coba gunakan kata kunci lain atau pilih kategori berbeda.</div>
         </div>
@@ -321,21 +294,17 @@
                 
                 <!-- Card Top Content -->
                 <div class="product-card-top">
-                    <div class="product-category">{{ $product->productCategory->name ?? 'Kopi' }}</div>
-                    <div class="product-name">{{ $product->name }}</div>
-                    <div class="product-weight">
-                        {{ $product->weight }} Gram
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                        <span class="product-category">{{ $product->productCategory->name ?? 'Kopi' }}</span>
+                        <span class="product-weight">{{ $product->weight }}g</span>
                     </div>
+                    <div class="product-name">{{ $product->name }}</div>
                 </div>
 
                 <!-- Card Bottom Content -->
                 <div class="product-card-bottom">
-                    <div class="product-divider"></div>
                     <div class="product-footer">
-                        <div>
-                            <div class="product-price-label">Harga</div>
-                            <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                        </div>
+                        <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
                         <span class="product-stock {{ $cls }}">{{ $txt }}</span>
                     </div>
                 </div>

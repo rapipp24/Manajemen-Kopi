@@ -18,30 +18,30 @@
         .btn-primary:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
 
         /* ── Summary Cards ───────────────────── */
-        .summary-row { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+        .summary-row { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px; }
         .summary-card {
-            background:#fff;border:1px solid var(--border);border-radius:12px;
-            padding:16px 18px;display:flex;flex-direction:column;gap:6px;
+            background:#fff;border:1px solid var(--border);border-radius:8px;
+            padding:12px 14px;display:flex;flex-direction:column;gap:4px;
             box-shadow: 0 1px 2px rgba(42, 23, 14, 0.01);
         }
-        .summary-value { font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1; }
-        .summary-label { font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em; }
+        .summary-value { font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1; }
+        .summary-label { font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em; }
 
         /* ── Table Card ──────────────────────── */
-        .table-card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
-        .table-title { padding:12px 16px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
+        .table-card { background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
+        .table-title { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);background:var(--cream); }
 
         table { width:100%;border-collapse:collapse; }
         thead tr { background:var(--cream);border-bottom:1px solid var(--border); }
-        th { padding:10px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
-        td { padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle; }
+        th { padding:8px 12px;text-align:left;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
+        td { padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle; }
         tr:last-child td { border-bottom:none; }
         tr:hover td { background:#faf8f5; }
 
         /* ── Status Badge ────────────────────── */
         .badge {
             display:inline-flex;align-items:center;justify-content:center;
-            padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;
+            padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;
             line-height:1.2;text-transform:uppercase;letter-spacing:0.04em;
         }
         .badge-pending  { background:#fffbeb;color:#d97706;border:1px solid #fde68a; }
@@ -50,18 +50,15 @@
         .badge-canceled { background:#fef2f2;color:#b91c1c;border:1px solid #fecaca; }
 
         .btn-link {
-            font-size:12.5px;font-weight:700;color:var(--brown);
+            font-size:12px;font-weight:700;color:var(--brown);
             text-decoration:none;transition:color 0.15s, opacity 0.15s;
             display:inline-flex;align-items:center;gap:4px;cursor:pointer;
         }
         .btn-link:hover { color:var(--accent); text-decoration:underline; }
 
         /* ── Empty ───────────────────────────── */
-        .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border-radius:12px; border:1px solid var(--border); }
-        .empty-emoji { font-size:36px;margin-bottom:10px;opacity:0.3; }
-        .empty-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px; }
-        .empty-cta { font-size:13px;color:var(--accent);font-weight:700;text-decoration:none; }
-        .empty-cta:hover { text-decoration:underline; }
+        .empty-wrap { padding:32px 20px;text-align:center; background:#fff; border-radius:8px; border:1px solid var(--border); }
+        .empty-title { font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:4px; }
 
         /* ── Desktop/Mobile Dual Layout ──────── */
         .desktop-only { display: block; }
@@ -70,28 +67,32 @@
         .mobile-card {
             background: #fff;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
+            transition: border-color 0.15s;
+        }
+        .mobile-card:hover {
+            border-color: var(--accent);
         }
         .mobile-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .mobile-card-num {
             font-family: monospace;
             font-weight: 700;
-            font-size: 12.5px;
+            font-size: 12px;
             color: var(--text);
         }
         .mobile-card-row {
             display: flex;
             justify-content: space-between;
-            font-size: 12.5px;
-            margin-bottom: 4px;
+            font-size: 12px;
+            margin-bottom: 3px;
         }
         .mobile-card-label {
             color: var(--muted);
@@ -102,10 +103,9 @@
             color: var(--text);
         }
         .mobile-card-actions {
-            margin-top: 10px;
-            padding-top: 8px;
+            margin-top: 8px;
+            padding-top: 6px;
             border-top: 1px solid rgba(234, 227, 210, 0.5);
-            text-align: right;
             display: flex;
             justify-content: flex-end;
         }
@@ -114,10 +114,11 @@
         @media (max-width: 767px) {
             .desktop-only { display: none !important; }
             .mobile-only { display: block !important; }
-            .summary-row { grid-template-columns: 1fr; gap: 8px; }
-            .summary-card { padding: 12px 14px; flex-direction: row; justify-content: space-between; align-items: center; }
-            .summary-value { order: 2; font-size: 20px; }
-            .summary-label { order: 1; margin: 0; }
+            .summary-row { grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 16px; }
+            .summary-card { padding: 8px 10px; flex-direction: column; justify-content: center; text-align: center; gap: 2px; }
+            .summary-value { order: 1; font-size: 15px; }
+            .summary-label { order: 2; margin: 0; font-size: 9px; line-height: 1.1; text-align: center; }
+            .btn-primary { padding: 8px 14px; font-size: 12px; }
         }
     </style>
 
@@ -198,9 +199,11 @@
                 <tr>
                     <td colspan="5">
                         <div class="empty-wrap" style="border:none;">
-                            <div class="empty-emoji">📋</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
                             <div class="empty-title">Belum ada pengajuan barang</div>
-                            <a href="{{ route('sales.orders.create') }}" class="empty-cta">Buat Pengajuan Sekarang →</a>
+                            <a href="{{ route('sales.orders.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Buat Pengajuan Sekarang</a>
                         </div>
                     </td>
                 </tr>
@@ -239,9 +242,11 @@
             </div>
         @empty
             <div class="empty-wrap">
-                <div class="empty-emoji">📋</div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
                 <div class="empty-title">Belum ada pengajuan barang</div>
-                <a href="{{ route('sales.orders.create') }}" class="empty-cta">Buat Pengajuan Sekarang →</a>
+                <a href="{{ route('sales.orders.create') }}" class="empty-cta-btn" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: var(--brown-light); color: var(--brown); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Buat Pengajuan Sekarang</a>
             </div>
         @endforelse
 
