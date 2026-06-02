@@ -36,13 +36,16 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
+// Email verification route - NO auth middleware required
+// User must be able to verify email without being logged in to avoid deadlock
+// Security: signed URL + throttle ensures link integrity without requiring auth
+Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
-
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
