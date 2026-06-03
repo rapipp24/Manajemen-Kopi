@@ -111,6 +111,16 @@ class User extends Authenticatable implements MustVerifyEmail
         (new VerifyEmailViaResend())->send($this);
     }
 
+    /**
+     * Override pengiriman notifikasi reset password.
+     * Menggunakan ResendApiMailer via HTTPS 443 (bukan SMTP).
+     * Kegagalan pengiriman email tidak menyebabkan exception — dicatat di log.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordViaResend($token));
+    }
+
     // ── Relationships ───────────────────────────────────────────────────────
 
     /** Admin yang menyetujui akun ini */
