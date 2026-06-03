@@ -125,7 +125,11 @@
                                             $label = number_format($stock, 0, ',', '.') . ' ' . $unit;
                                             
                                             if (($unit === 'kg' || $unit === 'kilogram') && $stock >= 1000) {
-                                                $label = number_format($stock/1000, 2, ',', '.') . ' Ton / ' . number_format($stock, 0, ',', '.') . ' kg';
+                                                $tonVal = $stock / 1000;
+                                                $tonFmt = floor($tonVal) == $tonVal 
+                                                    ? number_format($tonVal, 0, ',', '.') 
+                                                    : rtrim(rtrim(number_format($tonVal, 2, ',', '.'), '0'), ',');
+                                                $label = $tonFmt . ' Ton / ' . number_format($stock, 0, ',', '.') . ' kg';
                                             }
                                         @endphp
                                         <option value="{{ $product->id }}" 
