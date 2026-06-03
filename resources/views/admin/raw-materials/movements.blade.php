@@ -27,13 +27,19 @@
             <div style="font-size: 11px; font-weight: 700; color: var(--brown-500); text-transform: uppercase; margin-bottom: 8px;">Stok Saat Ini</div>
             <div style="font-size: 20px; font-weight: 800; color: var(--brown-500);">
                 @php
-                    $stock = $rawMaterial->current_stock;
+                    $stock = (float) $rawMaterial->current_stock;
                     $unit = $rawMaterial->unit->code ?? 'kg';
-                    $displayStock = number_format($stock, 2, ',', '.');
                     if (strtolower($unit) == 'kg' && $stock >= 1000) {
-                        $displayStock = number_format($stock / 1000, 2, ',', '.') . ' <span style="font-size: 14px;">Ton</span>';
+                        $tonVal = $stock / 1000;
+                        $formattedStock = floor($tonVal) == $tonVal 
+                            ? number_format($tonVal, 0, ',', '.') 
+                            : rtrim(rtrim(number_format($tonVal, 2, ',', '.'), '0'), ',');
+                        $displayStock = $formattedStock . ' <span style="font-size: 14px;">Ton</span>';
                     } else {
-                        $displayStock = $displayStock . ' <span style="font-size: 12px;">' . $unit . '</span>';
+                        $formattedStock = floor($stock) == $stock 
+                            ? number_format($stock, 0, ',', '.') 
+                            : rtrim(rtrim(number_format($stock, 2, ',', '.'), '0'), ',');
+                        $displayStock = $formattedStock . ' <span style="font-size: 12px;">' . $unit . '</span>';
                     }
                 @endphp
                 {!! $displayStock !!}
@@ -78,15 +84,15 @@
                             @endif
                         </td>
                         <td style="padding: 16px 20px; text-align: right; color: var(--text-muted); font-family: monospace; font-size: 13px; font-weight: 600;">
-                            {{ number_format($m->stock_before, 2, ',', '.') }}
+                            {{ floor((float)$m->stock_before) == (float)$m->stock_before ? number_format($m->stock_before, 0, ',', '.') : rtrim(rtrim(number_format($m->stock_before, 2, ',', '.'), '0'), ',') }}
                         </td>
                         <td style="padding: 16px 20px; text-align: right;">
                             <div style="font-size: 15px; font-weight: 800; color: {{ $m->movement_type == 'in' ? '#166534' : '#be123c' }};">
-                                {{ $m->movement_type == 'in' ? '+' : '-' }}{{ number_format($m->qty, 2, ',', '.') }}
+                                {{ $m->movement_type == 'in' ? '+' : '-' }}{{ floor((float)$m->qty) == (float)$m->qty ? number_format($m->qty, 0, ',', '.') : rtrim(rtrim(number_format($m->qty, 2, ',', '.'), '0'), ',') }}
                             </div>
                         </td>
                         <td style="padding: 16px 20px; text-align: right; font-size: 15px; font-weight: 800; color: var(--text-main); font-family: monospace;">
-                            {{ number_format($m->stock_after, 2, ',', '.') }}
+                            {{ floor((float)$m->stock_after) == (float)$m->stock_after ? number_format($m->stock_after, 0, ',', '.') : rtrim(rtrim(number_format($m->stock_after, 2, ',', '.'), '0'), ',') }}
                         </td>
                         <td style="padding: 16px 20px;">
                             @php

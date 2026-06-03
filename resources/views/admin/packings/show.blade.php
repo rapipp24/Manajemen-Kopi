@@ -92,7 +92,7 @@
                             {{ number_format($item->weight_per_pack) }} gr
                         </td>
                         <td style="padding: 12px 20px; font-size: 14px; font-weight: 700; color: #dc2626; text-align: right;">
-                            {{ number_format($item->total_weight, 3) }} kg
+                            {{ floor((float)$item->total_weight) == (float)$item->total_weight ? number_format($item->total_weight, 0, ',', '.') : rtrim(rtrim(number_format($item->total_weight, 3, ',', '.'), '0'), ',') }} kg
                         </td>
                     </tr>
                     @endforeach
@@ -105,7 +105,7 @@
                         </td>
                         <td></td>
                         <td style="padding: 14px 20px; font-size: 14px; font-weight: 800; color: #dc2626; text-align: right;">
-                            {{ number_format($grandTotalBerat, 3) }} kg
+                            {{ floor((float)$grandTotalBerat) == (float)$grandTotalBerat ? number_format($grandTotalBerat, 0, ',', '.') : rtrim(rtrim(number_format($grandTotalBerat, 3, ',', '.'), '0'), ',') }} kg
                         </td>
                     </tr>
                 </tfoot>
@@ -123,7 +123,7 @@
                 </div>
                 <div style="padding: 18px; background: #fff5f5; border-radius: 10px; border: 1px solid #fecaca; text-align: center;">
                     <p style="font-size: 11px; font-weight: 600; color: #dc2626; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Curah Terpakai</p>
-                    <p style="font-size: 26px; font-weight: 800; color: #dc2626;">{{ number_format($grandTotalBerat, 3) }}</p>
+                    <p style="font-size: 26px; font-weight: 800; color: #dc2626;">{{ floor((float)$grandTotalBerat) == (float)$grandTotalBerat ? number_format($grandTotalBerat, 0, ',', '.') : rtrim(rtrim(number_format($grandTotalBerat, 3, ',', '.'), '0'), ',') }}</p>
                     <p style="font-size: 12px; color: #ef4444;">kg dikurangi dari stok curah</p>
                 </div>
             </div>

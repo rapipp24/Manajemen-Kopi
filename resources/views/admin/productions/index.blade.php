@@ -46,13 +46,13 @@
                         {{ $production->product_type }}
                     </td>
                     <td style="padding: 14px 20px; font-size: 13px; color: #475569;">
-                        {{ number_format($production->total_material_used, 2) }} kg
+                        {{ floor((float)$production->total_material_used) == (float)$production->total_material_used ? number_format($production->total_material_used, 0, ',', '.') : rtrim(rtrim(number_format($production->total_material_used, 2, ',', '.'), '0'), ',') }} kg
                     </td>
                     <td style="padding: 14px 20px; font-size: 13px; color: #166534; font-weight: 600;">
-                        {{ number_format($production->total_output, 2) }} kg
+                        {{ floor((float)$production->total_output) == (float)$production->total_output ? number_format($production->total_output, 0, ',', '.') : rtrim(rtrim(number_format($production->total_output, 2, ',', '.'), '0'), ',') }} kg
                     </td>
                     <td style="padding: 14px 20px; font-size: 13px; color: #dc2626;">
-                        {{ number_format($production->shrinkage, 2) }} kg
+                        {{ floor((float)$production->shrinkage) == (float)$production->shrinkage ? number_format($production->shrinkage, 0, ',', '.') : rtrim(rtrim(number_format($production->shrinkage, 2, ',', '.'), '0'), ',') }} kg
                     </td>
                     <td style="padding: 14px 20px; font-size: 13px; color: #475569;">
                         {{ $production->creator->name ?? '-' }}

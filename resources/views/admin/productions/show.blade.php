@@ -71,7 +71,7 @@
                             {{ $item->rawMaterial->unit->name ?? '-' }}
                         </td>
                         <td style="padding: 12px 20px; font-size: 14px; font-weight: 700; color: #dc2626; text-align: right;">
-                            {{ number_format($item->qty_used, 2) }}
+                            {{ floor((float)$item->qty_used) == (float)$item->qty_used ? number_format($item->qty_used, 0, ',', '.') : rtrim(rtrim(number_format($item->qty_used, 2, ',', '.'), '0'), ',') }}
                         </td>
                     </tr>
                     @endforeach
@@ -87,7 +87,7 @@
                 <div style="padding: 18px; background: #fffbeb; border-radius: 10px; border: 1px solid #fde68a; text-align: center;">
                     <p style="font-size: 11px; font-weight: 600; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Bahan</p>
                     <p style="font-size: 22px; font-weight: 800; color: #92400e;">
-                        {{ number_format($production->total_material_used, 2) }}
+                        {{ floor((float)$production->total_material_used) == (float)$production->total_material_used ? number_format($production->total_material_used, 0, ',', '.') : rtrim(rtrim(number_format($production->total_material_used, 2, ',', '.'), '0'), ',') }}
                     </p>
                     <p style="font-size: 12px; color: #b45309;">kg</p>
                 </div>
@@ -95,7 +95,7 @@
                 <div style="padding: 18px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; text-align: center;">
                     <p style="font-size: 11px; font-weight: 600; color: #166534; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Total Hasil</p>
                     <p style="font-size: 22px; font-weight: 800; color: #166534;">
-                        {{ number_format($production->total_output, 2) }}
+                        {{ floor((float)$production->total_output) == (float)$production->total_output ? number_format($production->total_output, 0, ',', '.') : rtrim(rtrim(number_format($production->total_output, 2, ',', '.'), '0'), ',') }}
                     </p>
                     <p style="font-size: 12px; color: #15803d;">kg</p>
                 </div>
@@ -103,7 +103,7 @@
                 <div style="padding: 18px; background: #fff5f5; border-radius: 10px; border: 1px solid #fecaca; text-align: center;">
                     <p style="font-size: 11px; font-weight: 600; color: #dc2626; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Susut</p>
                     <p style="font-size: 22px; font-weight: 800; color: #dc2626;">
-                        {{ number_format($production->shrinkage, 2) }}
+                        {{ floor((float)$production->shrinkage) == (float)$production->shrinkage ? number_format($production->shrinkage, 0, ',', '.') : rtrim(rtrim(number_format($production->shrinkage, 2, ',', '.'), '0'), ',') }}
                     </p>
                     <p style="font-size: 12px; color: #ef4444;">kg</p>
                 </div>

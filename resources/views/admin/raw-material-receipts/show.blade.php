@@ -531,18 +531,26 @@
                             $rawMaterialUnit = $item->rawMaterial?->unit?->code ?? null;
 
                             // Logika tampil qty — null-safe jika unit tidak ada
-                            $qty = $item->qty;
+                            $qty = (float)$item->qty;
                             if ($rawMaterialUnit) {
                                 if (strtolower($rawMaterialUnit) === 'kg' && $qty >= 1000) {
-                                    $displayQty = number_format($qty / 1000, 2, ',', '.') . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">Ton</span>';
+                                    $tonVal = $qty / 1000;
+                                    $fmtQty = floor($tonVal) == $tonVal 
+                                        ? number_format($tonVal, 0, ',', '.') 
+                                        : rtrim(rtrim(number_format($tonVal, 2, ',', '.'), '0'), ',');
+                                    $displayQty = $fmtQty . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">Ton</span>';
                                 } else {
-                                    $fmt = (floor($qty) == $qty) ? 0 : 2;
-                                    $displayQty = number_format($qty, $fmt, ',', '.') . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">' . $rawMaterialUnit . '</span>';
+                                    $fmtQty = floor($qty) == $qty 
+                                        ? number_format($qty, 0, ',', '.') 
+                                        : rtrim(rtrim(number_format($qty, 2, ',', '.'), '0'), ',');
+                                    $displayQty = $fmtQty . ' <span style="font-size: 11px; color: var(--text-muted); font-weight: 700;">' . $rawMaterialUnit . '</span>';
                                 }
                             } else {
                                 // Unit tidak tersedia — tampilkan qty saja tanpa satuan
-                                $fmt = (floor($qty) == $qty) ? 0 : 2;
-                                $displayQty = number_format($qty, $fmt, ',', '.');
+                                $fmtQty = floor($qty) == $qty 
+                                    ? number_format($qty, 0, ',', '.') 
+                                    : rtrim(rtrim(number_format($qty, 2, ',', '.'), '0'), ',');
+                                $displayQty = $fmtQty;
                             }
                         @endphp
                         <tr>

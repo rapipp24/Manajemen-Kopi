@@ -26,7 +26,7 @@
                             <option value="">-- Pilih Jenis Produksi --</option>
                             @foreach($curahStocks as $type => $stock)
                                 <option value="{{ $type }}" {{ old('curah_type') == $type ? 'selected' : '' }}>
-                                    {{ $type }} (Tersedia: {{ number_format($stock, 2) }} kg)
+                                    {{ $type }} (Tersedia: {{ floor((float)$stock) == (float)$stock ? number_format($stock, 0, ',', '.') : rtrim(rtrim(number_format($stock, 2, ',', '.'), '0'), ',') }} kg)
                                 </option>
                             @endforeach
                         </select>
@@ -217,7 +217,7 @@
             if (type && curahStocks[type] !== undefined) {
                 currentCurahStock = parseFloat(curahStocks[type]);
                 labelType.textContent = `"${type}"`;
-                labelStock.textContent = currentCurahStock.toFixed(2) + ' kg';
+                labelStock.textContent = formatKgKeUnit(currentCurahStock);
                 infoBox.style.display = 'flex';
             } else {
                 currentCurahStock = 0;

@@ -43,21 +43,27 @@
                     <td style="padding: 16px 20px;">
                         <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">
                             @php
-                                $stock = $material->current_stock;
+                                $stock = (float) $material->current_stock;
                                 $unit = $material->unit->code ?? 'kg';
-                                $displayStock = number_format($stock, 2, ',', '.');
                                 
                                 // Eksperimen Konversi Ton
                                 if (strtolower($unit) == 'kg' && $stock >= 1000) {
-                                    $displayStock = number_format($stock / 1000, 2, ',', '.') . ' Ton';
+                                    $tonVal = $stock / 1000;
+                                    $formattedStock = floor($tonVal) == $tonVal 
+                                        ? number_format($tonVal, 0, ',', '.') 
+                                        : rtrim(rtrim(number_format($tonVal, 2, ',', '.'), '0'), ',');
+                                    $displayStock = $formattedStock . ' Ton';
                                 } else {
-                                    $displayStock = $displayStock . ' ' . $unit;
+                                    $formattedStock = floor($stock) == $stock 
+                                        ? number_format($stock, 0, ',', '.') 
+                                        : rtrim(rtrim(number_format($stock, 2, ',', '.'), '0'), ',');
+                                    $displayStock = $formattedStock . ' ' . $unit;
                                 }
                             @endphp
                             {{ $displayStock }}
                         </div>
                         <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                            Batas Aman: {{ number_format($material->minimum_stock, 2, ',', '.') }} {{ $unit }}
+                            Batas Aman: {{ floor((float)$material->minimum_stock) == (float)$material->minimum_stock ? number_format($material->minimum_stock, 0, ',', '.') : rtrim(rtrim(number_format($material->minimum_stock, 2, ',', '.'), '0'), ',') }} {{ $unit }}
                         </div>
                     </td>
                     <td style="padding: 16px 20px;">
