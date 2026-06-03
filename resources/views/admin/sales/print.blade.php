@@ -43,10 +43,16 @@
             font-size: 14px;
             font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .brand-sub {
-            font-size: 10px;
+            font-size: 10.5px;
+        }
+
+        /* Screen-only: tampil di browser, disembunyikan saat print LX */
+        .screen-only {
+            display: block;
         }
 
         .invoice-title {
@@ -110,7 +116,7 @@
         .items-table td {
             padding: 4px;
             font-size: 10.5px;
-            border-bottom: 1px dashed #eee; /* Garis pembantu tipis antar item */
+            border-bottom: 1px dashed #ccc; /* Garis pembantu antar item — cukup terlihat saat print */
         }
 
         .items-table tr:last-child td {
@@ -211,6 +217,10 @@
             .no-print {
                 display: none !important;
             }
+            /* Sembunyikan elemen screen-only saat print LX */
+            .screen-only {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -227,6 +237,13 @@
         <table class="header-table">
             <tr>
                 <td style="width: 60%;">
+                    {{-- Screen-only preview logo (tidak muncul saat print LX dot matrix) --}}
+                    <div class="screen-only" style="margin-bottom: 6px;">
+                        <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}"
+                             alt="Kopi Elang Emas"
+                             style="max-height: 36px; max-width: 40px; object-fit: contain; border-radius: 3px; display: block;"
+                             onerror="this.style.display='none';">
+                    </div>
                     <div class="brand-name">{{ $settings['shop_name'] }}</div>
                     <div class="brand-sub">{{ $settings['shop_address'] }}</div>
                     <div class="brand-sub">Telp: {{ $settings['shop_phone'] }}</div>
@@ -238,7 +255,8 @@
             </tr>
         </table>
 
-        <div class="divider"></div>
+        {{-- Divider ganda setelah header — lebih tegas untuk pemisah di kertas continuous form --}}
+        <div class="double-divider"></div>
 
         <!-- Informasi Transaksi & Pelanggan -->
         <table class="info-table">
