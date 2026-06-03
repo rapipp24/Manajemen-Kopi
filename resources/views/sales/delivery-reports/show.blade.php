@@ -1,4 +1,4 @@
-<x-layouts.user>
+git <x-layouts.user>
     <x-slot name="title">Laporan {{ $deliveryReport->report_number }}</x-slot>
 
     <style>
@@ -95,7 +95,95 @@
             .desktop-only { display: none !important; }
             .mobile-only { display: block !important; }
         }
+
+        /* ═══════════════ PRINT STYLES ═══════════════ */
+        @media print {
+            body {
+                background: white !important;
+                color: #2a170e !important;
+                font-family: 'Inter', sans-serif !important;
+                font-size: 11px !important;
+                line-height: 1.4 !important;
+            }
+            .sidebar, .topbar, .mobile-topbar, .sidebar-overlay, .sales-back-link, .btn-primary, .sales-ghost-button, .no-print, .report-heading {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+            }
+            .main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                min-height: auto !important;
+                display: block !important;
+            }
+            .page-body {
+                padding: 0 !important;
+            }
+            
+            /* Show A4 print header */
+            .print-header-a4 {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 2px solid #6B2E16;
+                padding-bottom: 12px;
+                margin-bottom: 20px;
+            }
+
+            /* Adjust Grid to Block for Print */
+            .layout {
+                display: block !important;
+            }
+
+            /* Adjust side panels spacing and break avoidance */
+            .layout > div {
+                margin-bottom: 20px !important;
+                page-break-inside: avoid !important;
+            }
+
+            .card {
+                border: 1px solid var(--border) !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+            }
+            
+            /* Force desktop view when printing */
+            .desktop-only {
+                display: block !important;
+            }
+            .mobile-only {
+                display: none !important;
+            }
+            
+            /* Show signatures */
+            .print-signatures {
+                display: flex !important;
+                justify-content: space-between;
+                margin-top: 40px !important;
+                page-break-inside: avoid !important;
+            }
+        }
+        .print-header-a4, .print-signatures { display: none; }
     </style>
+
+    <!-- Header Khusus Cetak A4 (Arsip Resmi) -->
+    <div class="print-header-a4">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}" alt="Logo" style="max-height: 45px; width: auto; object-fit: contain;" onerror="this.style.display='none';">
+            <div>
+                <h2 style="font-size: 15px; font-weight: 800; color: #6B2E16; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
+                <p style="font-size: 9px; color: #7A3E1D; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <h1 style="font-size: 16px; font-weight: 800; color: #6B2E16; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; text-transform: uppercase;">LAPORAN PENGIRIMAN</h1>
+            <p style="font-size: 11px; font-weight: 700; color: #0f172a; margin: 4px 0 0 0; font-family: monospace;">{{ $deliveryReport->report_number }}</p>
+        </div>
+    </div>
 
     <a href="{{ route('sales.delivery-reports.index') }}" class="sales-back-link">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Riwayat
@@ -336,6 +424,18 @@
                 </div>
             </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Tanda Tangan Cetak A4 -->
+    <div class="print-signatures">
+        <div style="text-align: center; width: 200px;">
+            <p style="font-size: 11px; margin-bottom: 50px; color: #475569;">Pengirim / Sales,</p>
+            <div style="border-top: 1.2px solid #475569; padding-top: 4px; font-weight: 700; color: #0f172a;">{{ $deliveryReport->sales->name ?? 'Sales' }}</div>
+        </div>
+        <div style="text-align: center; width: 200px;">
+            <p style="font-size: 11px; margin-bottom: 50px; color: #475569;">Penerima / Toko,</p>
+            <div style="border-top: 1.2px solid #475569; padding-top: 4px; font-weight: 700; color: #0f172a;">{{ $deliveryReport->toko_name }}</div>
         </div>
     </div>
 </x-layouts.user>

@@ -1,10 +1,110 @@
 <x-layouts.admin>
     <x-slot name="title">Detail Laporan {{ $deliveryReport->report_number }}</x-slot>
 
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-        <a href="{{ route('admin.delivery-reports.index') }}"
-           style="color:#64748b;text-decoration:none;font-size:13px;">← Semua Laporan</a>
-        <h1 style="font-size:20px;font-weight:800;color:#0f172a;font-family:monospace;margin:0;">
+    <style>
+        .brand-text-color { color: #6B2E16; }
+        .brand-bg-color { background-color: #F7F2EC; }
+        
+        .btn-back-link {
+            color: #6B2E16;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+        .btn-back-link:hover {
+            color: #A3470D;
+        }
+
+        /* ═══════════════ PRINT STYLES ═══════════════ */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-family: 'Inter', sans-serif !important;
+                font-size: 11px !important;
+                line-height: 1.4 !important;
+            }
+            /* Hide non-print elements */
+            .sidebar, .topbar, .no-print, .btn-back-link, [style*="color:#64748b;text-decoration:none;font-size:13px;"] {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+            }
+            .main-wrapper {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                min-height: auto !important;
+                display: block !important;
+            }
+            
+            /* Show A4 print header */
+            .print-header-a4 {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 2px solid #6B2E16;
+                padding-bottom: 12px;
+                margin-bottom: 20px;
+            }
+
+            /* Adjust Grid to Block for Print */
+            div[style*="display:grid;grid-template-columns:1fr 280px;gap:20px;"] {
+                display: block !important;
+            }
+
+            /* Adjust side panels spacing and break avoidance */
+            div[style*="display:flex;flex-direction:column;gap:16px;"] {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 16px !important;
+                margin-top: 20px !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* HPP / overpayment / return signature tables avoid break */
+            .card, div[style*="background:white;border-radius:12px;"] {
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+            }
+            
+            /* Show signatures */
+            .print-signatures {
+                display: flex !important;
+                justify-content: space-between;
+                margin-top: 40px !important;
+                page-break-inside: avoid !important;
+            }
+        }
+        .print-header-a4, .print-signatures { display: none; }
+    </style>
+
+    <!-- Header Khusus Cetak A4 (Arsip Resmi) -->
+    <div class="print-header-a4">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}" alt="Logo" style="max-height: 45px; width: auto; object-fit: contain;" onerror="this.style.display='none';">
+            <div>
+                <h2 style="font-size: 15px; font-weight: 800; color: #6B2E16; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
+                <p style="font-size: 9px; color: #7A3E1D; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <h1 style="font-size: 16px; font-weight: 800; color: #6B2E16; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; text-transform: uppercase;">LAPORAN PENGIRIMAN</h1>
+            <p style="font-size: 11px; font-weight: 700; color: #0f172a; margin: 4px 0 0 0; font-family: monospace;">{{ $deliveryReport->report_number }}</p>
+        </div>
+    </div>
+
+    <div class="no-print" style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+        <a href="{{ route('admin.delivery-reports.index') }}" class="btn-back-link">← Semua Laporan</a>
+        <h1 style="font-size:20px;font-weight:800;color:#6B2E16;font-family:monospace;margin:0;">
             {{ $deliveryReport->report_number }}
         </h1>
         <span style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check" style="width:12px;height:12px;"></i> Terkirim</span>
@@ -78,7 +178,7 @@
                     </div>
 
                     @if(!$deliveryReport->overpayment_resolved_at)
-                        <form action="{{ route('admin.delivery-reports.resolve-overpayment', $deliveryReport) }}" method="POST">
+                        <form class="no-print" action="{{ route('admin.delivery-reports.resolve-overpayment', $deliveryReport) }}" method="POST">
                             @csrf
                             <div style="margin-bottom:12px;">
                                 <label style="font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Catatan Penyelesaian <span style="color:#ef4444;">*</span></label>
@@ -90,7 +190,7 @@
                                 @enderror
                             </div>
                             <button type="submit"
-                                    style="background:#1d4ed8;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+                                    style="background:#6B2E16;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
                                 <i data-lucide="check" style="width:14px;height:14px;"></i> Tandai Sudah Diselesaikan
                             </button>
                         </form>
@@ -263,6 +363,18 @@
                 @endforeach
             </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Tanda Tangan Cetak A4 -->
+    <div class="print-signatures">
+        <div style="text-align: center; width: 200px;">
+            <p style="font-size: 11px; margin-bottom: 50px; color: #475569;">Pengirim / Sales,</p>
+            <div style="border-top: 1.2px solid #475569; padding-top: 4px; font-weight: 700; color: #0f172a;">{{ $deliveryReport->sales->name ?? 'Sales' }}</div>
+        </div>
+        <div style="text-align: center; width: 200px;">
+            <p style="font-size: 11px; margin-bottom: 50px; color: #475569;">Penerima / Toko,</p>
+            <div style="border-top: 1.2px solid #475569; padding-top: 4px; font-weight: 700; color: #0f172a;">{{ $deliveryReport->toko_name }}</div>
         </div>
     </div>
 

@@ -11,10 +11,10 @@
         .info-value { font-size: 15px; font-weight: 600; color: var(--text-main); }
         
         .item-table { width: 100%; border-collapse: collapse; }
-        .item-table th { text-align: left; padding: 12px 16px; background: #f8fafc; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); }
-        .item-table td { padding: 14px 16px; border-bottom: 1px solid #f8fafc; font-size: 14px; }
+        .item-table th { text-align: left; padding: 12px 16px; background: #fcfaf8; font-size: 11px; font-weight: 800; color: #6B2E16; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .item-table td { padding: 14px 16px; border-bottom: 1px solid #fcfaf8; font-size: 14px; }
         
-        .grand-total-box { margin-top: 24px; padding: 20px; background: #1a1512; border-radius: 12px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .grand-total-box { margin-top: 24px; padding: 20px; background: #6B2E16; border-radius: 12px; color: white; display: flex; justify-content: space-between; align-items: center; }
         
         .btn-action { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: 1px solid var(--border); background: white; color: var(--text-mid); }
         .btn-action:hover { background: #f8fafc; color: var(--text-main); }
@@ -96,9 +96,9 @@
                 background: transparent !important;
                 padding: 10px 12px !important;
                 font-size: 10px !important;
-                color: #475569 !important;
+                color: #6B2E16 !important;
                 border-top: none !important;
-                border-bottom: 1.5px solid #334155 !important;
+                border-bottom: 1.5px solid #6B2E16 !important;
                 text-transform: uppercase !important;
                 font-weight: 700 !important;
                 letter-spacing: 0.5px !important;
@@ -116,10 +116,10 @@
             /* Grand Total Box styling for A4 Print */
             body:not(.is-lx310-active) .grand-total-box {
                 background: transparent !important;
-                color: #0f172a !important;
+                color: #6B2E16 !important;
                 border: none !important;
-                border-top: 1.5px solid #0f172a !important;
-                border-bottom: 1.5px solid #0f172a !important;
+                border-top: 1.5px solid #6B2E16 !important;
+                border-bottom: 1.5px solid #6B2E16 !important;
                 border-radius: 0 !important;
                 padding: 12px 12px !important;
                 margin-top: 20px !important;
@@ -133,12 +133,12 @@
                 font-weight: 700 !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.5px !important;
-                color: #334155 !important;
+                color: #7A3E1D !important;
             }
             body:not(.is-lx310-active) .grand-total-box span:last-child {
                 font-size: 18px !important;
                 font-weight: 800 !important;
-                color: #0f172a !important;
+                color: #6B2E16 !important;
             }
             
             /* Receipt Note Box for A4 Print */
@@ -390,13 +390,16 @@
 
         <!-- Header Khusus Cetak A4 (Arsip Resmi) -->
         <div class="print-only-a4" style="margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 12px; border-bottom: 1.5px solid #0f172a;">
-                <div>
-                    <h2 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
-                    <p style="font-size: 10px; color: #475569; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 2px solid #6B2E16;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}" alt="Logo" style="max-height: 45px; width: auto; object-fit: contain;" onerror="this.style.display='none';">
+                    <div>
+                        <h2 style="font-size: 15px; font-weight: 800; color: #6B2E16; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_name', 'KOPI ELANG EMAS') }}</h2>
+                        <p style="font-size: 10px; color: #7A3E1D; margin: 2px 0 0 0; font-weight: 600; text-transform: uppercase; font-family: 'Inter', sans-serif;">{{ \App\Models\Setting::get('shop_tagline', 'Panel Manajemen') }}</p>
+                    </div>
                 </div>
                 <div style="text-align: right;">
-                    <h1 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">LAPORAN PENERIMAAN BARANG</h1>
+                    <h1 style="font-size: 16px; font-weight: 800; color: #6B2E16; margin: 0; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; text-transform: uppercase;">LAPORAN PENERIMAAN BARANG</h1>
                     <p style="font-size: 9.5px; color: #475569; margin: 4px 0 0 0; font-weight: 500; font-family: 'Inter', sans-serif;">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
                 </div>
             </div>
