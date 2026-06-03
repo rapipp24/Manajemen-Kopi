@@ -86,11 +86,52 @@
                 padding: 0 !important;
             }
             
+            /* Override auto-generated responsive table wrapper for A4 print */
+            body:not(.is-lx310-active) .responsive-table-wrapper {
+                overflow: visible !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            body:not(.is-lx310-active) .responsive-table-wrapper table {
+                min-width: 0 !important;
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
+
             /* Table Styling for A4 Print */
             body:not(.is-lx310-active) .item-table {
                 width: 100% !important;
+                table-layout: fixed !important;
                 border-collapse: collapse !important;
                 margin-top: 16px !important;
+            }
+            body:not(.is-lx310-active) .item-table th:nth-child(1),
+            body:not(.is-lx310-active) .item-table td:nth-child(1) {
+                width: 38% !important;
+                text-align: left !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+            }
+            body:not(.is-lx310-active) .item-table th:nth-child(2),
+            body:not(.is-lx310-active) .item-table td:nth-child(2) {
+                width: 18% !important;
+                text-align: right !important;
+                white-space: nowrap !important;
+            }
+            body:not(.is-lx310-active) .item-table th:nth-child(3),
+            body:not(.is-lx310-active) .item-table td:nth-child(3) {
+                width: 22% !important;
+                text-align: right !important;
+                white-space: nowrap !important;
+            }
+            body:not(.is-lx310-active) .item-table th:nth-child(4),
+            body:not(.is-lx310-active) .item-table td:nth-child(4) {
+                width: 22% !important;
+                text-align: right !important;
+                white-space: nowrap !important;
             }
             body:not(.is-lx310-active) .item-table th {
                 background: transparent !important;
