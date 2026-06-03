@@ -15,26 +15,43 @@
         }
 
         .pdf-header {
-            border-bottom: 2px solid #333;
-            padding-bottom: 20px;
+            border-bottom: 2.5px solid #6B2E16;
+            padding-bottom: 18px;
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
         }
 
+        /* Logo + company name side by side */
+        .company-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .company-logo {
+            flex-shrink: 0;
+            max-height: 48px;
+            max-width: 54px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            display: block;
+        }
+
         .company-info h1 {
-            margin: 0 0 6px 0;
-            font-size: 24px;
+            margin: 0 0 4px 0;
+            font-size: 20px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            color: #000;
+            letter-spacing: -0.4px;
+            color: #3a1a09;
         }
 
         .company-info p {
             margin: 0;
-            font-size: 12px;
-            color: #666;
+            font-size: 11px;
+            color: #7a5a45;
         }
 
         .report-title {
@@ -42,15 +59,15 @@
         }
 
         .report-title h2 {
-            margin: 0 0 6px 0;
-            font-size: 18px;
+            margin: 0 0 5px 0;
+            font-size: 17px;
             font-weight: 700;
-            color: #333;
+            color: #1a1a1a;
         }
 
         .report-title p {
             margin: 0;
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
         }
 
@@ -179,9 +196,16 @@
 
     <!-- Header Dokumen -->
     <div class="pdf-header">
-        <div class="company-info">
-            <h1>{{ \App\Models\Setting::get('report_header_name', 'Kopi Elang Emas') }}</h1>
-            <p>{{ \App\Models\Setting::get('report_subtitle', 'Manajemen Kopi & Produksi Terintegrasi') }}</p>
+        <div class="company-brand">
+            {{-- Logo resmi Kopi Elang Emas --}}
+            <img src="{{ asset('images/LOGO-KOPI-ELANG-EMAS.jpg') }}"
+                 alt="Kopi Elang Emas"
+                 class="company-logo"
+                 onerror="this.style.display='none';">
+            <div class="company-info">
+                <h1>{{ \App\Models\Setting::get('report_header_name', 'Kopi Elang Emas') }}</h1>
+                <p>{{ \App\Models\Setting::get('report_subtitle', 'Manajemen Kopi & Produksi Terintegrasi') }}</p>
+            </div>
         </div>
         <div class="report-title">
             <h2>{{ $title }}</h2>
