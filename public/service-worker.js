@@ -1,4 +1,4 @@
-const CACHE_NAME = "kopi-elang-static-v1";
+const CACHE_NAME = "kopi-elang-static-v2";
 const ASSETS_TO_CACHE = [
   "/manifest.json",
   "/icons/icon-192.png",

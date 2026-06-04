@@ -1,5 +1,170 @@
 <x-guest-layout>
+    <!-- Animated Splash Screen Overlay -->
+    <div id="login-splash" class="splash-overlay" aria-hidden="false">
+        <div class="splash-content">
+            <div class="splash-logo-ring">
+                <img src="/images/LOGO-KOPI-ELANG-EMAS.jpg" alt="Logo Kopi Elang Emas" onerror="this.parentElement.innerHTML='<span class=\'splash-fallback\'>☕</span>'">
+            </div>
+            <div class="splash-pulse"></div>
+            <div class="splash-progress">
+                <div class="splash-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
     <style>
+        /* ── Splash Screen Overlay ──────────────── */
+        .splash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #F7F2EC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            animation: splashFallbackFade 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation-delay: 0.1s;
+        }
+
+        .splash-content {
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .splash-logo-ring {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 3px solid #D9C0A8;
+            background: #ffffff;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(107, 46, 22, 0.15);
+            z-index: 2;
+            animation: splashLogoIntro 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .splash-logo-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .splash-fallback {
+            font-size: 2.5rem;
+            color: #A3470D;
+        }
+
+        .splash-pulse {
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 2px solid #A3470D;
+            opacity: 0;
+            z-index: 1;
+            animation: splashPulseRing 1.1s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
+            animation-delay: 0.3s;
+        }
+
+        .splash-progress {
+            width: 120px;
+            height: 3px;
+            background: #e7e0d5;
+            border-radius: 2px;
+            margin-top: 2rem;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .splash-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6B2E16, #A3470D);
+            border-radius: 2px;
+            animation: splashProgressBarLoad 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.1s;
+        }
+
+        .splash-overlay.fade-out {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.3s !important;
+        }
+
+        @keyframes splashFallbackFade {
+            0% {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+            85% {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+        }
+
+        @keyframes splashLogoIntro {
+            0% {
+                transform: scale(0.6);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes splashPulseRing {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        @keyframes splashProgressBarLoad {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .splash-overlay {
+                animation: none !important;
+                display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+            }
+        }
+
         .form-header {
             text-align: center;
             margin-bottom: 32px;
@@ -382,6 +547,20 @@
     </form>
 
     <script>
+        // PWA Splash Screen Animation controller
+        document.addEventListener('DOMContentLoaded', function() {
+            const splash = document.getElementById('login-splash');
+            if (splash) {
+                setTimeout(function() {
+                    splash.classList.add('fade-out');
+                    splash.setAttribute('aria-hidden', 'true');
+                    setTimeout(function() {
+                        splash.style.display = 'none';
+                    }, 300);
+                }, 950);
+            }
+        });
+
         function togglePassword() {
             const input = document.getElementById('password');
             const icon = document.getElementById('eye-icon');
