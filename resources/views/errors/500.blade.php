@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
-    <title>403 – Akses Tidak Diizinkan | Kopi Elang Emas</title>
+    <title>500 – Terjadi Kendala | Kopi Elang Emas</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -106,11 +106,11 @@
                  onerror="this.style.display='none'">
         </div>
 
-        <div class="code">403</div>
+        <div class="code">500</div>
         <div class="divider"></div>
 
-        <h1>Akses Tidak Diizinkan</h1>
-        <p>Anda tidak memiliki izin untuk membuka halaman ini.</p>
+        <h1>Terjadi Kendala</h1>
+        <p>Sistem sedang mengalami kendala. Silakan coba beberapa saat lagi atau hubungi admin.</p>
 
         <a href="{{ url('/') }}" class="btn">Kembali ke Beranda</a>
 

@@ -55,8 +55,7 @@ class VerifyEmailViaResend extends Notification
                 'user_id' => $notifiable->id,
                 'email'   => $notifiable->email,
             ]);
-            // Tidak throw Exception — agar registrasi tetap berhasil
-            // bahkan jika email gagal dikirim
+            throw new \RuntimeException('Gagal mengirim email verifikasi via Resend API.');
         }
     }
 

@@ -27,6 +27,11 @@ class EmailVerificationNotificationController extends Controller
                 'email'   => $request->user()->email,
                 'error'   => $e->getMessage(),
             ]);
+
+            return back()->with(
+                'resend_error',
+                'Email verifikasi belum dapat dikirim saat ini. Silakan coba beberapa saat lagi atau hubungi admin.'
+            );
         }
 
         return back()->with('status', 'verification-link-sent');

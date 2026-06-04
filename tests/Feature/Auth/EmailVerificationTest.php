@@ -3,9 +3,11 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Notifications\VerifyEmailViaResend;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -226,5 +228,52 @@ class EmailVerificationTest extends TestCase
         $response = $this->get($verificationUrl);
 
         $response->assertStatus(404);
+    }
+
+    /**
+     * Test: Resend verification berhasil → session status = verification-link-sent.
+     */
+    public function test_resend_verification_sets_sent_status_on_success(): void
+    {
+        // Mock ResendApiMailer agar tidak melakukan HTTP call nyata
+        $this->mock(\App\Services\ResendApiMailer::class)
+            ->shouldReceive('send')
+            ->once()
+            ->andReturn(true);
+
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->actingAs($user)
+            ->post('/email/verification-notification');
+
+        $response->assertSessionHas('status', 'verification-link-sent');
+        $response->assertSessionMissing('resend_error');
+    }
+
+    /**
+     * Test: Resend verification gagal (mailer return false → throw RuntimeException)
+     * → session resend_error berisi pesan manusiawi, tidak ada stack trace.
+     */
+    public function test_resend_verification_shows_friendly_error_when_mailer_fails(): void
+    {
+        // Mock ResendApiMailer agar return false (simulasi Resend API gagal)
+        $this->mock(\App\Services\ResendApiMailer::class)
+            ->shouldReceive('send')
+            ->once()
+            ->andReturn(false);
+
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->actingAs($user)
+            ->post('/email/verification-notification');
+
+        $response->assertSessionHas('resend_error');
+        $response->assertSessionMissing('status');
+
+        // Pastikan pesan manusiawi (bukan stack trace / exception class)
+        $errorMsg = $response->getSession()->get('resend_error');
+        $this->assertStringContainsString('Email verifikasi belum dapat dikirim', $errorMsg);
+        $this->assertStringNotContainsString('RuntimeException', $errorMsg);
+        $this->assertStringNotContainsString('Stack trace', $errorMsg);
     }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
-    <title>403 – Akses Tidak Diizinkan | Kopi Elang Emas</title>
+    <title>404 – Halaman Tidak Ditemukan | Kopi Elang Emas</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -106,11 +106,11 @@
                  onerror="this.style.display='none'">
         </div>
 
-        <div class="code">403</div>
+        <div class="code">404</div>
         <div class="divider"></div>
 
-        <h1>Akses Tidak Diizinkan</h1>
-        <p>Anda tidak memiliki izin untuk membuka halaman ini.</p>
+        <h1>Halaman Tidak Ditemukan</h1>
+        <p>Halaman yang Anda cari tidak tersedia atau mungkin sudah dipindahkan.</p>
 
         <a href="{{ url('/') }}" class="btn">Kembali ke Beranda</a>
 
