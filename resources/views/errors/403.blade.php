@@ -6,115 +6,142 @@
     <meta name="robots" content="noindex">
     <title>403 – Akses Tidak Diizinkan | Kopi Elang Emas</title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0;
             min-height: 100vh;
             background-color: #F7F2EC;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #3B1F10;
-            padding: 1.5rem;
+            padding: 2.5rem 1.5rem;
         }
 
-        .card {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(107, 46, 22, 0.12);
-            padding: 3rem 2.5rem 2.5rem;
-            max-width: 420px;
+        .wrap {
             width: 100%;
+            max-width: 720px;
             text-align: center;
         }
 
-        .logo-wrap {
-            margin-bottom: 1.75rem;
+        .logo-ring {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #D9C0A8;
+            overflow: hidden;
+            margin-bottom: 2.25rem;
         }
 
-        .logo {
-            height: 64px;
-            width: 64px;
-            border-radius: 50%;
+        .logo-ring img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border: 3px solid #EDE0D4;
+        }
+
+        .logo-fallback {
+            font-size: 2rem;
+            color: #A3470D;
         }
 
         .code {
-            font-size: 5rem;
+            font-size: clamp(80px, 14vw, 120px);
             font-weight: 800;
             line-height: 1;
-            color: #A3470D;
-            letter-spacing: -2px;
-            margin-bottom: 0.5rem;
+            letter-spacing: -4px;
+            background: linear-gradient(135deg, #6B2E16 0%, #A3470D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            user-select: none;
         }
 
         .divider {
-            width: 48px;
-            height: 4px;
+            width: 56px;
+            height: 3px;
             background: linear-gradient(90deg, #6B2E16, #A3470D);
             border-radius: 2px;
-            margin: 0 auto 1.5rem;
+            margin: 0 auto 1.75rem;
         }
 
         h1 {
-            font-size: 1.25rem;
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
             font-weight: 700;
             color: #3B1F10;
-            margin: 0 0 0.75rem;
+            margin-bottom: 0.875rem;
+            letter-spacing: -0.3px;
         }
 
-        p {
-            font-size: 0.9rem;
+        p.msg {
+            font-size: clamp(0.9rem, 2vw, 1.05rem);
             color: #7A5C48;
-            line-height: 1.7;
-            margin: 0 0 2rem;
+            line-height: 1.75;
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
         }
 
         .btn {
             display: inline-block;
-            padding: 0.7rem 2rem;
+            padding: 0.8rem 2.25rem;
             background: linear-gradient(135deg, #6B2E16, #A3470D);
             color: #ffffff;
             text-decoration: none;
             border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            transition: opacity 0.2s ease;
+            letter-spacing: 0.1px;
+            transition: opacity 0.2s ease, transform 0.15s ease;
         }
 
         .btn:hover {
             opacity: 0.88;
+            transform: translateY(-1px);
         }
 
-        .brand-footer {
-            margin-top: 2rem;
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .brand {
+            margin-top: 3rem;
             font-size: 0.75rem;
-            color: #C4A882;
-            letter-spacing: 0.5px;
+            color: #BFA080;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="logo-wrap">
+    <div class="wrap">
+        <div class="logo-ring">
             <img src="/images/LOGO-KOPI-ELANG-EMAS.jpg"
-                 alt="Logo Kopi Elang Emas"
-                 class="logo"
-                 onerror="this.style.display='none'">
+                 alt="Kopi Elang Emas"
+                 onerror="this.parentElement.innerHTML='<span class=\'logo-fallback\'>☕</span>'">
         </div>
 
         <div class="code">403</div>
         <div class="divider"></div>
 
         <h1>Akses Tidak Diizinkan</h1>
-        <p>Anda tidak memiliki izin untuk membuka halaman ini.</p>
+        <p class="msg">Anda tidak memiliki izin untuk membuka halaman ini.</p>
 
         <a href="{{ url('/') }}" class="btn">Kembali ke Beranda</a>
 
-        <p class="brand-footer">Kopi Elang Emas</p>
+        <p class="brand">Kopi Elang Emas</p>
     </div>
 </body>
 </html>
