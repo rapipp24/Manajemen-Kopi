@@ -123,6 +123,9 @@ Route::middleware(['auth', 'sales', 'verified'])->name('sales.')->group(function
     Route::get('/settings', [\App\Http\Controllers\Sales\SettingsController::class, 'edit'])->name('settings');
     Route::patch('/settings', [\App\Http\Controllers\Sales\SettingsController::class, 'update'])->name('settings.update');
 
+    // Pusat Bantuan Sales
+    Route::get('/sales/help', [\App\Http\Controllers\Sales\HelpController::class, 'index'])->name('help');
+
     Route::get('/orders-placeholder', function () {
         return "Halaman Buat Pesanan Sales";
     })->name('orders-placeholder');

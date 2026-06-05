@@ -448,6 +448,12 @@
                <i data-lucide="settings" class="nav-icon"></i>
                 Pengaturan Akun
             </a>
+
+            <a href="{{ route('sales.help') }}"
+               class="nav-item {{ request()->routeIs('sales.help*') ? 'active' : '' }}">
+               <i data-lucide="help-circle" class="nav-icon"></i>
+                Panduan
+            </a>
         </nav>
 
         <div class="sidebar-footer">
