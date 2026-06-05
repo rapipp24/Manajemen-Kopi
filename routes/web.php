@@ -22,6 +22,15 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Halaman Publik Legal (Tanpa Login)
+Route::get('/terms', function () {
+    return view('legal.terms');
+})->name('terms');
+
+Route::get('/privacy-policy', function () {
+    return view('legal.privacy-policy');
+})->name('privacy-policy');
+
 // ─── AREA ADMIN (Khusus Admin) ───────────────────────────────────────────────
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
