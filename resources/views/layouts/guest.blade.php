@@ -253,28 +253,36 @@
     <body>
         <div class="auth-container">
             <!-- Left Side (visible on desktop only) -->
-            <div class="auth-side-left">
+            <div class="auth-side-left" style="background-image: url('{{ $attributes->get('left-background', '/images/bg.jpg') }}');">
                 <div class="left-content">
-                    <div class="left-logo-ring">
-                        <img src="/icons/logo-transparent.png" alt="Logo Kopi Elang Emas">
-                    </div>
-                    <h1 class="hero-title">Kopi Elang Emas</h1>
-                    <div class="hero-subtitle">ERM Manajemen Kopi</div>
-                    <div class="hero-divider"></div>
-                    <p class="hero-quote">"Kopi Nikmat, Harga Merakyat"</p>
+                    @if(isset($left))
+                        {{ $left }}
+                    @else
+                        <div class="left-logo-ring">
+                            <img src="/icons/logo-transparent.png" alt="Logo Kopi Elang Emas">
+                        </div>
+                        <h1 class="hero-title">Kopi Elang Emas</h1>
+                        <div class="hero-subtitle">ERM Manajemen Kopi</div>
+                        <div class="hero-divider"></div>
+                        <p class="hero-quote">"Kopi Nikmat, Harga Merakyat"</p>
+                    @endif
                 </div>
             </div>
 
             <!-- Right Side (Form & Footer) -->
             <div class="auth-side-right">
-                <!-- Mobile Brand Header (centered, visible on mobile only) -->
-                <div class="mobile-brand-header">
-                    <div class="mobile-logo-box">
-                        <img src="/icons/logo-transparent.png" alt="Logo Kopi Elang Emas">
+                @if(isset($mobileHeader))
+                    {{ $mobileHeader }}
+                @else
+                    <!-- Default Mobile Brand Header (centered, visible on mobile only) -->
+                    <div class="mobile-brand-header">
+                        <div class="mobile-logo-box">
+                            <img src="/icons/logo-transparent.png" alt="Logo Kopi Elang Emas">
+                        </div>
+                        <div class="mobile-brand-text">Kopi Elang Emas</div>
+                        <div class="mobile-brand-sub">ERM Manajemen Kopi</div>
                     </div>
-                    <div class="mobile-brand-text">Kopi Elang Emas</div>
-                    <div class="mobile-brand-sub">ERM Manajemen Kopi</div>
-                </div>
+                @endif
 
                 <div class="auth-card-wrapper">
                     <div class="auth-card">
