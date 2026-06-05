@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Kopi Elang Mas') }}</title>
+        <title>{{ config('app.name', 'Kopi Elang Emas') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,8 +15,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <!-- PWA Basic Meta Tags -->
-        <meta name="theme-color" content="#1c0f05">
+        <!-- PWA Meta Tags -->
+        <meta name="theme-color" content="#6B2E16">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,267 +26,263 @@
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
         <link rel="manifest" href="/manifest.json">
 
-
-
         <style>
             * {
                 box-sizing: border-box;
+                margin: 0;
+                padding: 0;
             }
 
             body {
                 font-family: 'Inter', sans-serif;
-                margin: 0;
-                background-color: #f5f0e8;
+                background-color: #F7F2EC;
                 min-height: 100vh;
+                color: #2A130D;
             }
 
             .auth-container {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1.1fr 1fr;
                 min-height: 100vh;
             }
 
-            /* ── Sisi Kiri: Hero/Brand ─────────────────── */
+            /* ── Sisi Kiri: Premium Sidebar (Desktop Only) ─────────────────── */
             .auth-side-left {
                 position: relative;
-                background: #1a1512;
-                background-image: url('/images/auth-bg.png');
+                background-image: url('/images/bg.jpg');
                 background-size: cover;
                 background-position: center;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-end;
-                padding: 60px;
+                justify-content: center;
+                padding: 80px;
                 color: #ffffff;
+                overflow: hidden;
             }
 
+            /* Dark brown overlay for readability */
             .auth-side-left::before {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(to top, rgba(14, 11, 9, 0.95) 10%, rgba(14, 11, 9, 0.4) 100%);
+                background: linear-gradient(135deg, rgba(58, 26, 9, 0.9) 0%, rgba(26, 13, 6, 0.95) 100%);
+                z-index: 0;
+            }
+
+            /* Subtle pattern overlay on sidebar */
+            .auth-side-left::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: radial-gradient(rgba(163, 71, 13, 0.15) 1px, transparent 1px);
+                background-size: 24px 24px;
+                opacity: 0.8;
+                pointer-events: none;
+                z-index: 1;
             }
 
             .left-content {
                 position: relative;
-                z-index: 1;
-                max-width: 500px;
+                z-index: 2;
+                max-width: 520px;
             }
 
-            .brand-badge {
-                display: flex;
+            .left-logo-ring {
+                display: inline-flex;
                 align-items: center;
-                gap: 10px;
-                font-size: 13px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                margin-bottom: 24px;
-                color: #f59e0b;
+                justify-content: center;
+                width: 72px;
+                height: 72px;
+                border-radius: 20px;
+                border: 2px solid rgba(217, 192, 168, 0.25);
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(10px);
+                overflow: hidden;
+                margin-bottom: 2.5rem;
+                box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.3);
             }
 
-            .brand-badge span {
-                background: rgba(245, 158, 11, 0.2);
-                padding: 6px 10px;
-                border-radius: 6px;
-                display: flex;
-                align-items: center;
+            .left-logo-ring img {
+                width: 80%;
+                height: 80%;
+                object-fit: contain;
             }
 
             .hero-title {
-                font-size: 48px;
+                font-size: clamp(32px, 4.5vw, 44px);
                 font-weight: 800;
-                line-height: 1.1;
-                margin-bottom: 20px;
+                line-height: 1.15;
+                margin-bottom: 8px;
                 letter-spacing: -1px;
+                color: #ffffff;
             }
 
-            .hero-desc {
-                font-size: 16px;
-                line-height: 1.6;
-                color: #d1d5db;
-                margin-bottom: 40px;
-            }
-
-            .left-footer {
-                display: flex;
-                gap: 20px;
-                font-size: 11px;
+            .hero-subtitle {
+                font-size: clamp(14px, 2.5vw, 18px);
                 font-weight: 600;
+                color: #A3470D; /* brand accent color */
+                letter-spacing: 2px;
                 text-transform: uppercase;
-                letter-spacing: 1px;
-                color: #9ca3af;
-                margin-top: 40px;
-                padding-top: 25px;
-                border-top: 1px solid rgba(255,255,255,0.1);
+                margin-bottom: 24px;
             }
 
-            /* ── Mobile Brand Strip ────────────────────── */
-            .mobile-brand-strip {
+            .hero-divider {
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, #A3470D, #D9C0A8);
+                border-radius: 2px;
+                margin-bottom: 28px;
+            }
+
+            .hero-quote {
+                font-size: 16px;
+                font-style: italic;
+                color: #D9C0A8;
+                line-height: 1.6;
+                font-weight: 400;
+            }
+
+            /* ── Mobile Brand Header (Centered for Mobile) ─────────────── */
+            .mobile-brand-header {
                 display: none;
-                background: #1a1512;
-                padding: 18px 20px;
+                flex-direction: column;
                 align-items: center;
-                gap: 10px;
+                margin-bottom: 24px;
+                text-align: center;
             }
 
-            .mobile-brand-logo {
-                width: 32px;
-                height: 32px;
-                background: rgba(245, 158, 11, 0.2);
-                border-radius: 8px;
+            .mobile-logo-box {
+                width: 56px;
+                height: 56px;
+                border-radius: 14px;
+                border: 1.5px solid rgba(217, 192, 168, 0.25);
+                background: #3A1A09;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #f59e0b;
-                flex-shrink: 0;
+                overflow: hidden;
+                margin-bottom: 12px;
+                box-shadow: 0 6px 15px -4px rgba(107, 46, 22, 0.15);
+            }
+
+            .mobile-logo-box img {
+                width: 82%;
+                height: 82%;
+                object-fit: contain;
             }
 
             .mobile-brand-text {
-                font-size: 15px;
+                font-size: 20px;
                 font-weight: 800;
-                color: #ffffff;
-                letter-spacing: -0.3px;
+                color: #2A130D;
+                letter-spacing: -0.5px;
+                margin-bottom: 2px;
             }
 
             .mobile-brand-sub {
-                font-size: 11px;
-                color: #9ca3af;
-                font-weight: 500;
+                font-size: 12px;
+                color: #A3470D;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }
 
-            /* ── Sisi Kanan: Form ─────────────────────── */
+            /* ── Sisi Kanan: Form Container ─────────────────────── */
             .auth-side-right {
-                background-color: #f5f0e8;
+                background-color: #F7F2EC;
+                background-image: radial-gradient(#e1d6c7 1.5px, transparent 1.5px);
+                background-size: 20px 20px;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 padding: 40px 24px;
                 overflow-y: auto;
             }
 
+            .auth-card-wrapper {
+                width: 100%;
+                max-width: 460px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+            }
+
             .auth-card {
                 background: #ffffff;
                 width: 100%;
-                max-width: 460px;
-                padding: 52px 48px;
-                border-radius: 32px;
-                box-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+                padding: 48px;
+                border-radius: 24px;
+                box-shadow: 0 12px 40px -10px rgba(107, 46, 22, 0.08), 0 4px 12px -5px rgba(107, 46, 22, 0.04);
+                border: 1px solid rgba(231, 224, 213, 0.5);
             }
 
-            /* ── Tablet: 768px - 1024px ───────────────── */
+            /* ── Responsive Tablet & Mobile ───────────────── */
             @media (max-width: 1024px) {
                 .auth-container {
                     grid-template-columns: 1fr;
-                    min-height: 100vh;
                 }
                 .auth-side-left {
                     display: none;
                 }
-                .auth-side-right {
-                    padding: 32px 24px;
-                    align-items: flex-start;
-                    padding-top: 40px;
-                }
-                .auth-card {
-                    padding: 40px 36px;
-                    border-radius: 24px;
-                    max-width: 480px;
-                    margin: 0 auto;
-                }
-            }
-
-            /* ── Mobile: <= 640px ─────────────────────── */
-            @media (max-width: 640px) {
-                body {
-                    background-color: #ffffff;
-                }
-                .auth-container {
+                .mobile-brand-header {
                     display: flex;
-                    flex-direction: column;
-                    min-height: 100vh;
-                    min-height: 100dvh;
-                }
-                .mobile-brand-strip {
-                    display: flex;
-                    flex-shrink: 0;
                 }
                 .auth-side-right {
                     flex: 1;
-                    padding: 28px 16px 32px;
-                    background-color: #ffffff;
-                    align-items: flex-start;
+                    padding: 40px 16px;
                 }
                 .auth-card {
-                    padding: 28px 20px 32px;
-                    border-radius: 0;
-                    box-shadow: none;
-                    max-width: 100%;
-                    background: transparent;
+                    padding: 36px 24px;
+                    border-radius: 20px;
                 }
             }
 
-            /* ── Very Small: <= 375px ─────────────────── */
-            @media (max-width: 375px) {
+            @media (max-width: 480px) {
                 .auth-side-right {
-                    padding: 20px 12px 28px;
+                    padding: 24px 12px;
                 }
                 .auth-card {
-                    padding: 20px 16px 28px;
+                    padding: 28px 20px;
+                    border-radius: 16px;
                 }
             }
         </style>
     </head>
     <body>
         <div class="auth-container">
-            <!-- Mobile Brand Strip (only visible on mobile) -->
-            <div class="mobile-brand-strip">
-                <div class="mobile-brand-logo">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="mobile-brand-text">Kopi Elang Emas</div>
-                    <div class="mobile-brand-sub">Sistem Manajemen Produksi</div>
-                </div>
-            </div>
-
-            <!-- Left Side -->
+            <!-- Left Side (visible on desktop only) -->
             <div class="auth-side-left">
                 <div class="left-content">
-                    <div class="brand-badge">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                            </svg>
-                        </span>
-                        INDUSTRIAL ALCHEMIST
+                    <div class="left-logo-ring">
+                        <img src="/icons/logo-transparent.png" alt="Logo Kopi Elang Emas">
                     </div>
                     <h1 class="hero-title">Kopi Elang Emas</h1>
-                    <p class="hero-desc">Sistem Manajemen Produksi</p>
-                    
-                    <div class="left-footer">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 14px; height: 14px;">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4.13-5.5z" clip-rule="evenodd" />
-                            </svg>
-                            ENTERPRISE GRADE
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 14px; height: 14px;">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4.13-5.5z" clip-rule="evenodd" />
-                            </svg>
-                            PRODUCTION READY
-                        </div>
-                    </div>
+                    <div class="hero-subtitle">ERM Manajemen Kopi</div>
+                    <div class="hero-divider"></div>
+                    <p class="hero-quote">"Kopi Nikmat, Harga Merakyat"</p>
                 </div>
             </div>
 
-            <!-- Right Side -->
+            <!-- Right Side (Form & Footer) -->
             <div class="auth-side-right">
-                <div class="auth-card">
-                    {{ $slot }}
+                <!-- Mobile Brand Header (centered, visible on mobile only) -->
+                <div class="mobile-brand-header">
+                    <div class="mobile-logo-box">
+                        <img src="/icons/logo-transparent.png" alt="Logo Kopi Elang Emas">
+                    </div>
+                    <div class="mobile-brand-text">Kopi Elang Emas</div>
+                    <div class="mobile-brand-sub">ERM Manajemen Kopi</div>
+                </div>
+
+                <div class="auth-card-wrapper">
+                    <div class="auth-card">
+                        {{ $slot }}
+                    </div>
+                    @if(isset($footer))
+                        {{ $footer }}
+                    @endif
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <!-- Animated Splash Screen Overlay -->
+    <!-- Animated Splash Screen Overlay (PWA Opening Experience) -->
     <div id="login-splash" class="splash-overlay" aria-hidden="false">
         <div class="splash-content">
             <div class="splash-logo-ring">
@@ -165,241 +165,32 @@
             }
         }
 
-        .form-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .lock-icon-container {
-            width: 52px;
-            height: 52px;
-            background: #fdf6e3;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            color: #1a1512;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: #1a1512;
-            margin: 0 0 6px;
-            letter-spacing: -0.5px;
-        }
-
-        .header-sub {
-            font-size: 14px;
-            color: #78716c;
-            margin: 0;
-        }
-
-        /* ── Error Alert ─────────────────────────── */
-        .auth-error-box {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #dc2626;
-        }
-
-        /* ── Input Fields ────────────────────────── */
-        .input-wrapper {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
+        /* ── Form Headers ────────────────────────── */
+        .login-header-desktop {
             display: block;
-            font-size: 11px;
+            margin-bottom: 28px;
+        }
+
+        .login-header-mobile {
+            display: none;
+            margin-bottom: 28px;
+        }
+
+        .auth-title {
+            font-size: 26px;
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #57534e;
+            color: #2A130D;
+            letter-spacing: -0.5px;
             margin-bottom: 8px;
         }
 
-        .field-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            border-bottom: 2px solid #e7e0d5;
-            transition: border-color 0.25s ease;
+        .auth-subtitle {
+            font-size: 14px;
+            color: #7A6F68;
+            line-height: 1.5;
         }
 
-        .field-container:focus-within {
-            border-bottom-color: #1a1512;
-        }
-
-        .field-icon {
-            position: absolute;
-            left: 0;
-            color: #a8a29e;
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-        }
-
-        .custom-input {
-            width: 100%;
-            padding: 11px 36px 11px 30px;
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-            font-size: 15px;
-            color: #1a1512;
-            background: transparent !important;
-            min-height: 44px; /* touch target */
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Fix Autofill */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus {
-            -webkit-text-fill-color: #1a1512;
-            -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
-            transition: background-color 5000s ease-in-out 0s;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 0;
-            color: #a8a29e;
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            transition: color 0.2s;
-            flex-shrink: 0;
-            padding: 2px;
-        }
-
-        .password-toggle:hover {
-            color: #1a1512;
-        }
-
-        /* ── Remember Me ─────────────────────────── */
-        .remember-row {
-            display: flex;
-            align-items: center;
-            margin-top: 16px;
-            margin-bottom: 24px;
-        }
-
-        .remember-checkbox {
-            width: 16px;
-            height: 16px;
-            accent-color: #1a1512;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .remember-label {
-            margin-left: 10px;
-            font-size: 13px;
-            color: #78716c;
-            font-weight: 500;
-            cursor: pointer;
-            line-height: 1.3;
-        }
-
-        /* ── Login Button ────────────────────────── */
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: #1a1512;
-            color: #ffffff;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: background 0.25s, transform 0.15s;
-            min-height: 50px; /* touch target */
-            font-family: 'Inter', sans-serif;
-            letter-spacing: -0.2px;
-        }
-
-        .login-btn:hover {
-            background: #2d2520;
-            transform: translateY(-1px);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        /* ── Footer Help ─────────────────────────── */
-        .footer-help {
-            text-align: center;
-            margin-top: 28px;
-            padding-top: 22px;
-            border-top: 1px solid #f0ebe3;
-        }
-
-        .help-text {
-            font-size: 13px;
-            color: #a8a29e;
-            margin-bottom: 10px;
-        }
-
-        .help-link {
-            color: #1a1512;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .register-link {
-            color: #92400e;
-            font-weight: 800;
-            text-decoration: none;
-        }
-
-        .forgot-link {
-            font-size: 11px;
-            font-weight: 700;
-            color: #78716c;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .forgot-link:hover {
-            color: #1a1512;
-        }
-
-        /* ── Mobile Responsive ───────────────────── */
-        @media (max-width: 640px) {
-            .form-header {
-                margin-bottom: 24px;
-            }
-            .header-title {
-                font-size: 22px;
-            }
-            .custom-input {
-                font-size: 16px; /* prevent iOS zoom on focus */
-                min-height: 48px;
-            }
-            .login-btn {
-                font-size: 16px;
-                min-height: 52px;
-                border-radius: 14px;
-            }
-            .input-wrapper {
-                margin-bottom: 18px;
-            }
-        }
-
-        /* ── Auth Notice Card ────────────────────── */
+        /* ── Alerts & Warnings ───────────────────── */
         .auth-notice {
             margin-bottom: 24px;
             padding: 14px 16px;
@@ -434,22 +225,305 @@
             line-height: 1.55;
             opacity: 0.95;
         }
+
+        /* ── Inputs ──────────────────────────────── */
+        .input-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #574F4A;
+            margin-bottom: 8px;
+        }
+
+        .field-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #E7E0D5;
+            transition: border-color 0.25s ease;
+        }
+
+        .field-container:focus-within {
+            border-bottom-color: #6B2E16; /* brand color */
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 0;
+            color: #A8A29E;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 12px 36px 12px 28px;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            font-size: 15px;
+            color: #2A130D;
+            background: transparent !important;
+            min-height: 48px; /* touch target */
+            font-family: inherit;
+        }
+
+        /* Webkit autofill override */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #2A130D;
+            -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0;
+            color: #A8A29E;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: #6B2E16;
+        }
+
+        /* ── Remember Me & Forgot Password ───────── */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+
+        .remember-checkbox-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #6B2E16;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .remember-label {
+            margin-left: 10px;
+            font-size: 13.5px;
+            color: #7A6F68;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .forgot-link {
+            font-size: 13px;
+            font-weight: 600;
+            color: #A3470D;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            color: #6B2E16;
+        }
+
+        .desktop-forgot-link {
+            display: inline;
+        }
+
+        .mobile-forgot-link {
+            display: none;
+        }
+
+        /* ── Primary Submit Button ───────────────── */
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6B2E16 0%, #A3470D 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+            min-height: 48px;
+            font-family: inherit;
+        }
+
+        .login-btn:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ── Footer Link to Register ──────────────── */
+        .register-footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #E7E0D5;
+        }
+
+        .register-text {
+            font-size: 13.5px;
+            color: #8C7D70;
+        }
+
+        .register-link {
+            color: #A3470D;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .register-link:hover {
+            color: #6B2E16;
+        }
+
+        /* ── Named Slot Footers ───────────────────── */
+        .auth-footer-desktop {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #8C7D70;
+            padding: 0 4px;
+        }
+
+        .auth-footer-desktop a {
+            color: #6B2E16;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 16px;
+            transition: color 0.2s;
+        }
+
+        .auth-footer-desktop a:hover {
+            color: #A3470D;
+        }
+
+        .auth-footer-mobile {
+            display: none;
+            text-align: center;
+            font-size: 12px;
+            color: #8C7D70;
+        }
+
+        /* ── Responsive Styling ───────────────────── */
+        @media (max-width: 1024px) {
+            .login-header-desktop {
+                display: none;
+            }
+
+            .login-header-mobile {
+                display: block;
+                margin-bottom: 22px;
+            }
+
+            .auth-card {
+                padding: 32px 22px !important;
+                max-width: 420px !important;
+            }
+
+            .desktop-forgot-link {
+                display: none;
+            }
+
+            .mobile-forgot-link {
+                display: inline;
+            }
+
+            .remember-row {
+                justify-content: space-between;
+                width: 100%;
+                margin-top: 14px;
+                margin-bottom: 20px;
+            }
+
+            /* Boxed Style Inputs for Mobile */
+            .field-container {
+                border: 1.5px solid #E8D8CC !important;
+                border-bottom: 1.5px solid #E8D8CC !important;
+                border-radius: 12px;
+                background-color: #ffffff;
+                padding: 0 12px;
+                min-height: 48px;
+                height: 48px;
+            }
+
+            .field-container:focus-within {
+                border-color: #6B2E16 !important;
+                box-shadow: 0 0 0 3px rgba(107, 46, 22, 0.06);
+            }
+
+            .field-icon {
+                left: 12px;
+            }
+
+            .custom-input {
+                padding-top: 0;
+                padding-bottom: 0;
+                padding-left: 28px;
+                padding-right: 28px;
+                min-height: 44px;
+                height: 100%;
+            }
+
+            .password-toggle {
+                right: 12px;
+            }
+
+            .auth-footer-desktop {
+                display: none;
+            }
+
+            .auth-footer-mobile {
+                display: block;
+                margin-top: 4px;
+            }
+        }
     </style>
 
-    <div class="form-header">
-        <div class="lock-icon-container">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 22px; height: 22px;">
-                <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
-            </svg>
-        </div>
-        <h2 class="header-title">Selamat Datang Kembali</h2>
-        <p class="header-sub">Silakan masuk ke akun Anda</p>
+    <!-- Form Headings -->
+    <div class="login-header-desktop">
+        <h2 class="auth-title">Masuk</h2>
+        <p class="auth-subtitle">Masuk ke akun Anda untuk mengakses panel kerja.</p>
+    </div>
+
+    <div class="login-header-mobile">
+        <h2 class="auth-title">Selamat Datang</h2>
+        <p class="auth-subtitle">Silakan masuk untuk mengakses panel kerja Anda.</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        {{-- Flash: pesan sukses registrasi atau info --}}
+        {{-- Flash: Success / Registration Notices --}}
         @if (session('status'))
             @php
                 $status = session('status');
@@ -461,7 +535,7 @@
             @endphp
             <div class="auth-notice auth-notice-success">
                 <div class="auth-notice-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px; flex-shrink: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; flex-shrink: 0;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     {{ $title }}
@@ -472,11 +546,11 @@
             </div>
         @endif
 
-        {{-- Flash: pesan warning dari kondisi akun --}}
+        {{-- Flash: Warnings --}}
         @if (session('warning'))
             <div class="auth-notice auth-notice-warning">
                 <div class="auth-notice-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px; flex-shrink: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px; flex-shrink: 0;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                     </svg>
                     Peringatan
@@ -487,21 +561,23 @@
             </div>
         @endif
 
+        <!-- Email Input -->
         <div class="input-wrapper">
-            <label class="input-label">Email atau Username</label>
+            <label class="input-label">Email</label>
             <div class="field-container">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                <input id="email" class="custom-input" type="email" name="email" :value="old('email')" placeholder="admin@manajemenkopi.test" required autofocus maxlength="50" />
+                <input id="email" class="custom-input" type="email" name="email" value="{{ old('email') }}" placeholder="nama@email.com" required autofocus maxlength="50" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
 
+        <!-- Password Input -->
         <div class="input-wrapper">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
                 <label class="input-label" style="margin-bottom: 0;">Kata Sandi</label>
-                <a href="{{ route('password.request') }}" class="forgot-link">Lupa Password?</a>
+                <a href="{{ route('password.request') }}" class="forgot-link desktop-forgot-link">Lupa kata sandi?</a>
             </div>
             <div class="field-container">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="field-icon">
@@ -509,7 +585,7 @@
                 </svg>
                 <input id="password" class="custom-input" type="password" name="password" placeholder="••••••••" required minlength="8" />
                 <div class="password-toggle" onclick="togglePassword()">
-                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -518,11 +594,16 @@
             <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
+        <!-- Remember Me & Forgot Password Row -->
         <div class="remember-row">
-            <input id="remember_me" type="checkbox" class="remember-checkbox" name="remember">
-            <label for="remember_me" class="remember-label">Ingat saya di perangkat ini</label>
+            <div class="remember-checkbox-wrapper">
+                <input id="remember_me" type="checkbox" class="remember-checkbox" name="remember">
+                <label for="remember_me" class="remember-label">Ingat saya</label>
+            </div>
+            <a href="{{ route('password.request') }}" class="forgot-link mobile-forgot-link">Lupa kata sandi?</a>
         </div>
 
+        <!-- Submit Button -->
         <button type="submit" class="login-btn">
             Masuk
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
@@ -530,21 +611,29 @@
             </svg>
         </button>
 
-        <div class="footer-help">
-            <div class="help-text">
-                Butuh bantuan akses? 
-                <a href="https://wa.me/6281234567890" target="_blank" class="help-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-1.074-.765 5.99 5.99 0 01.123-1.006A8.274 8.274 0 013 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                    </svg>
-                    Hubungi Support
-                </a>
-            </div>
-            <p style="font-size: 13px; color: #94a3b8;">
-                Belum punya akun? <a href="{{ route('register') }}" class="register-link">Daftar Sekarang</a>
+        <!-- Link to Register -->
+        <div class="register-footer">
+            <p class="register-text">
+                Belum punya akun sales? <a href="{{ route('register') }}" class="register-link">Daftar sebagai Sales</a>
             </p>
         </div>
     </form>
+
+    <!-- Footer Slots for named rendering -->
+    <x-slot name="footer">
+        <!-- Desktop Footer -->
+        <div class="auth-footer-desktop">
+            <span class="footer-copy">© 2026 Kopi Elang Emas ERM</span>
+            <div class="footer-links">
+                <a href="https://wa.me/6285789741206" target="_blank">Bantuan</a>
+                <a href="/privacy-policy">Privasi</a>
+            </div>
+        </div>
+        <!-- Mobile Footer -->
+        <div class="auth-footer-mobile">
+            © 2026 Kopi Elang Emas. Operational Excellence.
+        </div>
+    </x-slot>
 
     <script>
         // PWA Splash Screen Animation controller
