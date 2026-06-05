@@ -26,6 +26,11 @@
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
         <link rel="manifest" href="/manifest.json">
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png">
+
         <style>
             * {
                 box-sizing: border-box;
