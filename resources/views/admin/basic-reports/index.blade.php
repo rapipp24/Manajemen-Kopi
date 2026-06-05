@@ -216,6 +216,53 @@
             justify-content: center;
             gap: 16px;
         }
+
+        /* ── Summary Cards ── */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #e8d8c4;
+            box-shadow: 0 4px 16px rgba(120, 53, 15, 0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+        }
+
+        .theme-hadir::before { background: #22c55e; }
+        .theme-izin::before  { background: #eab308; }
+        .theme-sakit::before { background: #06b6d4; }
+        .theme-alfa::before  { background: #ef4444; }
+        .theme-belum::before { background: #9e7c62; }
+
+        .card-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #9e7c62;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-val {
+            font-size: 26px;
+            font-weight: 800;
+            color: #2c1a0e;
+        }
     </style>
 
     <div class="report-container">
@@ -226,7 +273,27 @@
                 <p style="font-size: 13.5px; color: #9e7c62;">Analisis data operasional, stok, dan penjualan retail</p>
             </div>
 
-            @if($activeTab !== 'stock' && $activeTab !== 'stok')
+            @if($activeTab === 'attendance')
+            <form method="GET" action="{{ route('admin.basic-reports.index') }}">
+                <input type="hidden" name="type" value="attendance">
+                
+                <div class="filter-group">
+                    <select name="month" class="filter-select" style="background: #fffdfa; border: 1.5px solid #e8d8c4; border-radius: 12px; padding: 10px 16px; font-size: 13.5px; color: #2c1a0e; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
+                        @foreach($months as $num => $name)
+                            <option value="{{ $num }}" {{ $month === $num ? 'selected' : '' }}>{{ $name }}</option>
+                        @endforeach
+                    </select>
+
+                    <select name="year" class="filter-select" style="background: #fffdfa; border: 1.5px solid #e8d8c4; border-radius: 12px; padding: 10px 16px; font-size: 13.5px; color: #2c1a0e; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}" {{ $year === $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+
+                    <button type="submit" class="btn-filter-submit" style="padding: 12px 24px; border-radius: 12px;">Filter</button>
+                </div>
+            </form>
+            @elseif($activeTab !== 'stock' && $activeTab !== 'stok')
             <form id="filter-form" method="GET" action="{{ route('admin.basic-reports.index') }}">
                 <input type="hidden" name="type" value="{{ $activeTab }}">
                 
@@ -251,24 +318,6 @@
             @endif
         </div>
 
-        <!-- Rekap Absensi Bulanan Banner Card -->
-        <div style="background: white; border: 1px solid #e8d8c4; border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(120, 53, 15, 0.02); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 4px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <div style="width: 42px; height: 42px; border-radius: 10px; background: #fdfaf6; border: 1px solid #e8d8c4; display: flex; align-items: center; justify-content: center; color: #92400e;">
-                    <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h4 style="font-size: 14.5px; font-weight: 700; color: #2c1a0e; margin: 0;">Laporan Rekap Absensi Bulanan</h4>
-                    <p style="font-size: 12.5px; color: #9e7c62; margin: 2px 0 0 0;">Lihat total kehadiran, sakit, izin, dan alfa karyawan gudang setiap bulannya.</p>
-                </div>
-            </div>
-            <a href="{{ route('admin.reports.attendance') }}" class="btn-action-outline" style="background: #92400e; color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(146, 64, 14, 0.15); transition: all 0.2s;">
-                Buka Rekap Absensi ➔
-            </a>
-        </div>
-
         <!-- Tabs Navigation -->
         <div class="report-tabs">
             <a href="{{ route('admin.basic-reports.index', ['type' => 'raw_material', 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
@@ -291,6 +340,10 @@
                class="tab-btn {{ $activeTab === 'order' ? 'active' : '' }}">
                 Pengajuan Sales
             </a>
+            <a href="{{ route('admin.basic-reports.index', ['type' => 'attendance', 'month' => $month, 'year' => $year]) }}" 
+               class="tab-btn {{ $activeTab === 'attendance' ? 'active' : '' }}">
+                Absensi Bulanan
+            </a>
         </div>
 
         <!-- Helper Text Laporan Stok -->
@@ -304,22 +357,63 @@
         <!-- Action Buttons (Export) -->
         <div class="report-actions" style="flex-direction: column; align-items: flex-end;">
             <div style="display: flex; gap: 12px;">
-                <a href="{{ route('admin.basic-reports.export-excel', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-                   class="btn-action-outline">
-                    <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Export Excel (.csv)
-                </a>
-                <a href="{{ route('admin.basic-reports.export-pdf', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-                   target="_blank"
-                   class="btn-action-outline">
-                    <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
-                    Export PDF (Cetak)
-                </a>
+                @if($activeTab === 'attendance')
+                    <a href="{{ route('admin.reports.attendance.export', ['month' => $month, 'year' => $year]) }}" class="btn-action-outline">
+                        <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Export CSV (.csv)
+                    </a>
+                    <a href="{{ route('admin.reports.attendance.print', ['month' => $month, 'year' => $year]) }}" target="_blank" class="btn-action-outline">
+                        <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
+                        Cetak / Print
+                    </a>
+                @else
+                    <a href="{{ route('admin.basic-reports.export-excel', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
+                       class="btn-action-outline">
+                        <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Export Excel (.csv)
+                    </a>
+                    <a href="{{ route('admin.basic-reports.export-pdf', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
+                       target="_blank"
+                       class="btn-action-outline">
+                        <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
+                        Export PDF (Cetak)
+                    </a>
+                @endif
             </div>
             <span style="font-size: 11.5px; color: #847162; font-weight: 500; text-align: right; margin-top: 8px; display: block; line-height: 1.4;">
-                * Export Excel menggunakan format CSV. Untuk hasil PDF bersih, nonaktifkan <em>Headers and footers</em> saat mencetak.
+                @if($activeTab === 'attendance')
+                    * Pengunduhan rekap menggunakan format CSV (UTF-8 BOM). Cetak menggunakan layout print browser.
+                @else
+                    * Export Excel menggunakan format CSV. Untuk hasil PDF bersih, nonaktifkan <em>Headers and footers</em> saat mencetak.
+                @endif
             </span>
         </div>
+
+        @if($activeTab === 'attendance')
+        <!-- Summary Grid for Attendance -->
+        <div class="summary-grid" style="margin-bottom: 24px;">
+            <div class="summary-card theme-hadir">
+                <span class="card-label">Total Hadir</span>
+                <span class="card-val">{{ $totals['hadir'] ?? 0 }}</span>
+            </div>
+            <div class="summary-card theme-izin">
+                <span class="card-label">Total Izin</span>
+                <span class="card-val">{{ $totals['izin'] ?? 0 }}</span>
+            </div>
+            <div class="summary-card theme-sakit">
+                <span class="card-label">Total Sakit</span>
+                <span class="card-val">{{ $totals['sakit'] ?? 0 }}</span>
+            </div>
+            <div class="summary-card theme-alfa">
+                <span class="card-label">Total Alfa</span>
+                <span class="card-val">{{ $totals['alfa'] ?? 0 }}</span>
+            </div>
+            <div class="summary-card theme-belum">
+                <span class="card-label">Belum Dicatat</span>
+                <span class="card-val">{{ $totals['belum_dicatat'] ?? 0 }}</span>
+            </div>
+        </div>
+        @endif
 
         <!-- Table Display Area -->
         <div class="report-table-card">
@@ -538,6 +632,67 @@
                                 </td>
                             </tr>
                         @endforelse
+                    </tbody>
+                </table>
+            @endif
+
+            <!-- 6. ABSENSI BULANAN -->
+            @if($activeTab === 'attendance')
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>Nama Karyawan</th>
+                            <th>Status Karyawan</th>
+                            <th style="text-align: center; width: 100px;">Hadir</th>
+                            <th style="text-align: center; width: 100px;">Izin</th>
+                            <th style="text-align: center; width: 100px;">Sakit</th>
+                            <th style="text-align: center; width: 100px;">Alfa</th>
+                            <th style="text-align: center; width: 120px;">Belum Dicatat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $no = 1; @endphp
+                        @forelse($recap as $row)
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>
+                                    <span style="font-weight: 700; color: #1c0f05;">{{ $row['employee']->name }}</span>
+                                </td>
+                                <td>
+                                    @if($row['employee']->is_active)
+                                        <span class="status-badge status-success">Aktif</span>
+                                    @else
+                                        <span class="status-badge status-danger" style="font-style: italic;">Nonaktif</span>
+                                    @endif
+                                </td>
+                                <td style="text-align: center; font-weight: 600; color: #166534;">{{ $row['hadir'] }}</td>
+                                <td style="text-align: center; font-weight: 600; color: #b45309;">{{ $row['izin'] }}</td>
+                                <td style="text-align: center; font-weight: 600; color: #0891b2;">{{ $row['sakit'] }}</td>
+                                <td style="text-align: center; font-weight: 600; color: #be123c;">{{ $row['alfa'] }}</td>
+                                <td style="text-align: center; font-weight: 600; color: #9e7c62;">{{ $row['belum_dicatat'] }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <svg style="width: 48px; height: 48px; opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                        <p style="font-size: 14px; font-weight: 600;">Tidak ada data absensi untuk periode ini.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+
+                        @if(count($recap) > 0)
+                            <tr class="total-row" style="background: #fffdfa; font-weight: 700; border-top: 2px solid #e8d8c4;">
+                                <td colspan="3" style="font-weight: 700; color: #1c0f05;">TOTAL KESELURUHAN</td>
+                                <td style="text-align: center; font-weight: 700; color: #166534;">{{ $totals['hadir'] }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #b45309;">{{ $totals['izin'] }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #0891b2;">{{ $totals['sakit'] }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #be123c;">{{ $totals['alfa'] }}</td>
+                                <td style="text-align: center; font-weight: 700; color: #9e7c62;">{{ $totals['belum_dicatat'] }}</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             @endif
