@@ -3,7 +3,7 @@
     <div id="login-splash" class="splash-overlay" aria-hidden="false">
         <div class="splash-content">
             <div class="splash-logo-ring">
-                <img src="/images/LOGO-KOPI-ELANG-EMAS.jpg" alt="Logo Kopi Elang Emas" onerror="this.parentElement.innerHTML='<span class=\'splash-fallback\'>☕</span>'">
+                <img src="/icons/splash-logo.png" alt="Logo Kopi Elang Emas" onerror="this.parentElement.innerHTML='<span class=\'splash-fallback\'>☕</span>'">
             </div>
             <div class="splash-pulse"></div>
             <div class="splash-progress">
@@ -45,13 +45,13 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 96px;
-            height: 96px;
+            width: 136px;
+            height: 136px;
             border-radius: 50%;
-            border: 3px solid #D9C0A8;
+            border: 2px solid #E7E0D5;
             background: #ffffff;
             overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(107, 46, 22, 0.15);
+            box-shadow: 0 8px 20px -6px rgba(107, 46, 22, 0.12);
             z-index: 2;
             animation: splashLogoIntro 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
@@ -69,8 +69,8 @@
 
         .splash-pulse {
             position: absolute;
-            width: 96px;
-            height: 96px;
+            width: 136px;
+            height: 136px;
             border-radius: 50%;
             border: 2px solid #A3470D;
             opacity: 0;

@@ -1,9 +1,10 @@
-const CACHE_NAME = "kopi-elang-static-v2";
+const CACHE_NAME = "kopi-elang-static-v3";
 const ASSETS_TO_CACHE = [
   "/manifest.json",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
-  "/icons/apple-touch-icon.png"
+  "/icons/apple-touch-icon.png",
+  "/icons/splash-logo.png"
 ];
 
 // Install Event - Pre-cache minimal static assets for PWA installability
