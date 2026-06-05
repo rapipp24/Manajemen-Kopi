@@ -633,7 +633,7 @@
         <div class="page-header">
             <div class="page-title-block">
                 <h1>Absensi Karyawan Gudang</h1>
-                <p>Pencatatan kehadiran harian karyawan gudang.</p>
+                <p>Pencatatan kehadiran harian karyawan gudang. <a href="{{ route('admin.reports.attendance') }}" style="color: var(--brown-500); font-weight: 700; text-decoration: underline; margin-left: 6px;">Lihat Rekap Bulanan ➔</a></p>
             </div>
             
             <form action="{{ route('admin.attendances.index') }}" method="GET" id="date-form">

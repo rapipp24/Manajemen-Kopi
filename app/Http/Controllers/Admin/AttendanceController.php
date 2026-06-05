@@ -248,4 +248,226 @@ class AttendanceController extends Controller
             ->route('admin.attendances.index')
             ->with('success', 'Absensi berhasil dihapus.');
     }
+
+    /**
+     * Helper to compute attendance recap data for a month and year.
+     */
+    private function getRecapData($month, $year)
+    {
+        // 1. Ambil karyawan aktif saat ini
+        $activeEmployees = WarehouseEmployee::where('is_active', true)->orderBy('name')->get();
+
+        // 2. Ambil karyawan nonaktif yang memiliki record absensi pada bulan/tahun terpilih
+        $inactiveWithAttendanceIds = EmployeeAttendance::whereYear('attendance_date', $year)
+            ->whereMonth('attendance_date', $month)
+            ->pluck('warehouse_employee_id')
+            ->unique();
+
+        $inactiveEmployees = WarehouseEmployee::where('is_active', false)
+            ->whereIn('id', $inactiveWithAttendanceIds)
+            ->orderBy('name')
+            ->get();
+
+        // Gabungkan karyawan aktif dengan karyawan nonaktif yang memiliki data pada bulan terpilih
+        $employees = $activeEmployees->concat($inactiveEmployees)->unique('id')->sortBy('name')->values();
+
+        // 3. Ambil seluruh data absensi untuk bulan/tahun terpilih
+        $attendances = EmployeeAttendance::whereYear('attendance_date', $year)
+            ->whereMonth('attendance_date', $month)
+            ->get()
+            ->groupBy('warehouse_employee_id');
+
+        // 4. Hitung jumlah hari dalam bulan terpilih
+        $daysInMonth = \Carbon\Carbon::createFromDate($year, $month, 1)->daysInMonth;
+
+        // 5. Hitung daysToCount untuk hitung "Belum Dicatat" sesuai guardrail:
+        // - bulan berjalan: hitung hanya sampai hari ini
+        // - bulan lampau: hitung sampai akhir bulan
+        // - bulan masa depan: jangan dihitung sebagai belum dicatat (0)
+        $todayDay = (int)date('j');
+        $currentMonth = (int)date('n');
+        $currentYear = (int)date('Y');
+
+        if ($year == $currentYear && $month == $currentMonth) {
+            $daysToCount = $todayDay;
+        } elseif ($year < $currentYear || ($year == $currentYear && $month < $currentMonth)) {
+            $daysToCount = $daysInMonth;
+        } else {
+            $daysToCount = 0;
+        }
+
+        $recap = [];
+        $totals = [
+            'hadir' => 0,
+            'izin' => 0,
+            'sakit' => 0,
+            'alfa' => 0,
+            'belum_dicatat' => 0,
+        ];
+
+        foreach ($employees as $emp) {
+            $empAttendances = $attendances->get($emp->id, collect());
+            $hadir = 0;
+            $izin = 0;
+            $sakit = 0;
+            $alfa = 0;
+
+            foreach ($empAttendances as $att) {
+                if ($att->status === 'hadir') {
+                    $hadir++;
+                } elseif ($att->status === 'izin') {
+                    $izin++;
+                } elseif ($att->status === 'sakit') {
+                    $sakit++;
+                } elseif ($att->status === 'alfa') {
+                    $alfa++;
+                }
+            }
+
+            $totalRecorded = $hadir + $izin + $sakit + $alfa;
+            
+            // "Belum Dicatat" dihitung aman dari negative value
+            $belumDicatat = max(0, $daysToCount - $totalRecorded);
+
+            $recap[] = [
+                'employee' => $emp,
+                'hadir' => $hadir,
+                'izin' => $izin,
+                'sakit' => $sakit,
+                'alfa' => $alfa,
+                'belum_dicatat' => $belumDicatat,
+            ];
+
+            // Tambahkan ke total keseluruhan
+            $totals['hadir'] += $hadir;
+            $totals['izin'] += $izin;
+            $totals['sakit'] += $sakit;
+            $totals['alfa'] += $alfa;
+            $totals['belum_dicatat'] += $belumDicatat;
+        }
+
+        return [$employees, $recap, $totals, $daysInMonth];
+    }
+
+    /**
+     * Tampilkan halaman rekap absensi bulanan.
+     */
+    public function recap(Request $request)
+    {
+        $month = (int)$request->input('month', date('n'));
+        $year = (int)$request->input('year', date('Y'));
+
+        list($employees, $recap, $totals, $daysInMonth) = $this->getRecapData($month, $year);
+
+        // Daftar nama bulan dalam Bahasa Indonesia
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        // Daftar pilihan tahun (dari 2024 sampai tahun berjalan + 1)
+        $startYear = 2024;
+        $endYear = (int)date('Y') + 1;
+        $years = range($startYear, $endYear);
+
+        return view('admin.reports.attendance', compact('recap', 'totals', 'month', 'year', 'months', 'years', 'daysInMonth'));
+    }
+
+    /**
+     * Cetak rekap absensi bulanan.
+     */
+    public function recapPrint(Request $request)
+    {
+        $month = (int)$request->input('month', date('n'));
+        $year = (int)$request->input('year', date('Y'));
+
+        list($employees, $recap, $totals, $daysInMonth) = $this->getRecapData($month, $year);
+
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        return view('admin.reports.attendance_print', compact('recap', 'totals', 'month', 'year', 'months', 'daysInMonth'));
+    }
+
+    /**
+     * Export rekap absensi bulanan ke file CSV.
+     */
+    public function recapExport(Request $request)
+    {
+        $month = (int)$request->input('month', date('n'));
+        $year = (int)$request->input('year', date('Y'));
+
+        list($employees, $recap, $totals, $daysInMonth) = $this->getRecapData($month, $year);
+
+        // Format nama bulan agar pad 2 digit untuk nama file
+        $monthPadded = str_pad($month, 2, '0', STR_PAD_LEFT);
+        $filename = "rekap-absensi-{$year}-{$monthPadded}.csv";
+
+        $headers = [
+            'Content-type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+        $monthName = $months[$month];
+
+        $callback = function() use ($recap, $totals, $monthName, $year) {
+            $file = fopen('php://output', 'w');
+            
+            // Tulis UTF-8 BOM
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header info rekap
+            fputcsv($file, ["REKAP ABSENSI BULANAN KARYAWAN GUDANG"], ';');
+            fputcsv($file, ["Periode: {$monthName} {$year}"], ';');
+            fputcsv($file, ["Tanggal Cetak: " . date('d-m-Y H:i')], ';');
+            fputcsv($file, [], ';');
+
+            // Header Tabel
+            fputcsv($file, ['No', 'Nama Karyawan', 'Status Aktif', 'Hadir', 'Izin', 'Sakit', 'Alfa', 'Belum Dicatat'], ';');
+
+            // Baris Data Karyawan
+            $no = 1;
+            foreach ($recap as $row) {
+                fputcsv($file, [
+                    $no++,
+                    $row['employee']->name,
+                    $row['employee']->is_active ? 'Aktif' : 'Nonaktif',
+                    $row['hadir'],
+                    $row['izin'],
+                    $row['sakit'],
+                    $row['alfa'],
+                    $row['belum_dicatat']
+                ], ';');
+            }
+
+            // Baris Total Keseluruhan
+            fputcsv($file, [], ';');
+            fputcsv($file, [
+                'TOTAL',
+                '',
+                '',
+                $totals['hadir'],
+                $totals['izin'],
+                $totals['sakit'],
+                $totals['alfa'],
+                $totals['belum_dicatat']
+            ], ';');
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

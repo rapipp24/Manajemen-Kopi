@@ -251,6 +251,24 @@
             @endif
         </div>
 
+        <!-- Rekap Absensi Bulanan Banner Card -->
+        <div style="background: white; border: 1px solid #e8d8c4; border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(120, 53, 15, 0.02); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 4px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 42px; height: 42px; border-radius: 10px; background: #fdfaf6; border: 1px solid #e8d8c4; display: flex; align-items: center; justify-content: center; color: #92400e;">
+                    <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 style="font-size: 14.5px; font-weight: 700; color: #2c1a0e; margin: 0;">Laporan Rekap Absensi Bulanan</h4>
+                    <p style="font-size: 12.5px; color: #9e7c62; margin: 2px 0 0 0;">Lihat total kehadiran, sakit, izin, dan alfa karyawan gudang setiap bulannya.</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.reports.attendance') }}" class="btn-action-outline" style="background: #92400e; color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(146, 64, 14, 0.15); transition: all 0.2s;">
+                Buka Rekap Absensi ➔
+            </a>
+        </div>
+
         <!-- Tabs Navigation -->
         <div class="report-tabs">
             <a href="{{ route('admin.basic-reports.index', ['type' => 'raw_material', 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 

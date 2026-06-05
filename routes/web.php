@@ -64,6 +64,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/basic-reports/export-excel', [\App\Http\Controllers\Admin\BasicReportController::class, 'exportExcel'])->name('basic-reports.export-excel');
     Route::get('/basic-reports/export-pdf', [\App\Http\Controllers\Admin\BasicReportController::class, 'exportPdf'])->name('basic-reports.export-pdf');
 
+    // Rekap Absensi Bulanan
+    Route::get('/reports/attendance', [\App\Http\Controllers\Admin\AttendanceController::class, 'recap'])->name('reports.attendance');
+    Route::get('/reports/attendance/export', [\App\Http\Controllers\Admin\AttendanceController::class, 'recapExport'])->name('reports.attendance.export');
+    Route::get('/reports/attendance/print', [\App\Http\Controllers\Admin\AttendanceController::class, 'recapPrint'])->name('reports.attendance.print');
+
     // Sales Orders (Pengajuan Barang dari Sales)
     Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');
     Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
