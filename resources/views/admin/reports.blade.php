@@ -50,7 +50,7 @@
         /* KPI Grid - Desktop */
         .main-kpi-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 24px;
         }
@@ -79,6 +79,7 @@
         .kpi-card.kpi-selisih-surplus { border-left: 4px solid #10b981; } /* Emerald */
         .kpi-card.kpi-selisih-defisit { border-left: 4px solid #f43f5e; } /* Rose */
         .kpi-card.kpi-piutang { border-left: 4px solid #f59e0b; } /* Amber */
+        .kpi-card.kpi-kelebihan { border-left: 4px solid #7c3aed; } /* Purple */
 
         /* Pengeluaran Tercatat Styling */
         .expense-section {
@@ -492,7 +493,7 @@
                         <p class="kpi-label">Total Uang Masuk</p>
                         <p class="kpi-value">{{ $totalCashIn < 0 ? '-Rp ' . number_format(abs($totalCashIn), 0, ',', '.') : 'Rp ' . number_format($totalCashIn, 0, ',', '.') }}</p>
                     </div>
-                    <p class="kpi-helper report-helper-text">Pembayaran admin + setoran sales disetujui</p>
+                    <p class="kpi-helper report-helper-text">Kas/setoran yang sudah benar-benar diterima. Return tidak otomatis mengurangi kas masuk.</p>
                 </div>
 
                 <!-- Selisih Tercatat -->
@@ -506,7 +507,7 @@
                             <span class="kpi-badge badge-surplus">Surplus Tercatat</span>
                         @endif
                     </div>
-                    <p class="kpi-helper report-helper-text">Uang masuk - uang keluar tercatat. Bukan laba bersih.</p>
+                    <p class="kpi-helper report-helper-text">Selisih antara uang masuk dan uang keluar tercatat, bukan laba bersih.</p>
                 </div>
 
                 <!-- Sisa Tagihan Toko -->
@@ -519,6 +520,15 @@
                         @endif
                     </div>
                     <p class="kpi-helper report-helper-text">Tagihan lapangan yang belum lunas</p>
+                </div>
+
+                <!-- Kelebihan Bayar Toko -->
+                <div class="kpi-card kpi-kelebihan">
+                    <div>
+                        <p class="kpi-label">Kelebihan Bayar Toko</p>
+                        <p class="kpi-value">Rp {{ number_format($totalKelebihanBayar, 0, ',', '.') }}</p>
+                    </div>
+                    <p class="kpi-helper report-helper-text">Saldo lebih bayar akibat setoran melebihi tagihan efektif setelah return.</p>
                 </div>
             </div>
 
@@ -546,12 +556,21 @@
 
             <div class="analysis-section">
                 <div class="analysis-card">
+                    <!-- Total Return Diterima Info Bar -->
+                    <div style="border-bottom: 1px dashed #e5e7eb; padding-bottom: 12px; margin-bottom: 16px; font-size: 13px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Total Return Diterima</span>
+                            <span style="font-size: 14px; font-weight: 800; color: #b45309;">Rp {{ number_format($totalReturnDiterima, 0, ',', '.') }}</span>
+                        </div>
+                        <span class="report-helper-text" style="font-size: 11.5px; color: #64748b;">Nilai barang return yang sudah diterima admin pada periode ini.</span>
+                    </div>
+
                     <div class="analysis-grid">
-                        <!-- Total Nilai Penjualan -->
+                        <!-- Total Penjualan Bersih -->
                         <div class="analysis-col">
-                            <span class="analysis-label">Total Nilai Penjualan</span>
+                            <span class="analysis-label">Total Penjualan Bersih</span>
                             <span class="analysis-value">{{ $totalNilaiPenjualan < 0 ? '-Rp ' . number_format(abs($totalNilaiPenjualan), 0, ',', '.') : 'Rp ' . number_format($totalNilaiPenjualan, 0, ',', '.') }}</span>
-                            <span class="analysis-helper report-helper-text">Nilai barang terjual/dikirim setelah memperhitungkan return diterima</span>
+                            <span class="analysis-helper report-helper-text">Nilai penjualan setelah dikurangi return diterima.</span>
                         </div>
 
                         <!-- Subtraction Operator -->
@@ -575,7 +594,7 @@
                         <div class="analysis-col highlighting-col">
                             <span class="analysis-label highlight-label">Margin Produk</span>
                             <span class="analysis-value highlight-value">{{ $labaMargin < 0 ? '-Rp ' . number_format(abs($labaMargin), 0, ',', '.') : 'Rp ' . number_format($labaMargin, 0, ',', '.') }}</span>
-                            <span class="analysis-helper highlight-helper report-helper-text">Keuntungan dari harga jual dikurangi HPP produk.</span>
+                            <span class="analysis-helper highlight-helper report-helper-text">Total Penjualan Bersih dikurangi Total HPP Produk Bersih.</span>
                         </div>
                     </div>
                 </div>
