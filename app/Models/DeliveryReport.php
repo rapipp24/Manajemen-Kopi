@@ -106,6 +106,50 @@ class DeliveryReport extends Model
         return max(0, (float) $this->total_amount - $this->total_return_diterima);
     }
 
+    /**
+     * Nilai total return berstatus diterima.
+     */
+    public function getAcceptedReturnAmountAttribute(): float
+    {
+        return $this->total_return_diterima;
+    }
+
+    /**
+     * Nilai tagihan efektif = total_amount - accepted_return_amount.
+     */
+    public function getEffectiveTotalAmountAttribute(): float
+    {
+        return $this->tagihan_efektif;
+    }
+
+    /**
+     * Sisa tagihan efektif = max(0, effective_total_amount - down_payment_amount).
+     */
+    public function getEffectiveRemainingAmountAttribute(): float
+    {
+        return max(0.0, $this->effective_total_amount - (float) $this->down_payment_amount);
+    }
+
+    /**
+     * Sinkronisasi payment_status di database secara aman.
+     */
+    public function syncPaymentStatus(): bool
+    {
+        $remaining = $this->effective_remaining_amount;
+        $dp = (float) $this->down_payment_amount;
+
+        $status = 'belum_bayar';
+        if ($remaining <= 0.0) {
+            $status = 'lunas';
+        } elseif ($dp > 0.0 && $remaining > 0.0) {
+            $status = 'dp';
+        } elseif ($dp <= 0.0 && $remaining > 0.0) {
+            $status = 'belum_bayar';
+        }
+
+        return $this->update(['payment_status' => $status]);
+    }
+
     public function deposits()
     {
         return $this->hasMany(SalesDeposit::class, 'delivery_report_id');

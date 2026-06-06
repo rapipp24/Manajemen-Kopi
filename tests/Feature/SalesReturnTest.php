@@ -504,5 +504,358 @@ class SalesReturnTest extends TestCase
         $this->assertEquals($this->admin->id, $report->overpayment_resolved_by);
         $this->assertEquals('Kelebihan bayar 15rb sudah dikembalikan tunai ke toko.', $report->overpayment_resolution_note);
     }
+
+    /**
+     * Test 10: Return diterima membuat DP menjadi lunas
+     */
+    public function test_return_received_makes_dp_lunas()
+    {
+        // Delivery total 100000
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-101',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'dp',
+            'down_payment_amount' => 70000, // Setoran disetujui 70000
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        // Return diterima 30000
+        $return = SalesReturn::create([
+            'return_number' => 'RET-101',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3, // 3 * 10000 = 30000
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        // Admin approve return
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'perlu_proses_ulang',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+        
+        $report->refresh();
+        $this->assertEquals(0, $report->effective_remaining_amount);
+        $this->assertEquals('lunas', $report->payment_status);
+    }
+
+    /**
+     * Test 11: Return pending tidak mengubah status
+     */
+    public function test_return_pending_does_not_change_status()
+    {
+        // Delivery total 100000, setoran disetujui 70000, status dp
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-102',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'dp',
+            'down_payment_amount' => 70000,
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        // Return pending 30000 (status menunggu)
+        $return = SalesReturn::create([
+            'return_number' => 'RET-102',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3,
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        $report->refresh();
+        $this->assertEquals('dp', $report->payment_status);
+        $this->assertEquals(30000, $report->effective_remaining_amount);
+    }
+
+    /**
+     * Test 12: Return ditolak tidak mengubah status
+     */
+    public function test_return_rejected_does_not_change_status()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-103',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'dp',
+            'down_payment_amount' => 70000,
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-103',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3,
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        // Admin reject return
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.reject', $return), [
+                'rejection_reason' => 'Ditolak alasan jelas',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+
+        $report->refresh();
+        $this->assertEquals('dp', $report->payment_status);
+        $this->assertEquals(30000, $report->effective_remaining_amount);
+    }
+
+    /**
+     * Test 13: Setoran baru tidak boleh melebihi sisa efektif
+     */
+    public function test_deposit_cannot_exceed_effective_remaining_amount()
+    {
+        // Delivery total 100000
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-104',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'dp',
+            'down_payment_amount' => 60000, // Setoran disetujui 60000
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        // Return diterima 30000
+        $return = SalesReturn::create([
+            'return_number' => 'RET-104',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'diterima',
+            'return_condition' => 'perlu_proses_ulang'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3,
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        // Sisa efektif = 100000 - 30000 - 60000 = 10000
+        $this->assertEquals(10000, $report->fresh()->effective_remaining_amount);
+
+        // Sales coba setor 20000 -> Harus ditolak
+        $response = $this->actingAs($this->sales1)
+            ->post(route('sales.deposits.store'), [
+                'delivery_report_id' => $report->id,
+                'amount' => 20000,
+                'payment_date' => now()->format('Y-m-d'),
+                'payment_method' => 'Tunai',
+                'note' => 'Coba setor lebih'
+            ]);
+
+        $response->assertSessionHas('error');
+        $response->assertSessionHas('error', 'Nominal setoran melebihi sisa tagihan setelah memperhitungkan return yang diterima.');
+    }
+
+    /**
+     * Test 14: Setoran pas sisa efektif
+     */
+    public function test_deposit_exactly_effective_remaining_amount()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-105',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'dp',
+            'down_payment_amount' => 60000,
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        // Return diterima 30000
+        $return = SalesReturn::create([
+            'return_number' => 'RET-105',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'diterima',
+            'return_condition' => 'perlu_proses_ulang'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3,
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        // Sisa efektif = 10000
+        $this->assertEquals(10000, $report->fresh()->effective_remaining_amount);
+
+        // Sales setor 10000
+        $response = $this->actingAs($this->sales1)
+            ->post(route('sales.deposits.store'), [
+                'delivery_report_id' => $report->id,
+                'amount' => 10000,
+                'payment_date' => now()->format('Y-m-d'),
+                'payment_method' => 'Tunai',
+                'note' => 'Setor pas'
+            ]);
+
+        $response->assertRedirect(route('sales.deposits.index'));
+
+        // Admin approve setoran tersebut
+        $deposit = \App\Models\SalesDeposit::where('delivery_report_id', $report->id)
+            ->where('status', 'menunggu_verifikasi')
+            ->firstOrFail();
+
+        $responseApprove = $this->actingAs($this->admin)
+            ->post(route('admin.sales-deposits.approve', $deposit));
+
+        $responseApprove->assertSessionHas('success');
+
+        $report->refresh();
+        $this->assertEquals('lunas', $report->payment_status);
+        $this->assertEquals(70000, $report->down_payment_amount); // 60000 + 10000
+        $this->assertEquals(0, $report->effective_remaining_amount);
+    }
+
+    /**
+     * Test 15: Stok tidak berubah akibat sync status
+     */
+    public function test_sync_payment_status_does_not_affect_stock_data()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-106',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'dp',
+            'down_payment_amount' => 60000,
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        // Simpan snapshot data stok
+        $productStockBefore = $this->product->current_stock;
+        
+        // Cek model SalesStock jika ada
+        $salesStockBefore = null;
+        if (class_exists(\App\Models\SalesStock::class)) {
+            $salesStockBefore = \App\Models\SalesStock::where('sales_id', $this->sales1->id)
+                ->where('product_id', $this->product->id)
+                ->first();
+        }
+
+        $stockMovementsCountBefore = StockMovement::count();
+        $drItemsCountBefore = DeliveryReportItem::count();
+
+        // Panggil syncPaymentStatus
+        $report->syncPaymentStatus();
+
+        // Assert tidak ada perubahan stok produk gudang
+        $this->product->refresh();
+        $this->assertEquals($productStockBefore, $this->product->current_stock);
+
+        // Assert tidak ada perubahan stok sales
+        if ($salesStockBefore) {
+            $salesStockAfter = \App\Models\SalesStock::where('sales_id', $this->sales1->id)
+                ->where('product_id', $this->product->id)
+                ->first();
+            $this->assertEquals($salesStockBefore->qty, $salesStockAfter->qty);
+        }
+
+        // Assert tidak ada movement baru
+        $this->assertEquals($stockMovementsCountBefore, StockMovement::count());
+
+        // Assert item reports tidak berubah
+        $this->assertEquals($drItemsCountBefore, DeliveryReportItem::count());
+    }
 }
 

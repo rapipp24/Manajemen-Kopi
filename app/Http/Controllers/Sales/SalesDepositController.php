@@ -31,7 +31,7 @@ class SalesDepositController extends Controller
             })
             ->get()
             ->filter(function ($report) {
-                return $report->remaining_amount > 0;
+                return $report->effective_remaining_amount > 0;
             });
 
         $selectedReportId = $request->input('delivery_report_id');
@@ -65,12 +65,12 @@ class SalesDepositController extends Controller
             return back()->withInput()->with('error', 'Masih ada setoran untuk laporan ini yang menunggu verifikasi admin.');
         }
 
-        if ($report->remaining_amount <= 0) {
-            return back()->withInput()->with('error', 'Laporan pengiriman ini sudah lunas.');
+        if ($report->effective_remaining_amount <= 0) {
+            return back()->withInput()->with('error', 'Tagihan ini sudah lunas atau tidak memiliki sisa tagihan.');
         }
 
-        if ($request->amount > $report->remaining_amount) {
-            return back()->withInput()->with('error', 'Nominal setoran melebihi sisa tagihan (Maksimal Rp ' . number_format($report->remaining_amount, 0, ',', '.') . ').');
+        if ($request->amount > $report->effective_remaining_amount) {
+            return back()->withInput()->with('error', 'Nominal setoran melebihi sisa tagihan setelah memperhitungkan return yang diterima.');
         }
 
         // Simpan file bukti transfer hanya jika seluruh validasi bisnis di atas telah lolos (mencegah file yatim/orphan)

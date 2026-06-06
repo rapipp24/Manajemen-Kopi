@@ -112,6 +112,14 @@ class SalesReturnController extends Controller
                 'approved_at'      => now(),
             ]);
 
+            // Sinkronisasikan status pembayaran pada DeliveryReport terkait
+            if ($return->delivery_report_id) {
+                $report = \App\Models\DeliveryReport::lockForUpdate()->find($return->delivery_report_id);
+                if ($report) {
+                    $report->syncPaymentStatus();
+                }
+            }
+
             DB::commit();
 
             $msg = $request->return_condition === 'layak_jual'

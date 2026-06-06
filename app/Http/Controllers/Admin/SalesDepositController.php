@@ -53,8 +53,8 @@ class SalesDepositController extends Controller
 
             $report = DeliveryReport::where('id', $deposit->delivery_report_id)->lockForUpdate()->firstOrFail();
 
-            if ($deposit->amount > $report->remaining_amount) {
-                throw new Exception('Nominal setoran melebihi sisa tagihan laporan pengiriman ini.');
+            if ($deposit->amount > $report->effective_remaining_amount) {
+                throw new Exception('Nominal setoran melebihi sisa tagihan setelah memperhitungkan return yang diterima.');
             }
 
             // Update status setoran
@@ -67,18 +67,12 @@ class SalesDepositController extends Controller
             // Update delivery report
             // Tambahkan amount ke down_payment_amount (yang dianggap cache total uang masuk)
             $newPaidAmount = $report->down_payment_amount + $deposit->amount;
-            
-            $paymentStatus = 'belum_bayar';
-            if ($newPaidAmount >= $report->total_amount) {
-                $paymentStatus = 'lunas';
-            } elseif ($newPaidAmount > 0) {
-                $paymentStatus = 'dp';
-            }
 
             $report->update([
                 'down_payment_amount' => $newPaidAmount,
-                'payment_status' => $paymentStatus,
             ]);
+
+            $report->syncPaymentStatus();
 
             DB::commit();
             return back()->with('success', 'Setoran berhasil disetujui.');
