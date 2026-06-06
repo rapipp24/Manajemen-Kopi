@@ -24,4 +24,10 @@ class DeliveryReportItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    /** Return items associated with this delivery report item */
+    public function salesReturnItems(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SalesReturnItem::class, 'delivery_report_item_id');
+    }
 }
