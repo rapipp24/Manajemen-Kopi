@@ -62,8 +62,15 @@
                 <tbody>
                     @foreach($returns as $ret)
                     <tr style="border-bottom:1px solid #f1f5f9;">
-                        <td style="padding:13px 20px;font-family:monospace;font-weight:700;font-size:12.5px;color:#92400e;">
-                            {{ $ret->return_number }}
+                        <td style="padding:13px 20px;">
+                            <div style="font-family:monospace;font-weight:700;font-size:12.5px;color:#92400e;">{{ $ret->return_number }}</div>
+                            <div style="margin-top:4px;">
+                                @if($ret->return_type === 'tukar_barang')
+                                    <span style="background:#faf5ff;color:#7c3aed;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;border:1px solid #ddd6fe;">Tukar Barang</span>
+                                @else
+                                    <span style="background:#eff6ff;color:#2563eb;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;border:1px solid #bfdbfe;">Potong Tagihan</span>
+                                @endif
+                            </div>
                         </td>
                         <td style="padding:13px 20px;font-size:13px;font-weight:600;color:#0f172a;">
                             {{ $ret->sales->name ?? '—' }}

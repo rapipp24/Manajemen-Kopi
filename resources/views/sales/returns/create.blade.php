@@ -133,6 +133,26 @@
                 </div>
             </div>
 
+            <div style="margin-bottom:16px;">
+                <label class="form-label">Jenis Return <span style="color:#ef4444;">*</span></label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;">
+                    <label style="border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer; display:flex; flex-direction:column; gap:4px; background:#fff;" id="label_type_potong">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="radio" name="return_type" value="potong_tagihan" checked required style="accent-color:var(--accent);">
+                            <span style="font-weight:700; font-size:13px; color:var(--text);">Potong Tagihan</span>
+                        </div>
+                        <span style="font-size:11.5px; color:var(--muted); margin-left:22px;">Nilai barang return mengurangi tagihan toko.</span>
+                    </label>
+                    <label style="border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer; display:flex; flex-direction:column; gap:4px; background:#fff;" id="label_type_tukar">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="radio" name="return_type" value="tukar_barang" {{ old('return_type') === 'tukar_barang' ? 'checked' : '' }} required style="accent-color:var(--accent);">
+                            <span style="font-weight:700; font-size:13px; color:var(--text);">Tukar Barang</span>
+                        </div>
+                        <span style="font-size:11.5px; color:var(--muted); margin-left:22px;">Barang dikembalikan untuk diganti produk lain, tagihan tidak berkurang.</span>
+                    </label>
+                </div>
+            </div>
+
             <div>
                 <label class="form-label" for="note">Catatan Tambahan (Opsional)</label>
                 <textarea name="note" id="note" class="form-control" rows="2" placeholder="Tulis catatan jika barang rusak/perlu proses ulang fisiknya di pabrik.">{{ old('note') }}</textarea>

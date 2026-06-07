@@ -19,7 +19,18 @@ class SalesReturn extends Model
         'rejection_reason',
         'approved_by',
         'approved_at',
+        'return_type',
     ];
+
+    public function isTukarBarang(): bool
+    {
+        return $this->return_type === 'tukar_barang';
+    }
+
+    public function isPotongTagihan(): bool
+    {
+        return $this->return_type === 'potong_tagihan';
+    }
 
     protected $casts = [
         'return_date'  => 'date',

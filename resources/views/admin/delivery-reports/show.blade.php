@@ -346,6 +346,13 @@
                     <div>
                         <div style="font-family:monospace;font-weight:700;font-size:12px;color:#92400e;">{{ $ret->return_number }}</div>
                         <div style="font-size:11px;color:#94a3b8;margin-top:2px;">{{ $ret->return_date->format('d M Y') }}</div>
+                        <div style="margin-top:4px;">
+                            @if($ret->return_type === 'tukar_barang')
+                                <span style="background:#faf5ff;color:#7c3aed;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;border:1px solid #ddd6fe;">Tukar Barang</span>
+                            @else
+                                <span style="background:#eff6ff;color:#2563eb;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;border:1px solid #bfdbfe;">Potong Tagihan</span>
+                            @endif
+                        </div>
                     </div>
                     <div style="text-align:right;">
                         <div style="font-size:12px;font-weight:700;color:#0f172a;">Rp {{ number_format($ret->total_return, 0, ',', '.') }}</div>

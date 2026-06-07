@@ -61,9 +61,12 @@ class SalesReturnController extends Controller
     {
         $request->validate([
             'return_condition' => 'required|in:layak_jual,perlu_proses_ulang',
+            'return_type'      => 'required|in:tukar_barang,potong_tagihan',
         ], [
             'return_condition.required' => 'Kondisi barang wajib dipilih.',
             'return_condition.in' => 'Kondisi barang tidak valid.',
+            'return_type.required' => 'Jenis penyelesaian wajib dipilih.',
+            'return_type.in' => 'Jenis penyelesaian tidak valid.',
         ]);
 
         DB::beginTransaction();
@@ -104,16 +107,17 @@ class SalesReturnController extends Controller
                 }
             }
 
-            // Update status return dan simpan return_condition
+            // Update status return dan simpan return_condition & return_type
             $return->update([
                 'status'           => 'diterima',
                 'return_condition' => $request->return_condition,
+                'return_type'      => $request->return_type,
                 'approved_by'      => Auth::id(),
                 'approved_at'      => now(),
             ]);
 
-            // Sinkronisasikan status pembayaran pada DeliveryReport terkait
-            if ($return->delivery_report_id) {
+            // Sinkronisasikan status pembayaran pada DeliveryReport terkait (hanya jika jenisnya potong tagihan)
+            if ($request->return_type === 'potong_tagihan' && $return->delivery_report_id) {
                 $report = \App\Models\DeliveryReport::lockForUpdate()->find($return->delivery_report_id);
                 if ($report) {
                     $report->syncPaymentStatus();

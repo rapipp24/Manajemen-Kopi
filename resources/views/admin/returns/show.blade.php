@@ -142,6 +142,14 @@
                         <span style="font-size:12px;color:#64748b;">Tanggal Ajuan</span>
                         <span style="font-size:12px;font-weight:600;color:#0f172a;">{{ $return->created_at->format('d M Y, H:i') }}</span>
                     </div>
+                    <div style="display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #f1f5f9;">
+                        <span style="font-size:12px;color:#64748b;">Usulan Sales</span>
+                        @if($return->return_type === 'tukar_barang')
+                            <span style="font-size:12px;font-weight:700;color:#7c3aed;background:#faf5ff;padding:2px 8px;border-radius:4px;">Tukar Barang</span>
+                        @else
+                            <span style="font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;padding:2px 8px;border-radius:4px;">Potong Tagihan</span>
+                        @endif
+                    </div>
                     @if($return->note)
                     <div style="padding:11px 18px;">
                         <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Catatan Sales</div>
@@ -187,6 +195,43 @@
                 {{-- Terima Return --}}
                 <form id="receiveForm" action="{{ route('admin.returns.receive', $return) }}" method="POST" style="margin-bottom:16px; margin-top:20px;">
                     @csrf
+
+                    <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12.5px;color:#334155;">
+                        <span style="font-weight:700;display:block;margin-bottom:6px;color:#64748b;text-transform:uppercase;font-size:10.5px;letter-spacing:0.5px;">Usulan Sales (dari Lapangan):</span>
+                        @if($return->return_type === 'tukar_barang')
+                            <span style="font-weight:700;color:#7c3aed;background:#faf5ff;padding:4px 10px;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;gap:4px;border:1px solid #ddd6fe;">
+                                <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> Tukar Barang
+                            </span>
+                        @else
+                            <span style="font-weight:700;color:#2563eb;background:#eff6ff;padding:4px 10px;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;gap:4px;border:1px solid #bfdbfe;">
+                                <i data-lucide="check-circle" style="width:13px;height:13px;"></i> Potong Tagihan
+                            </span>
+                        @endif
+                    </div>
+
+                    <div style="margin-bottom:18px;">
+                        <label style="font-size:12px;font-weight:700;color:#334155;display:block;margin-bottom:8px;">Keputusan Admin (Penyelesaian Final) <span style="color:#ef4444;">*</span></label>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #cbd5e1;border-radius:8px;cursor:pointer;background:#fff;transition:all 0.2s;" id="label_type_potong_admin">
+                                <input type="radio" name="return_type" value="potong_tagihan" {{ $return->return_type === 'potong_tagihan' ? 'checked' : '' }} required style="margin-top:3px;" onchange="updateTypeStyles()">
+                                <div>
+                                    <span style="font-size:13px;font-weight:700;color:#0f172a;display:block;">Potong Tagihan</span>
+                                    <span style="font-size:11.5px;color:#64748b;display:block;margin-top:2px;">Nilai barang return mengurangi tagihan toko.</span>
+                                </div>
+                            </label>
+                            
+                            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #cbd5e1;border-radius:8px;cursor:pointer;background:#fff;transition:all 0.2s;" id="label_type_tukar_admin">
+                                <input type="radio" name="return_type" value="tukar_barang" {{ $return->return_type === 'tukar_barang' ? 'checked' : '' }} required style="margin-top:3px;" onchange="updateTypeStyles()">
+                                <div>
+                                    <span style="font-size:13px;font-weight:700;color:#0f172a;display:block;">Tukar Barang</span>
+                                    <span style="font-size:11.5px;color:#64748b;display:block;margin-top:2px;">Barang dikembalikan untuk diganti produk lain, tagihan tidak berkurang.</span>
+                                </div>
+                            </label>
+                        </div>
+                        @error('return_type')
+                            <div style="color:#ef4444;font-size:12px;margin-top:6px;">{{ $message }}</div>
+                        @enderror
+                    </div>
                     
                     <div style="margin-bottom:18px;">
                         <label style="font-size:12px;font-weight:700;color:#334155;display:block;margin-bottom:8px;">Kondisi Barang Return <span style="color:#ef4444;">*</span></label>
@@ -225,7 +270,22 @@
                 <div style="color:#166534;font-size:13px;font-weight:700;margin:0;display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check" style="width:14px;height:14px;"></i> Return Diterima</div>
                 
                 <div>
-                    <span style="font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px;">Kondisi Barang</span>
+                    <span style="font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px;">Keputusan Admin</span>
+                    @if($return->return_type === 'tukar_barang')
+                        <span style="background:#faf5ff;color:#7c3aed;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+                            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Tukar Barang
+                        </span>
+                        <div style="font-size:12px;color:#7c3aed;margin-top:6px;line-height:1.4;">Barang dikembalikan untuk diganti dengan produk lain, tagihan tidak berkurang.</div>
+                    @else
+                        <span style="background:#eff6ff;color:#2563eb;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+                            <i data-lucide="check-circle" style="width:14px;height:14px;"></i> Potong Tagihan
+                        </span>
+                        <div style="font-size:12px;color:#2563eb;margin-top:6px;line-height:1.4;">Nilai barang return mengurangi tagihan toko.</div>
+                    @endif
+                </div>
+
+                <div>
+                    <span style="font-size:11px;color:#64748b;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px;margin-top:8px;">Kondisi Barang</span>
                     @if($return->return_condition === 'layak_jual')
                         <span style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
                             <i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Layak Jual
@@ -308,26 +368,60 @@
             const checked = document.querySelector('input[name="return_condition"]:checked');
             
             // reset styles
-            layakJual.style.borderColor = '#cbd5e1';
-            layakJual.style.background = '#fff';
-            perluProsesUlang.style.borderColor = '#cbd5e1';
-            perluProsesUlang.style.background = '#fff';
+            if (layakJual) {
+                layakJual.style.borderColor = '#cbd5e1';
+                layakJual.style.background = '#fff';
+            }
+            if (perluProsesUlang) {
+                perluProsesUlang.style.borderColor = '#cbd5e1';
+                perluProsesUlang.style.background = '#fff';
+            }
             
             if (checked) {
-                if (checked.value === 'layak_jual') {
+                if (checked.value === 'layak_jual' && layakJual) {
                     layakJual.style.borderColor = '#166534';
                     layakJual.style.background = '#f0fdf4';
-                } else if (checked.value === 'perlu_proses_ulang') {
+                } else if (checked.value === 'perlu_proses_ulang' && perluProsesUlang) {
                     perluProsesUlang.style.borderColor = '#ca8a04';
                     perluProsesUlang.style.background = '#fefce8';
                 }
             }
         }
 
+        function updateTypeStyles() {
+            const typePotong = document.getElementById('label_type_potong_admin');
+            const typeTukar = document.getElementById('label_type_tukar_admin');
+            const checked = document.querySelector('input[name="return_type"]:checked');
+            
+            if (typePotong) {
+                typePotong.style.borderColor = '#cbd5e1';
+                typePotong.style.background = '#fff';
+            }
+            if (typeTukar) {
+                typeTukar.style.borderColor = '#cbd5e1';
+                typeTukar.style.background = '#fff';
+            }
+            
+            if (checked) {
+                if (checked.value === 'potong_tagihan' && typePotong) {
+                    typePotong.style.borderColor = '#2563eb';
+                    typePotong.style.background = '#eff6ff';
+                } else if (checked.value === 'tukar_barang' && typeTukar) {
+                    typeTukar.style.borderColor = '#7c3aed';
+                    typeTukar.style.background = '#faf5ff';
+                }
+            }
+        }
+
         function openReceiveModal() {
             const checked = document.querySelector('input[name="return_condition"]:checked');
+            const typeChecked = document.querySelector('input[name="return_type"]:checked');
             if (!checked) {
                 alert('Silakan pilih kondisi barang terlebih dahulu!');
+                return;
+            }
+            if (!typeChecked) {
+                alert('Silakan pilih keputusan jenis return terlebih dahulu!');
                 return;
             }
             
@@ -341,12 +435,29 @@
                 stockInfo.innerHTML = '<li>Stok siap jual di gudang <strong>TIDAK bertambah</strong>.</li><li>Stock movement <strong>TIDAK tercatat</strong>.</li><li>Proses fisik packing ulang ditangani manual di gudang.</li>';
             }
             
+            const modalList = document.querySelector('#receiveModal ul[style*="list-style-type:none;"]');
+            if (modalList) {
+                if (typeChecked.value === 'potong_tagihan') {
+                    modalList.innerHTML = '<li style="display:flex;align-items:center;gap:6px;"><i data-lucide="check-circle" style="width:14px;height:14px;color:#166534;flex-shrink:0;"></i> Tagihan efektif toko akan <strong>berkurang</strong>.</li><li style="display:flex;align-items:center;gap:6px;"><i data-lucide="alert-circle" style="width:14px;height:14px;color:#ea580c;flex-shrink:0;"></i> Tindakan ini <strong>tidak bisa dibatalkan</strong>.</li>';
+                } else {
+                    modalList.innerHTML = '<li style="display:flex;align-items:center;gap:6px;"><i data-lucide="check-circle" style="width:14px;height:14px;color:#7c3aed;flex-shrink:0;"></i> Tagihan efektif toko <strong>TIDAK berkurang</strong> (Tukar Barang).</li><li style="display:flex;align-items:center;gap:6px;"><i data-lucide="alert-circle" style="width:14px;height:14px;color:#ea580c;flex-shrink:0;"></i> Tindakan ini <strong>tidak bisa dibatalkan</strong>.</li>';
+                }
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
+            
             document.getElementById('receiveModal').style.display = 'flex';
         }
         
         function closeReceiveModal() {
             document.getElementById('receiveModal').style.display = 'none';
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTypeStyles();
+            updateConditionStyles();
+        });
     </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>

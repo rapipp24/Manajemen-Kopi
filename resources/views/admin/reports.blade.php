@@ -562,7 +562,7 @@
                             <span style="font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Total Return Diterima</span>
                             <span style="font-size: 14px; font-weight: 800; color: #b45309;">Rp {{ number_format($totalReturnDiterima, 0, ',', '.') }}</span>
                         </div>
-                        <span class="report-helper-text" style="font-size: 11.5px; color: #64748b;">Nilai barang return yang sudah diterima admin pada periode ini.</span>
+                        <span class="report-helper-text" style="font-size: 11.5px; color: #64748b;">Nilai barang return (Potong Tagihan) yang sudah diterima admin pada periode ini. Tipe Tukar Barang tidak mengurangi tagihan.</span>
                     </div>
 
                     <div class="analysis-grid">

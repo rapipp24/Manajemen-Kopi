@@ -93,7 +93,8 @@ class DeliveryReport extends Model
     public function getTotalReturnDiterimaAttribute(): float
     {
         return (float) $this->salesReturns()
-            ->where('status', 'diterima')
+            ->where('sales_returns.status', 'diterima')
+            ->where('sales_returns.return_type', 'potong_tagihan')
             ->join('sales_return_items', 'sales_returns.id', '=', 'sales_return_items.sales_return_id')
             ->sum('sales_return_items.subtotal_return');
     }

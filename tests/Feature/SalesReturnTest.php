@@ -84,6 +84,7 @@ class SalesReturnTest extends TestCase
             ->post(route('sales.returns.store'), [
                 'delivery_report_id' => $report->id,
                 'return_date' => now()->format('Y-m-d'),
+                'return_type' => 'potong_tagihan',
                 'items' => [
                     [
                         'delivery_report_item_id' => $drItem->id,
@@ -125,6 +126,7 @@ class SalesReturnTest extends TestCase
             ->post(route('sales.returns.store'), [
                 'delivery_report_id' => $report->id,
                 'return_date' => now()->format('Y-m-d'),
+                'return_type' => 'potong_tagihan',
                 'items' => [
                     [
                         'delivery_report_item_id' => $drItem->id,
@@ -168,6 +170,7 @@ class SalesReturnTest extends TestCase
             ->post(route('sales.returns.store'), [
                 'delivery_report_id' => $report->id,
                 'return_date' => now()->format('Y-m-d'),
+                'return_type' => 'potong_tagihan',
                 'items' => [
                     [
                         'delivery_report_item_id' => $drItem->id,
@@ -229,6 +232,7 @@ class SalesReturnTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->post(route('admin.returns.receive', $return), [
                 'return_condition' => 'layak_jual',
+                'return_type' => 'potong_tagihan',
             ]);
 
         $response->assertRedirect(route('admin.returns.show', $return));
@@ -396,6 +400,7 @@ class SalesReturnTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->post(route('admin.returns.receive', $return), [
                 'return_condition' => 'perlu_proses_ulang',
+                'return_type' => 'potong_tagihan',
             ]);
 
         $response->assertRedirect(route('admin.returns.show', $return));
@@ -435,9 +440,10 @@ class SalesReturnTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->post(route('admin.returns.receive', $return), [
                 'return_condition' => '', // kosong
+                'return_type' => '', // kosong
             ]);
 
-        $response->assertSessionHasErrors('return_condition');
+        $response->assertSessionHasErrors(['return_condition', 'return_type']);
         $this->assertEquals('menunggu', $return->fresh()->status);
     }
 
@@ -552,6 +558,7 @@ class SalesReturnTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->post(route('admin.returns.receive', $return), [
                 'return_condition' => 'perlu_proses_ulang',
+                'return_type' => 'potong_tagihan',
             ]);
 
         $response->assertRedirect(route('admin.returns.show', $return));
@@ -856,6 +863,478 @@ class SalesReturnTest extends TestCase
 
         // Assert item reports tidak berubah
         $this->assertEquals($drItemsCountBefore, DeliveryReportItem::count());
+    }
+
+    /**
+     * Test 16: Return Tukar Barang Layak Jual
+     * - Assert: Stok gudang bertambah, tagihan tetap utuh, sisa tagihan tetap,
+     *   payment_status tidak berubah (tetap), penjualan bersih & HPP tidak terpotong.
+     */
+    public function test_tukar_barang_layak_jual()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-TUKAR-1',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-TUKAR-1',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 2,
+            'price_snapshot' => 15000,
+            'subtotal_return' => 30000
+        ]);
+
+        $stockBefore = $this->product->current_stock; // 100
+
+        // Admin approve return sebagai Tukar Barang & Layak Jual
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'layak_jual',
+                'return_type' => 'tukar_barang',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+        
+        $this->product->refresh();
+        $this->assertEquals($stockBefore + 2, $this->product->current_stock); // Stok bertambah
+
+        $report->refresh();
+        $this->assertEquals(0, $report->total_return_diterima); // Total return diterima tetap 0
+        $this->assertEquals(30000, $report->tagihan_efektif); // Tagihan efektif tetap utuh
+        $this->assertEquals(30000, $report->effective_remaining_amount); // Sisa tetap
+        $this->assertEquals('belum_bayar', $report->payment_status); // Status pembayaran tidak berubah
+    }
+
+    /**
+     * Test 17: Return Tukar Barang Perlu Proses Ulang
+     * - Assert: Stok gudang tidak bertambah, tagihan & status pembayaran tetap.
+     */
+    public function test_tukar_barang_proses_ulang()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-TUKAR-2',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-TUKAR-2',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 2,
+            'price_snapshot' => 15000,
+            'subtotal_return' => 30000
+        ]);
+
+        $stockBefore = $this->product->current_stock; // 100
+
+        // Admin approve return sebagai Tukar Barang & Perlu Proses Ulang
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'perlu_proses_ulang',
+                'return_type' => 'tukar_barang',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+        
+        $this->product->refresh();
+        $this->assertEquals($stockBefore, $this->product->current_stock); // Stok tidak bertambah
+
+        $report->refresh();
+        $this->assertEquals(0, $report->total_return_diterima); // Total return diterima tetap 0
+        $this->assertEquals(30000, $report->tagihan_efektif); // Tagihan tetap
+        $this->assertEquals('belum_bayar', $report->payment_status); // Status tetap
+    }
+
+    /**
+     * Test 18: Return Potong Tagihan Layak Jual
+     * - Assert: Stok gudang bertambah, tagihan berkurang, status pembayaran ter-update.
+     */
+    public function test_potong_tagihan_layak_jual()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-POTONG-1',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-POTONG-1',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 2,
+            'price_snapshot' => 15000,
+            'subtotal_return' => 30000
+        ]);
+
+        $stockBefore = $this->product->current_stock; // 100
+
+        // Admin approve return sebagai Potong Tagihan & Layak Jual
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'layak_jual',
+                'return_type' => 'potong_tagihan',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+        
+        $this->product->refresh();
+        $this->assertEquals($stockBefore + 2, $this->product->current_stock); // Stok bertambah
+
+        $report->refresh();
+        $this->assertEquals(30000, $report->total_return_diterima); // Return diterima bertambah
+        $this->assertEquals(0, $report->tagihan_efektif); // Tagihan berkurang jadi 0
+        $this->assertEquals('lunas', $report->payment_status); // Lunas
+    }
+
+    /**
+     * Test 19: Return Potong Tagihan Perlu Proses Ulang
+     * - Assert: Stok gudang tidak bertambah, tagihan berkurang, status pembayaran ter-update.
+     */
+    public function test_potong_tagihan_proses_ulang()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-POTONG-2',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-POTONG-2',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 2,
+            'price_snapshot' => 15000,
+            'subtotal_return' => 30000
+        ]);
+
+        $stockBefore = $this->product->current_stock; // 100
+
+        // Admin approve return sebagai Potong Tagihan & Perlu Proses Ulang
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'perlu_proses_ulang',
+                'return_type' => 'potong_tagihan',
+            ]);
+
+        $response->assertRedirect(route('admin.returns.show', $return));
+        
+        $this->product->refresh();
+        $this->assertEquals($stockBefore, $this->product->current_stock); // Stok tidak bertambah
+
+        $report->refresh();
+        $this->assertEquals(30000, $report->total_return_diterima); // Return diterima bertambah
+        $this->assertEquals(0, $report->tagihan_efektif); // Tagihan berkurang jadi 0
+        $this->assertEquals('lunas', $report->payment_status); // Lunas
+    }
+
+    /**
+     * Test 20: Return Tukar Barang tidak membuat Overpayment
+     * - Skenario: Delivery 100k, Setoran disetujui 100k, Return tukar_barang 30k diterima.
+     * - Assert: payment_status tetap lunas, overpayment_amount tetap 0, tagihan_efektif tetap 100000.
+     */
+    public function test_tukar_barang_does_not_create_overpayment()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-OVER-TUKAR',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'lunas',
+            'down_payment_amount' => 100000,
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-OVER-TUKAR',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3,
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        // Admin approve return sebagai Tukar Barang
+        $response = $this->actingAs($this->admin)
+            ->post(route('admin.returns.receive', $return), [
+                'return_condition' => 'layak_jual',
+                'return_type' => 'tukar_barang',
+            ]);
+
+        $report->refresh();
+        $this->assertEquals('lunas', $report->payment_status);
+        $this->assertEquals(0.0, $report->overpayment_amount);
+        $this->assertEquals(100000, $report->tagihan_efektif);
+        $this->assertFalse($report->is_overpaid);
+    }
+
+    /**
+     * Test 21: Return Tukar Barang tidak masuk Total Return pengurang Penjualan Bersih
+     */
+    public function test_tukar_barang_does_not_affect_financial_report()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-FIN-TUKAR',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 100000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 10,
+            'price' => 10000,
+            'subtotal' => 100000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-FIN-TUKAR',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'diterima',
+            'return_type' => 'tukar_barang',
+            'return_condition' => 'layak_jual'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 3,
+            'price_snapshot' => 10000,
+            'subtotal_return' => 30000
+        ]);
+
+        // Gunakan logic ReportController query
+        $returnsCount = \App\Models\SalesReturnItem::join('sales_returns', 'sales_return_items.sales_return_id', '=', 'sales_returns.id')
+            ->where('sales_returns.status', 'diterima')
+            ->where('sales_returns.return_type', 'potong_tagihan')
+            ->where('sales_returns.delivery_report_id', $report->id)
+            ->sum('sales_return_items.subtotal_return');
+
+        $this->assertEquals(0, $returnsCount); // Harus 0 karena bertipe tukar_barang
+    }
+
+    /**
+     * Test 22: Data Lama Default Potong Tagihan
+     */
+    public function test_old_returns_default_to_potong_tagihan()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-OLD',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-OLD',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'menunggu'
+        ]);
+
+        $return->refresh();
+
+        $this->assertEquals('potong_tagihan', $return->return_type); // Default database migration
+        $this->assertTrue($return->isPotongTagihan());
+        $this->assertFalse($return->isTukarBarang());
+    }
+
+    /**
+     * Test 23: Sales Validation
+     */
+    public function test_sales_validation_requires_return_type()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-VAL',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        // Coba ajukan return tanpa return_type
+        $response = $this->actingAs($this->sales1)
+            ->post(route('sales.returns.store'), [
+                'delivery_report_id' => $report->id,
+                'return_date' => now()->format('Y-m-d'),
+                'items' => [
+                    [
+                        'delivery_report_item_id' => $drItem->id,
+                        'qty_return' => 1,
+                        'reason' => 'Rusak'
+                    ]
+                ]
+            ]);
+
+        $response->assertSessionHasErrors('return_type');
+    }
+
+    /**
+     * Test 24: Return Tukar Barang tidak mengubah Total Return Diterima di detail Delivery Report
+     * Karena return_type = tukar_barang tidak boleh tampil sebagai pengurang tagihan di detail delivery report.
+     */
+    public function test_tukar_barang_does_not_change_total_return_diterima_in_delivery_report_detail()
+    {
+        $report = DeliveryReport::create([
+            'report_number' => 'DR-DET-TUKAR',
+            'sales_id' => $this->sales1->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 30000,
+            'payment_status' => 'belum_bayar',
+            'created_by' => $this->sales1->id
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 15000,
+            'subtotal' => 30000
+        ]);
+
+        $return = SalesReturn::create([
+            'return_number' => 'RET-DET-TUKAR',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales1->id,
+            'return_date' => now(),
+            'status' => 'diterima',
+            'return_type' => 'tukar_barang',
+            'return_condition' => 'layak_jual'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 2,
+            'price_snapshot' => 15000,
+            'subtotal_return' => 30000
+        ]);
+
+        $this->assertEquals(0.0, $report->total_return_diterima);
+        $this->assertEquals(30000.0, $report->tagihan_efektif);
     }
 }
 

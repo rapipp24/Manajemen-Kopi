@@ -75,6 +75,7 @@ class SalesReturnController extends Controller
         $request->validate([
             'delivery_report_id'   => 'required|exists:delivery_reports,id',
             'return_date'          => 'required|date',
+            'return_type'          => 'required|string|in:tukar_barang,potong_tagihan',
             'note'                 => 'nullable|string|max:1000',
             'items'                => 'required|array|min:1',
             'items.*.delivery_report_item_id' => 'required|exists:delivery_report_items,id',
@@ -134,6 +135,7 @@ class SalesReturnController extends Controller
                 'return_date'        => $request->return_date,
                 'status'             => 'menunggu',
                 'note'               => $request->note,
+                'return_type'        => $request->return_type,
             ]);
 
             // Buat item-item return

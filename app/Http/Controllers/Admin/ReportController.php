@@ -52,10 +52,11 @@ class ReportController extends Controller
         if ($deliveryReports->isNotEmpty()) {
             $returnsPerReport = SalesReturnItem::join('sales_returns', 'sales_return_items.sales_return_id', '=', 'sales_returns.id')
                 ->where('sales_returns.status', 'diterima')
+                ->where('sales_returns.return_type', 'potong_tagihan')
                 ->whereIn('sales_returns.delivery_report_id', $deliveryReports->pluck('id'))
                 ->groupBy('sales_returns.delivery_report_id')
                 ->select('sales_returns.delivery_report_id', DB::raw('SUM(sales_return_items.subtotal_return) as total_return'))
-                ->pluck('total_return', 'delivery_report_id')
+                ->pluck('total_return', 'sales_returns.delivery_report_id')
                 ->all();
         }
 
@@ -229,6 +230,7 @@ class ReportController extends Controller
         if ($deliveryReports->isNotEmpty()) {
             $returnItems = SalesReturnItem::join('sales_returns', 'sales_return_items.sales_return_id', '=', 'sales_returns.id')
                 ->where('sales_returns.status', 'diterima')
+                ->where('sales_returns.return_type', 'potong_tagihan')
                 ->whereIn('sales_returns.delivery_report_id', $deliveryReports->pluck('id'))
                 ->with('product')
                 ->get(['sales_return_items.*']);
