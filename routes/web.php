@@ -43,6 +43,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('raw-materials', RawMaterialController::class);
     Route::resource('products', AdminProductController::class);
     Route::resource('customers', CustomerController::class);
+    Route::resource('packages', \App\Http\Controllers\Admin\PackageController::class);
+    Route::resource('package-assemblies', \App\Http\Controllers\Admin\PackageAssemblyController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::post('users/{user}/approve', [\App\Http\Controllers\Admin\UserController::class, 'approve'])->name('users.approve');
     Route::post('users/{user}/reject', [\App\Http\Controllers\Admin\UserController::class, 'reject'])->name('users.reject');
