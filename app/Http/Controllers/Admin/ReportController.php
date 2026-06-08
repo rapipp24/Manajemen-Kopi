@@ -66,6 +66,8 @@ class ReportController extends Controller
         $totalPaidToko = 0.0;
         $totalSisaPiutang = 0.0;
         $totalKelebihanBayar = 0.0;
+        $totalKelebihanBayarTercatat = 0.0;
+        $totalKelebihanBayarBelumSelesai = 0.0;
 
         $salesBreakdown = [];
         $tokoBreakdown = [];
@@ -87,7 +89,12 @@ class ReportController extends Controller
             if ($sisaPiutang > 0) {
                 $totalSisaPiutang += $sisaPiutang;
             } else {
-                $totalKelebihanBayar += abs($sisaPiutang);
+                $overpaymentVal = abs($sisaPiutang);
+                $totalKelebihanBayar += $overpaymentVal;
+                $totalKelebihanBayarTercatat += $overpaymentVal;
+                if (is_null($report->overpayment_resolved_at)) {
+                    $totalKelebihanBayarBelumSelesai += $overpaymentVal;
+                }
             }
 
             // A. Breakdown Per Sales
@@ -281,6 +288,8 @@ class ReportController extends Controller
             'totalPaidToko',
             'totalSisaPiutang',
             'totalKelebihanBayar',
+            'totalKelebihanBayarTercatat',
+            'totalKelebihanBayarBelumSelesai',
             'salesBreakdown',
             'tokoBreakdown',
             'tagihanBelumBayar',

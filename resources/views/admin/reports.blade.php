@@ -522,13 +522,13 @@
                     <p class="kpi-helper report-helper-text">Tagihan lapangan yang belum lunas</p>
                 </div>
 
-                <!-- Kelebihan Bayar Toko -->
+                <!-- Kelebihan Bayar Belum Selesai -->
                 <div class="kpi-card kpi-kelebihan">
                     <div>
-                        <p class="kpi-label">Kelebihan Bayar Toko</p>
-                        <p class="kpi-value">Rp {{ number_format($totalKelebihanBayar, 0, ',', '.') }}</p>
+                        <p class="kpi-label">Kelebihan Bayar Belum Selesai</p>
+                        <p class="kpi-value">Rp {{ number_format($totalKelebihanBayarBelumSelesai, 0, ',', '.') }}</p>
                     </div>
-                    <p class="kpi-helper report-helper-text">Saldo lebih bayar akibat setoran melebihi tagihan efektif setelah return.</p>
+                    <p class="kpi-helper report-helper-text">Saldo kelebihan bayar yang belum diselesaikan oleh admin.</p>
                 </div>
             </div>
 

@@ -343,5 +343,72 @@ class ReportTest extends TestCase
         $response->assertViewHas('totalPaidToko', 50000.0);
         $response->assertViewHas('totalSisaPiutang', 0.0);
         $response->assertViewHas('totalKelebihanBayar', 25000.0);
+        $response->assertViewHas('totalKelebihanBayarTercatat', 25000.0);
+        $response->assertViewHas('totalKelebihanBayarBelumSelesai', 25000.0);
+
+        // Pastikan muncul di section bawah
+        $bayarLebihBelumSelesai = $response->viewData('bayarLebihBelumSelesai');
+        $this->assertCount(1, $bayarLebihBelumSelesai);
+        $this->assertEquals($report->id, $bayarLebihBelumSelesai[0]['id']);
+    }
+
+    /**
+     * Test: Kelebihan bayar yang sudah diselesaikan tidak muncul di card Belum Selesai dan section bawah.
+     */
+    public function test_resolved_overpayment_calculations()
+    {
+        // Delivery Report lunas
+        $report = DeliveryReport::create([
+            'report_number' => 'DEL-004',
+            'sales_id' => $this->sales->id,
+            'customer_id' => $this->customer->id,
+            'delivery_date' => now(),
+            'total_amount' => 50000,
+            'payment_status' => 'lunas',
+            'down_payment_amount' => 50000,
+            'created_by' => $this->sales->id,
+            'overpayment_resolved_at' => now(), // sudah diselesaikan
+        ]);
+
+        $drItem = DeliveryReportItem::create([
+            'delivery_report_id' => $report->id,
+            'product_id' => $this->product->id,
+            'qty' => 2,
+            'price' => 25000,
+            'subtotal' => 50000
+        ]);
+
+        // Retur setelah lunas (diterima)
+        $return = SalesReturn::create([
+            'return_number' => 'RET-005',
+            'delivery_report_id' => $report->id,
+            'sales_id' => $this->sales->id,
+            'return_date' => now(),
+            'status' => 'diterima'
+        ]);
+
+        SalesReturnItem::create([
+            'sales_return_id' => $return->id,
+            'delivery_report_item_id' => $drItem->id,
+            'product_id' => $this->product->id,
+            'qty_return' => 1,
+            'price_snapshot' => 25000,
+            'subtotal_return' => 25000
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('admin.reports'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('totalTagihanEfektif', 25000.0);
+        $response->assertViewHas('totalPaidToko', 50000.0);
+        $response->assertViewHas('totalSisaPiutang', 0.0);
+        // Tetap tercatat di historis
+        $response->assertViewHas('totalKelebihanBayarTercatat', 25000.0);
+        // Tapi Rp0 di card belum diselesaikan
+        $response->assertViewHas('totalKelebihanBayarBelumSelesai', 0.0);
+
+        // Tidak muncul di list bawah
+        $bayarLebihBelumSelesai = $response->viewData('bayarLebihBelumSelesai');
+        $this->assertCount(0, $bayarLebihBelumSelesai);
     }
 }
