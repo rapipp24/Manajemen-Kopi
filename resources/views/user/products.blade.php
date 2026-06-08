@@ -247,13 +247,13 @@
         <p class="page-desc">Referensi produk kopi yang tersedia di gudang.</p>
     </div>
 
-    @if($products->isEmpty())
+    @if($products->isEmpty() && $packages->isEmpty())
         <div class="empty-wrap">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
             </svg>
-            <div class="empty-title">Belum ada produk tersedia</div>
-            <div class="empty-desc">Hubungi admin untuk menambahkan produk.</div>
+            <div class="empty-title">Belum ada produk atau paket tersedia</div>
+            <div class="empty-desc">Hubungi admin untuk menambahkan produk atau paket.</div>
         </div>
     @else
         <!-- Search & Filter Controls -->
@@ -261,7 +261,7 @@
             <!-- Search Box -->
             <div class="search-box">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="text" id="product-search" placeholder="Cari produk berdasarkan nama, jenis, atau berat..." autocomplete="off">
+                <input type="text" id="product-search" placeholder="Cari produk atau paket berdasarkan nama, kode, atau isi..." autocomplete="off">
                 <button id="search-clear" style="display:none;" type="button">
                     <i data-lucide="x" style="width:14px;height:14px;"></i>
                 </button>
@@ -269,17 +269,15 @@
 
             <!-- Filter Chips -->
             <div class="filter-chips">
-                <button type="button" class="chip active" data-category-id="all">
+                <button type="button" class="chip active" data-type="all">
                     Semua
                 </button>
-                @php
-                    $activeCategories = $products->pluck('productCategory')->unique('id')->filter()->sortBy('name');
-                @endphp
-                @foreach($activeCategories as $cat)
-                    <button type="button" class="chip" data-category-id="{{ $cat->id }}">
-                        {{ $cat->name }}
-                    </button>
-                @endforeach
+                <button type="button" class="chip" data-type="product">
+                    Produk
+                </button>
+                <button type="button" class="chip" data-type="package">
+                    Paket / Pack
+                </button>
             </div>
         </div>
 
@@ -288,11 +286,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
-            <div class="empty-title">Produk tidak ditemukan</div>
-            <div class="empty-desc">Coba gunakan kata kunci lain atau pilih kategori berbeda.</div>
+            <div class="empty-title">Produk atau paket tidak ditemukan</div>
+            <div class="empty-desc">Coba gunakan kata kunci lain atau pilih tab filter yang sesuai.</div>
         </div>
 
         <div class="products-grid">
+            <!-- Products -->
             @foreach($products as $product)
             @php
                 $stok = $product->current_stock;
@@ -302,8 +301,9 @@
             @endphp
             <div class="product-card {{ $isOutOfStock ? 'out-of-stock' : '' }}"
                  data-name="{{ strtolower($product->name) }}"
-                 data-category-id="{{ $product->product_category_id }}"
-                 data-category-name="{{ strtolower($product->productCategory->name ?? '') }}"
+                 data-type="product"
+                 data-code=""
+                 data-desc=""
                  data-weight="{{ $product->weight }}">
                 
                 <!-- Card Top Content -->
@@ -325,6 +325,51 @@
 
             </div>
             @endforeach
+
+            <!-- Packages -->
+            @foreach($packages as $pkg)
+            @php
+                $stok = $pkg->stock->qty ?? 0;
+                $isOutOfStock = $stok <= 0;
+                $cls  = $isOutOfStock ? 'stock-none' : ($stok < 5 ? 'stock-low' : 'stock-ok');
+                $txt  = number_format($stok, 0, ',', '.') . ' pack';
+
+                $itemsRingkas = $pkg->items->map(function($item) {
+                    $unitName = $item->product->unit->name ?? 'pcs';
+                    $qtyFormatted = $item->qty == (int)$item->qty ? (int)$item->qty : $item->qty;
+                    return "{$qtyFormatted} {$unitName} {$item->product->name}";
+                })->implode(', ');
+            @endphp
+            <div class="product-card {{ $isOutOfStock ? 'out-of-stock' : '' }}"
+                 style="border-top: 2px solid var(--brown);"
+                 data-name="{{ strtolower($pkg->name) }}"
+                 data-type="package"
+                 data-code="{{ strtolower($pkg->code) }}"
+                 data-desc="{{ strtolower($itemsRingkas) }}"
+                 data-weight="">
+                
+                <!-- Card Top Content -->
+                <div class="product-card-top">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                        <span class="product-category" style="background: var(--brown); color: white; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 700; text-transform: uppercase;">Paket</span>
+                        <span style="font-size: 9px; font-weight: 600; color: var(--muted);"><code>{{ $pkg->code }}</code></span>
+                    </div>
+                    <div class="product-name">{{ $pkg->name }}</div>
+                    <div style="font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4;">
+                        Isi: {{ $itemsRingkas }}
+                    </div>
+                </div>
+
+                <!-- Card Bottom Content -->
+                <div class="product-card-bottom">
+                    <div class="product-footer">
+                        <div class="product-price">Rp {{ number_format($pkg->selling_price, 0, ',', '.') }}</div>
+                        <span class="product-stock {{ $cls }}">{{ $txt }}</span>
+                    </div>
+                </div>
+
+            </div>
+            @endforeach
         </div>
     @endif
 
@@ -336,7 +381,7 @@
             const cards = document.querySelectorAll('.product-card');
             const emptyState = document.getElementById('empty-state-search');
             
-            let activeCategoryId = 'all';
+            let activeType = 'all';
             let searchQuery = '';
 
             function filterProducts() {
@@ -344,19 +389,21 @@
 
                 cards.forEach(card => {
                     const name = card.getAttribute('data-name') || '';
-                    const categoryId = card.getAttribute('data-category-id') || '';
-                    const categoryName = card.getAttribute('data-category-name') || '';
+                    const type = card.getAttribute('data-type') || '';
+                    const code = card.getAttribute('data-code') || '';
+                    const desc = card.getAttribute('data-desc') || '';
                     const weight = card.getAttribute('data-weight') || '';
 
-                    const matchesCategory = (activeCategoryId === 'all' || categoryId === activeCategoryId);
+                    const matchesType = (activeType === 'all' || type === activeType);
                     const matchesSearch = (
                         searchQuery === '' ||
                         name.includes(searchQuery) ||
-                        categoryName.includes(searchQuery) ||
+                        code.includes(searchQuery) ||
+                        desc.includes(searchQuery) ||
                         weight.includes(searchQuery)
                     );
 
-                    if (matchesCategory && matchesSearch) {
+                    if (matchesType && matchesSearch) {
                         card.style.display = '';
                         visibleCount++;
                     } else {
@@ -371,12 +418,12 @@
                 }
             }
 
-            // Category filter click event
+            // Type filter click event
             chips.forEach(chip => {
                 chip.addEventListener('click', function() {
                     chips.forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
-                    activeCategoryId = this.getAttribute('data-category-id');
+                    activeType = this.getAttribute('data-type');
                     filterProducts();
                 });
             });

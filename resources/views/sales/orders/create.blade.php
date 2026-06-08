@@ -2,8 +2,6 @@
     <x-slot name="title">Buat Pengajuan Barang</x-slot>
 
     <style>
-
-
         .page-title { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px; }
         .page-desc  { font-size:13.5px;color:var(--muted);margin-bottom:24px; }
 
@@ -102,7 +100,7 @@
     </a>
 
     <h1 class="page-title">Buat Pengajuan Barang</h1>
-    <p class="page-desc">Pilih produk dan jumlah yang ingin diambil dari gudang. Pengajuan akan direview oleh admin.</p>
+    <p class="page-desc">Pilih produk satuan atau paket/pack dan jumlah yang ingin diambil dari gudang. Pengajuan akan direview oleh admin.</p>
 
     <form action="{{ route('sales.orders.store') }}" method="POST" id="orderForm">
         @csrf
@@ -132,14 +130,15 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <!-- Card Tambah Produk Satuan -->
+                <div class="card" style="margin-top: 12px;">
                     <div class="card-header">
-                        <h3>Tambah Produk</h3>
-                        <p>Pilih produk dan tentukan jumlahnya</p>
+                        <h3>Tambah Produk Satuan</h3>
+                        <p>Pilih produk satuan dan tentukan jumlahnya</p>
                     </div>
                     <div class="card-body">
                         <div class="field">
-                            <label>Produk</label>
+                            <label>Produk Satuan</label>
                             <select id="product_selector">
                                 <option value="">— Cari produk —</option>
                                 @foreach($products as $p)
@@ -161,11 +160,50 @@
                         </div>
                         <div class="field">
                             <label>Jumlah yang Diminta</label>
-                            <input type="number" id="qty_selector" value="1" min="1" placeholder="0">
+                            <input type="number" id="qty_selector" value="1" min="1" step="1" placeholder="0">
                         </div>
-                        <div id="stock_error_msg" style="display:none;margin: 0 0 12px 0;padding:10px 14px;background:#fef2f2;border:1px solid #fee2e2;border-radius:8px;font-size:12.5px;color:#991b1b;line-height:1.4;font-weight:500;"></div>
                         <button type="button" id="add_item" class="btn-add">
-                            <i data-lucide="plus" style="width:14px;height:14px;"></i> Tambah ke Daftar
+                            <i data-lucide="plus" style="width:14px;height:14px;"></i> Tambah Produk
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card Tambah Paket / Pack -->
+                <div class="card" style="margin-top: 12px;">
+                    <div class="card-header">
+                        <h3>Tambah Paket / Pack</h3>
+                        <p>Pilih paket/pack dan tentukan jumlahnya</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="field">
+                            <label>Paket / Pack</label>
+                            <select id="package_selector">
+                                <option value="">— Cari paket —</option>
+                                @foreach($packages as $pkg)
+                                    @php
+                                        $itemsRingkas = $pkg->items->map(function($item) {
+                                            $unitName = $item->product->unit->name ?? 'pcs';
+                                            $qtyFormatted = $item->qty == (int)$item->qty ? (int)$item->qty : $item->qty;
+                                            return "{$qtyFormatted} {$unitName} {$item->product->name}";
+                                        })->implode(', ');
+                                    @endphp
+                                    <option value="{{ $pkg->id }}"
+                                            data-name="{{ $pkg->name }}"
+                                            data-price="{{ $pkg->selling_price }}"
+                                            data-stock="{{ $pkg->stock->qty ?? 0 }}"
+                                            data-desc="Isi: {{ $itemsRingkas }}">
+                                        {{ $pkg->name }} (Stok: {{ number_format($pkg->stock->qty ?? 0, 0, ',', '.') }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span id="package_info" style="font-size:11.5px;color:#78716c;display:none;margin-top:4px;font-weight:500;line-height:1.4;"></span>
+                        </div>
+                        <div class="field">
+                            <label>Jumlah Paket Diajukan</label>
+                            <input type="number" id="qty_package_selector" value="1" min="1" step="1" placeholder="0">
+                        </div>
+                        <button type="button" id="add_package_item" class="btn-add">
+                            <i data-lucide="plus" style="width:14px;height:14px;"></i> Tambah Paket
                         </button>
                     </div>
                 </div>
@@ -185,7 +223,7 @@
                         <div class="item-empty-icon" style="margin-bottom: 8px;">
                             <i data-lucide="clipboard-list" style="width:24px;height:24px;color:var(--muted);opacity:0.4;margin: 0 auto;"></i>
                         </div>
-                        <p>Belum ada produk dipilih.<br>Pilih produk di sebelah kiri lalu tambahkan ke daftar.</p>
+                        <p>Belum ada produk atau paket dipilih.<br>Pilih produk/paket di sebelah kiri lalu tambahkan ke daftar.</p>
                     </div>
                     <div id="items_container"></div>
                 </div>
@@ -194,6 +232,7 @@
                     <span class="total-label">Total Estimasi</span>
                     <span class="total-value" id="grand_total">Rp 0</span>
                 </div>
+                <div id="stock_error_msg" style="display:none;margin: 0 18px 12px 18px;padding:10px 14px;background:#fef2f2;border:1px solid #fee2e2;border-radius:8px;font-size:12.5px;color:#991b1b;line-height:1.4;font-weight:500;"></div>
                 <div style="padding:0 18px 18px;">
                     <button type="submit" class="btn-submit" disabled>Kirim Pengajuan ke Gudang</button>
                 </div>
@@ -203,16 +242,22 @@
     </form>
 
     <script>
-        const productSelector = document.getElementById('product_selector');
-        const qtySelector     = document.getElementById('qty_selector');
-        const addItemBtn      = document.getElementById('add_item');
-        const itemsContainer  = document.getElementById('items_container');
-        const emptyState      = document.getElementById('empty_state');
-        const grandTotalEl    = document.getElementById('grand_total');
-        const itemCountBadge  = document.getElementById('item_count_badge');
-        const form            = document.getElementById('orderForm');
-        const stockInfoEl     = document.getElementById('stock_info');
-        const stockErrorMsgEl = document.getElementById('stock_error_msg');
+        const productSelector      = document.getElementById('product_selector');
+        const qtySelector          = document.getElementById('qty_selector');
+        const addItemBtn           = document.getElementById('add_item');
+        
+        const packageSelector      = document.getElementById('package_selector');
+        const qtyPackageSelector   = document.getElementById('qty_package_selector');
+        const addPackageItemBtn    = document.getElementById('add_package_item');
+        const packageInfoEl        = document.getElementById('package_info');
+        
+        const itemsContainer       = document.getElementById('items_container');
+        const emptyState           = document.getElementById('empty_state');
+        const grandTotalEl         = document.getElementById('grand_total');
+        const itemCountBadge       = document.getElementById('item_count_badge');
+        const form                 = document.getElementById('orderForm');
+        const stockInfoEl          = document.getElementById('stock_info');
+        const stockErrorMsgEl      = document.getElementById('stock_error_msg');
 
         let items = [];
         let errorTimeout = null;
@@ -227,7 +272,6 @@
                 clearTimeout(errorTimeout);
             }
 
-            // Hilang otomatis setelah 6 detik
             errorTimeout = setTimeout(function () {
                 hideStockError();
             }, 6000);
@@ -258,13 +302,27 @@
             qtySelector.setAttribute('max', Math.round(stock));
         });
 
-        qtySelector.addEventListener('input', function () {
+        qtySelector.addEventListener('input', function () { hideStockError(); });
+        qtySelector.addEventListener('change', function () { hideStockError(); });
+
+        packageSelector.addEventListener('change', function () {
             hideStockError();
+            const opt = this.options[this.selectedIndex];
+            if (!this.value) {
+                packageInfoEl.style.display = 'none';
+                qtyPackageSelector.removeAttribute('max');
+                return;
+            }
+            const stock = parseFloat(opt.dataset.stock) || 0;
+            const desc = opt.dataset.desc || '';
+            
+            packageInfoEl.innerHTML = `Stok Gudang: <strong>${Math.round(stock)} pack</strong><br><span style="color:#78716c; font-size: 11px;">${desc}</span>`;
+            packageInfoEl.style.display = 'block';
+            qtyPackageSelector.setAttribute('max', Math.round(stock));
         });
 
-        qtySelector.addEventListener('change', function () {
-            hideStockError();
-        });
+        qtyPackageSelector.addEventListener('input', function () { hideStockError(); });
+        qtyPackageSelector.addEventListener('change', function () { hideStockError(); });
 
         addItemBtn.addEventListener('click', function () {
             const id  = productSelector.value;
@@ -277,9 +335,8 @@
             const price = parseFloat(opt.dataset.price);
             const stock = parseInt(opt.dataset.stock) || 0;
 
-            // Hitung akumulasi qty produk yang sama yang sudah ada di daftar
             let currentQtyInList = 0;
-            const idx = items.findIndex(i => i.id === id);
+            const idx = items.findIndex(i => i.id === id && i.type === 'product');
             if (idx > -1) {
                 currentQtyInList = items[idx].qty;
             }
@@ -295,13 +352,51 @@
                 items[idx].qty += qty;
                 items[idx].sub  = items[idx].qty * price;
             } else {
-                items.push({ id, name, price, qty, sub: qty * price });
+                items.push({ id, name, price, qty, sub: qty * price, type: 'product' });
             }
             render();
             productSelector.value = '';
             qtySelector.value = 1;
             stockInfoEl.style.display = 'none';
             qtySelector.removeAttribute('max');
+            hideStockError();
+        });
+
+        addPackageItemBtn.addEventListener('click', function () {
+            const id  = packageSelector.value;
+            const qty = parseInt(qtyPackageSelector.value) || 0;
+            if (!id)    { showStockError('Pilih paket terlebih dahulu.'); return; }
+            if (qty < 1){ showStockError('Jumlah minimal 1.'); return; }
+
+            const opt   = packageSelector.options[packageSelector.selectedIndex];
+            const name  = opt.dataset.name;
+            const price = parseFloat(opt.dataset.price);
+            const stock = parseInt(opt.dataset.stock) || 0;
+
+            let currentQtyInList = 0;
+            const idx = items.findIndex(i => i.id === id && i.type === 'package');
+            if (idx > -1) {
+                currentQtyInList = items[idx].qty;
+            }
+
+            const totalRequestedQty = currentQtyInList + qty;
+
+            if (totalRequestedQty > stock) {
+                showStockError(`Qty melebihi stok paket gudang. Stok tersedia: ${stock} pack. (Di daftar: ${currentQtyInList} pack, diajukan tambahan: ${qty} pack)`);
+                return;
+            }
+
+            if (idx > -1) {
+                items[idx].qty += qty;
+                items[idx].sub  = items[idx].qty * price;
+            } else {
+                items.push({ id, name, price, qty, sub: qty * price, type: 'package' });
+            }
+            render();
+            packageSelector.value = '';
+            qtyPackageSelector.value = 1;
+            packageInfoEl.style.display = 'none';
+            qtyPackageSelector.removeAttribute('max');
             hideStockError();
         });
 
@@ -317,19 +412,34 @@
             }
             if (submitBtn) submitBtn.disabled = false;
             emptyState.style.display = 'none';
-            let total = 0, html = '';
-            items.forEach((item, i) => {
+            let total = 0, html = '', productIndex = 0, packageIndex = 0;
+            items.forEach((item) => {
                 total += item.sub;
-                html += `<div class="item-row">
-                    <input type="hidden" name="items[${i}][product_id]" value="${item.id}">
-                    <input type="hidden" name="items[${i}][qty]"        value="${item.qty}">
-                    <span class="item-name">${item.name}</span>
-                    <span class="item-qty">${item.qty}×</span>
-                    <span class="item-est">${rp(item.sub)}</span>
-                    <button type="button" class="item-del" onclick="removeItem(${i})">
-                        <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-                    </button>
-                </div>`;
+                if (item.type === 'product') {
+                    html += `<div class="item-row">
+                        <input type="hidden" name="items[${productIndex}][product_id]" value="${item.id}">
+                        <input type="hidden" name="items[${productIndex}][qty]"        value="${item.qty}">
+                        <span class="item-name">${item.name}</span>
+                        <span class="item-qty">${item.qty}×</span>
+                        <span class="item-est">${rp(item.sub)}</span>
+                        <button type="button" class="item-del" onclick="removeItemById('${item.id}', 'product')">
+                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        </button>
+                    </div>`;
+                    productIndex++;
+                } else if (item.type === 'package') {
+                    html += `<div class="item-row">
+                        <input type="hidden" name="package_items[${packageIndex}][package_id]" value="${item.id}">
+                        <input type="hidden" name="package_items[${packageIndex}][qty]"        value="${item.qty}">
+                        <span class="item-name"><span style="background: var(--brown); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-right: 6px; vertical-align: middle;">PAKET</span>${item.name}</span>
+                        <span class="item-qty">${item.qty}×</span>
+                        <span class="item-est">${rp(item.sub)}</span>
+                        <button type="button" class="item-del" onclick="removeItemById('${item.id}', 'package')">
+                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        </button>
+                    </div>`;
+                    packageIndex++;
+                }
             });
             itemsContainer.innerHTML = html;
             grandTotalEl.textContent = rp(total);
@@ -338,14 +448,19 @@
             }
         }
 
-        window.removeItem = i => { items.splice(i, 1); render(); };
+        window.removeItemById = (id, type) => {
+            const idx = items.findIndex(i => i.id === id && i.type === type);
+            if (idx > -1) {
+                items.splice(idx, 1);
+            }
+            render();
+        };
 
         form.addEventListener('submit', e => {
             if (items.length === 0) {
                 e.preventDefault();
-                showStockError('Tambahkan minimal 1 produk.');
+                showStockError('Tambahkan minimal 1 produk atau 1 paket.');
             }
         });
     </script>
-
 </x-layouts.user>

@@ -257,13 +257,29 @@
         Kembali ke Daftar Pengajuan
     </a>
 
+    @php
+        $insufficientStock = false;
+        foreach ($salesOrder->items as $item) {
+            if ($item->product->current_stock < $item->qty) {
+                $insufficientStock = true;
+            }
+        }
+        foreach ($salesOrder->packageItems as $item) {
+            $pkgStockQty = $item->package->stock ? $item->package->stock->qty : 0.00;
+            if ($pkgStockQty < $item->qty) {
+                $insufficientStock = true;
+            }
+        }
+    @endphp
+
     <div class="so-layout">
 
         {{-- ══ KIRI: Daftar Barang ════════════════════════ --}}
         <div>
+            @if($salesOrder->items->isNotEmpty())
             <div class="so-card">
                 <div class="so-card-header">
-                    <h3>Daftar Barang yang Diminta</h3>
+                    <h3>Daftar Produk Satuan yang Diminta</h3>
                 </div>
 
                 {{-- Desktop table --}}
@@ -282,7 +298,7 @@
                             <tr>
                                 <td>
                                     <div style="font-weight:600;color:#0f172a;">{{ $item->product->name }}</div>
-                                    <div style="font-size:12px;color:#64748b;">SKU: {{ $item->product->sku }}</div>
+                                    <div style="font-size:12px;color:#64748b;">SKU: {{ $item->product->code }}</div>
                                 </td>
                                 <td style="text-align:center;">
                                     <span style="font-weight:600;color:{{ $item->product->current_stock < $item->qty ? '#ef4444' : '#166534' }};">
@@ -298,14 +314,6 @@
                             </tr>
                             @endforeach
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" style="text-align:right;font-weight:700;color:#64748b;font-size:12px;text-transform:uppercase;">Total Nilai Barang</td>
-                                <td style="text-align:right;font-size:18px;font-weight:800;color:#0f172a;">
-                                    Rp {{ number_format($salesOrder->total, 0, ',', '.') }}
-                                </td>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
 
@@ -314,7 +322,7 @@
                     @foreach($salesOrder->items as $item)
                     <div class="so-item-card">
                         <div class="so-item-name">{{ $item->product->name }}</div>
-                        <div class="so-item-sku">SKU: {{ $item->product->sku }}</div>
+                        <div class="so-item-sku">SKU: {{ $item->product->code }}</div>
                         <div class="so-item-meta">
                             <div class="so-item-meta-row">
                                 <span class="so-item-meta-label">Stok Gudang</span>
@@ -335,12 +343,91 @@
                         </div>
                     </div>
                     @endforeach
+                </div>
+            </div>
+            @endif
 
-                    {{-- Mobile total --}}
-                    <div class="so-mobile-total">
-                        <span class="so-mobile-total-label">Total Nilai Barang</span>
-                        <span class="so-mobile-total-val">Rp {{ number_format($salesOrder->total, 0, ',', '.') }}</span>
+            @if($salesOrder->packageItems->isNotEmpty())
+            <div class="so-card">
+                <div class="so-card-header">
+                    <h3>Daftar Paket / Pack yang Diminta</h3>
+                </div>
+
+                {{-- Desktop table --}}
+                <div class="so-desktop-table so-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Paket</th>
+                                <th style="text-align:center;">Stok Gudang</th>
+                                <th style="text-align:center;">Qty Minta</th>
+                                <th style="text-align:right;">Estimasi Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($salesOrder->packageItems as $item)
+                            @php
+                                $pkgStockQty = $item->package->stock ? $item->package->stock->qty : 0.00;
+                            @endphp
+                            <tr>
+                                <td>
+                                    <div style="font-weight:600;color:#0f172a;">{{ $item->package->name }}</div>
+                                    <div style="font-size:12px;color:#64748b;">Kode: {{ $item->package->code }}</div>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span style="font-weight:600;color:{{ $pkgStockQty < $item->qty ? '#ef4444' : '#166534' }};">
+                                        {{ number_format($pkgStockQty, 0, ',', '.') }} pack
+                                    </span>
+                                </td>
+                                <td style="text-align:center;font-weight:700;font-size:15px;color:#0f172a;">
+                                    {{ number_format($item->qty, 0, ',', '.') }}
+                                </td>
+                                <td style="text-align:right;font-weight:700;">
+                                    Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile card list --}}
+                <div class="so-mobile-list">
+                    @foreach($salesOrder->packageItems as $item)
+                    @php
+                        $pkgStockQty = $item->package->stock ? $item->package->stock->qty : 0.00;
+                    @endphp
+                    <div class="so-item-card">
+                        <div class="so-item-name">{{ $item->package->name }}</div>
+                        <div class="so-item-sku">Kode: {{ $item->package->code }}</div>
+                        <div class="so-item-meta">
+                            <div class="so-item-meta-row">
+                                <span class="so-item-meta-label">Stok Gudang</span>
+                                <span class="so-item-meta-val" style="color:{{ $pkgStockQty < $item->qty ? '#ef4444' : '#166534' }};">
+                                    {{ number_format($pkgStockQty, 0, ',', '.') }} pack
+                                </span>
+                            </div>
+                            <div class="so-item-meta-row">
+                                <span class="so-item-meta-label">Qty Minta</span>
+                                <span class="so-item-meta-val" style="color:#0f172a;">
+                                    {{ number_format($item->qty, 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="so-item-subtotal-row">
+                            <span class="so-item-subtotal-label">Subtotal</span>
+                            <span class="so-item-subtotal-val">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </div>
                     </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <div class="so-card">
+                <div class="so-mobile-total" style="display: flex;">
+                    <span class="so-mobile-total-label">Total Nilai Barang</span>
+                    <span class="so-mobile-total-val">Rp {{ number_format($salesOrder->total, 0, ',', '.') }}</span>
                 </div>
             </div>
 
@@ -408,9 +495,16 @@
                         @csrf
                         @method('PATCH')
 
+                        @if($insufficientStock && $salesOrder->status === 'menunggu')
+                            <div style="background:#fef2f2;border:1px solid #fee2e2;color:#ef4444;padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:14px;line-height:1.4;">
+                                ⚠️ Stok gudang untuk beberapa item produk/paket tidak mencukupi. Pengajuan tidak dapat disetujui.
+                            </div>
+                        @endif
+
                         @if($salesOrder->status === 'menunggu')
                         <button type="button" name="status" value="diproses"
                                 class="confirm-action so-btn-approve"
+                                @if($insufficientStock) disabled style="background:#cbd5e1;cursor:not-allowed;box-shadow:none;" @endif
                                 data-confirm-title="Setujui Pengajuan?"
                                 data-confirm-text="Stok gudang akan langsung dikurangi untuk pengajuan ini."
                                 data-confirm-icon="question">

@@ -119,66 +119,105 @@
     </div>
 
     <div class="layout">
-        {{-- Kiri: Daftar Produk --}}
+        {{-- Kiri: Daftar Produk & Paket --}}
         <div class="card">
-            <div class="card-header">
-                <h3>Daftar Barang yang Diminta</h3>
-            </div>
-            <div class="table-scroll-container desktop-only">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produk</th>
-                            <th>Kemasan</th>
-                            <th style="text-align:center;">Qty</th>
-                            <th style="text-align:right;">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($order->items as $item)
-                        <tr>
-                            <td style="font-weight:700;color:var(--text);">{{ $item->product->name }}</td>
-                            <td>
-                                <span style="background:var(--cream);border:1px solid var(--border);color:var(--text);font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;">
-                                    {{ $item->product->weight }} Gram
-                                </span>
-                            </td>
-                            <td style="text-align:center;font-weight:700;color:var(--text);">{{ $item->qty }} pcs</td>
-                            <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr style="background:var(--cream); font-weight:800; border-top: 1px solid var(--border);">
-                            <td colspan="3" style="text-align:right;font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">
-                                Total Estimasi
-                            </td>
-                            <td style="text-align:right;font-size:17px;font-weight:800;color:var(--brown);letter-spacing:-0.02em;">
-                                Rp {{ number_format($order->total, 0, ',', '.') }}
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            
-            <div class="mobile-only">
-                @foreach($order->items as $item)
-                <div class="mobile-item">
-                    <div class="mobile-item-top">
-                        <div class="mobile-item-title">{{ $item->product->name }}</div>
-                        <div class="mobile-item-qty">{{ $item->qty }} pcs</div>
-                    </div>
-                    <div class="mobile-item-bot">
-                        <span class="mobile-item-weight">{{ $item->product->weight }} Gram</span>
-                        <span class="mobile-item-subtotal">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
-                    </div>
+            @if($order->items->isNotEmpty())
+                <div class="card-header">
+                    <h3>Daftar Produk Satuan yang Diminta</h3>
                 </div>
-                @endforeach
-                <div class="mobile-total-row">
-                    <div class="mobile-total-label">Total Estimasi</div>
-                    <div class="mobile-total-val">Rp {{ number_format($order->total, 0, ',', '.') }}</div>
+                <div class="table-scroll-container desktop-only">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Kemasan</th>
+                                <th style="text-align:center;">Qty</th>
+                                <th style="text-align:right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($order->items as $item)
+                            <tr>
+                                <td style="font-weight:700;color:var(--text);">{{ $item->product->name }}</td>
+                                <td>
+                                    <span style="background:var(--cream);border:1px solid var(--border);color:var(--text);font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;">
+                                        {{ $item->product->weight }} Gram
+                                    </span>
+                                </td>
+                                <td style="text-align:center;font-weight:700;color:var(--text);">{{ $item->qty }} pcs</td>
+                                <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
+                
+                <div class="mobile-only">
+                    @foreach($order->items as $item)
+                    <div class="mobile-item">
+                        <div class="mobile-item-top">
+                            <div class="mobile-item-title">{{ $item->product->name }}</div>
+                            <div class="mobile-item-qty">{{ $item->qty }} pcs</div>
+                        </div>
+                        <div class="mobile-item-bot">
+                            <span class="mobile-item-weight">{{ $item->product->weight }} Gram</span>
+                            <span class="mobile-item-subtotal">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @endif
+
+            @if($order->packageItems->isNotEmpty())
+                <div class="card-header" style="border-top: {{ $order->items->isNotEmpty() ? '1px solid var(--border)' : 'none' }};">
+                    <h3>Daftar Paket / Pack yang Diminta</h3>
+                </div>
+                <div class="table-scroll-container desktop-only">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Paket</th>
+                                <th>Kode Paket</th>
+                                <th style="text-align:center;">Qty</th>
+                                <th style="text-align:right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($order->packageItems as $item)
+                            <tr>
+                                <td style="font-weight:700;color:var(--text);">{{ $item->package->name }}</td>
+                                <td>
+                                    <code>{{ $item->package->code }}</code>
+                                </td>
+                                <td style="text-align:center;font-weight:700;color:var(--text);">{{ number_format($item->qty, 0, ',', '.') }} pack</td>
+                                <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mobile-only">
+                    @foreach($order->packageItems as $item)
+                    <div class="mobile-item">
+                        <div class="mobile-item-top">
+                            <div class="mobile-item-title">{{ $item->package->name }}</div>
+                            <div class="mobile-item-qty">{{ number_format($item->qty, 0, ',', '.') }} pack</div>
+                        </div>
+                        <div class="mobile-item-bot">
+                            <span class="mobile-item-weight"><code>{{ $item->package->code }}</code></span>
+                            <span class="mobile-item-subtotal">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            @endif
+
+            <div class="mobile-total-row">
+                <div class="mobile-total-label">Total Estimasi</div>
+                <div class="mobile-total-val">Rp {{ number_format($order->total, 0, ',', '.') }}</div>
             </div>
+
             @if($order->catatan)
             <div class="note-box">"{{ $order->catatan }}"</div>
             @endif

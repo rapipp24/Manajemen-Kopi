@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Package;
+use App\Models\PackageStock;
+use App\Models\SalesPackageStock;
+use App\Models\PackageStockMovement;
 use App\Models\SalesOrder;
 use App\Models\SalesStock;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class SalesOrderController extends Controller
@@ -30,7 +35,7 @@ class SalesOrderController extends Controller
      */
     public function show(SalesOrder $salesOrder)
     {
-        $salesOrder->load(['customer', 'sales', 'items.product']);
+        $salesOrder->load(['customer', 'sales', 'items.product', 'packageItems.package.items.product']);
         return view('admin.sales-orders.show', compact('salesOrder'));
     }
 
@@ -61,6 +66,7 @@ class SalesOrderController extends Controller
                     throw new Exception("Hanya pengajuan dengan status 'Menunggu' yang bisa disetujui.");
                 }
 
+                // 1. Proses item produk satuan
                 foreach ($salesOrder->items as $item) {
                     // Lock product record untuk cegah race condition
                     $product = Product::lockForUpdate()->find($item->product_id);
@@ -77,7 +83,6 @@ class SalesOrderController extends Controller
                     $product->save();
 
                     // Movement #1 — OUT dari Gudang Utama
-                    // user_id = NULL → menandakan movement ini milik stok gudang/products
                     StockMovement::create([
                         'item_type'      => 'product',
                         'item_id'        => $product->id,
@@ -92,16 +97,15 @@ class SalesOrderController extends Controller
                     ]);
 
                     // ── STEP 2: Tambah stok SALES ────────────────────────────────
-                    $salesStock = SalesStock::firstOrCreate(
+                    $salesStock = SalesStock::lockForUpdate()->firstOrCreate(
                         ['user_id' => $salesOrder->sales_id, 'product_id' => $product->id],
                         ['qty' => 0]
                     );
                     $salesStockBefore = $salesStock->qty;
                     $salesStock->increment('qty', $item->qty);
-                    $salesStock->refresh(); // ambil nilai terbaru
+                    $salesStock->refresh();
 
                     // Movement #2 — IN ke Stok Sales
-                    // user_id = sales_id → menandakan movement ini milik stok sales
                     StockMovement::create([
                         'item_type'      => 'product',
                         'item_id'        => $product->id,
@@ -112,9 +116,74 @@ class SalesOrderController extends Controller
                         'stock_before'   => $salesStockBefore,
                         'stock_after'    => $salesStock->qty,
                         'note'           => "Masuk stok sales dari gudang ({$salesOrder->order_number})",
-                        'user_id'        => $salesOrder->sales_id, // NOT NULL = stok sales
+                        'user_id'        => $salesOrder->sales_id,
                     ]);
                 }
+
+                // 2. Proses item paket fisik
+                foreach ($salesOrder->packageItems as $item) {
+                    // Lock package stock record gudang
+                    $packageStock = PackageStock::where('package_id', $item->package_id)->lockForUpdate()->first();
+                    $package = Package::find($item->package_id);
+
+                    $currentStock = $packageStock ? $packageStock->qty : 0.00;
+                    if ($currentStock < $item->qty) {
+                        $currentStockFormatted = number_format($currentStock, 0, ',', '.');
+                        throw new Exception("Stok paket '{$package->name}' tidak cukup. Sisa gudang: {$currentStockFormatted} pack");
+                    }
+
+                    // ── STEP 1: Kurangi stok gudang utama paket
+                    $gudangBefore = $packageStock->qty;
+                    $packageStock->qty -= $item->qty;
+                    $packageStock->save();
+
+                    // Movement #1 — OUT dari Gudang Utama Paket
+                    PackageStockMovement::create([
+                        'package_id'     => $package->id,
+                        'user_id'        => null, // Gudang Utama
+                        'movement_type'  => 'out',
+                        'qty'            => $item->qty,
+                        'stock_before'   => $gudangBefore,
+                        'stock_after'    => $packageStock->qty,
+                        'reference_type' => SalesOrder::class,
+                        'reference_id'   => $salesOrder->id,
+                        'note'           => "Keluar gudang -> Sales {$salesOrder->sales->name} ({$salesOrder->order_number})",
+                        'created_by'     => Auth::id(),
+                    ]);
+
+                    // ── STEP 2: Tambah stok paket SALES
+                    $salesPackageStock = SalesPackageStock::where('user_id', $salesOrder->sales_id)
+                        ->where('package_id', $package->id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$salesPackageStock) {
+                        $salesPackageStock = SalesPackageStock::create([
+                            'user_id'    => $salesOrder->sales_id,
+                            'package_id' => $package->id,
+                            'qty'        => 0.00,
+                        ]);
+                    }
+
+                    $salesStockBefore = $salesPackageStock->qty;
+                    $salesPackageStock->qty += $item->qty;
+                    $salesPackageStock->save();
+
+                    // Movement #2 — IN/Transfer to Sales
+                    PackageStockMovement::create([
+                        'package_id'     => $package->id,
+                        'user_id'        => $salesOrder->sales_id,
+                        'movement_type'  => 'transfer_to_sales',
+                        'qty'            => $item->qty,
+                        'stock_before'   => $salesStockBefore,
+                        'stock_after'    => $salesPackageStock->qty,
+                        'reference_type' => SalesOrder::class,
+                        'reference_id'   => $salesOrder->id,
+                        'note'           => "Masuk stok sales dari gudang ({$salesOrder->order_number})",
+                        'created_by'     => Auth::id(),
+                    ]);
+                }
+
                 $salesOrder->processed_at = now();
             }
 

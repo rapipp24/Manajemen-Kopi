@@ -28,6 +28,11 @@ class Package extends Model
         return $this->hasMany(PackageItem::class);
     }
 
+    public function stock()
+    {
+        return $this->hasOne(PackageStock::class);
+    }
+
     public static function generateNextCode(): string
     {
         $lastPackage = self::withTrashed()

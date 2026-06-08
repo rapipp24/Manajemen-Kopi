@@ -137,6 +137,35 @@
                 min-width: 170px;
             }
         }
+
+        /* ── Stok Tabs ───────────────────────── */
+        .stok-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        .stok-tab-btn {
+            background: none;
+            border: none;
+            padding: 6px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        .stok-tab-btn:hover {
+            color: var(--text);
+            background: var(--cream);
+        }
+        .stok-tab-btn.active {
+            color: var(--brown);
+            background: var(--cream);
+            border: 1px solid var(--border);
+        }
     </style>
 
     <div class="page-header">
@@ -155,31 +184,76 @@
             ->where('user_id', auth()->id())
             ->where('qty', '>', 0)
             ->get();
+
+        $myPackageStocks = \App\Models\SalesPackageStock::with(['package.items.product.unit'])
+            ->where('user_id', auth()->id())
+            ->where('qty', '>', 0)
+            ->get();
+
+        $allEmpty = $myStocks->isEmpty() && $myPackageStocks->isEmpty();
     @endphp
 
     <div class="stok-card">
         <div class="stok-card-header">
-            <span class="stok-card-title">Stok Barang Anda Saat Ini</span>
-            @if($myStocks->isEmpty())
+            <span class="stok-card-title">Stok Anda Saat Ini</span>
+            @if($allEmpty)
                 <a href="{{ route('sales.orders.create') }}" class="sales-action-pill">
                     <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Barang
                 </a>
             @endif
         </div>
 
-        @if($myStocks->isEmpty())
-            <p class="stok-empty-note">Anda belum memiliki stok barang. Ajukan barang ke gudang terlebih dahulu.</p>
+        @if($allEmpty)
+            <p class="stok-empty-note">Anda belum memiliki stok produk maupun paket. Ajukan barang/paket ke gudang terlebih dahulu.</p>
         @else
-            <div class="stok-list">
-                @foreach($myStocks as $s)
-                <div class="stok-item">
-                    <div class="stok-item-qty">{{ number_format($s->qty, 0, ',', '.') }}</div>
-                    <div class="stok-item-info">
-                        <div class="stok-item-name">{{ $s->product->name }}</div>
-                        <div class="stok-item-unit">{{ $s->product->weight }} Gram · {{ $s->product->unit->code ?? '' }}</div>
+            <div class="stok-tabs">
+                <button type="button" class="stok-tab-btn active" onclick="switchStokTab('tab-produk', event)">Stok Produk Satuan</button>
+                <button type="button" class="stok-tab-btn" onclick="switchStokTab('tab-paket', event)">Stok Paket / Pack</button>
+            </div>
+
+            <!-- Tab Produk Satuan -->
+            <div id="tab-produk" class="stok-tab-content">
+                @if($myStocks->isEmpty())
+                    <p class="stok-empty-note">Anda tidak memiliki stok produk satuan.</p>
+                @else
+                    <div class="stok-list">
+                        @foreach($myStocks as $s)
+                        <div class="stok-item">
+                            <div class="stok-item-qty">{{ number_format($s->qty, 0, ',', '.') }}</div>
+                            <div class="stok-item-info">
+                                <div class="stok-item-name">{{ $s->product->name }}</div>
+                                <div class="stok-item-unit">{{ $s->product->weight }} Gram · {{ $s->product->unit->code ?? '' }}</div>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
-                </div>
-                @endforeach
+                @endif
+            </div>
+
+            <!-- Tab Paket / Pack -->
+            <div id="tab-paket" class="stok-tab-content" style="display: none;">
+                @if($myPackageStocks->isEmpty())
+                    <p class="stok-empty-note">Anda tidak memiliki stok paket.</p>
+                @else
+                    <div class="stok-list">
+                        @foreach($myPackageStocks as $ps)
+                        @php
+                            $itemsRingkas = $ps->package->items->map(function($item) {
+                                $unitName = $item->product->unit->name ?? 'pcs';
+                                $qtyFormatted = $item->qty == (int)$item->qty ? (int)$item->qty : $item->qty;
+                                return "{$qtyFormatted} {$unitName} {$item->product->name}";
+                            })->implode(', ');
+                        @endphp
+                        <div class="stok-item" title="Isi: {{ $itemsRingkas }}">
+                            <div class="stok-item-qty" style="color: var(--accent);">{{ number_format($ps->qty, 0, ',', '.') }}</div>
+                            <div class="stok-item-info">
+                                <div class="stok-item-name"><span style="background: var(--brown); color: white; padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: 700; margin-right: 4px; vertical-align: middle;">PAKET</span>{{ $ps->package->name }}</div>
+                                <div class="stok-item-unit">Kode: {{ $ps->package->code }} · {{ $ps->package->items->count() }} Item</div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         @endif
     </div>
@@ -286,5 +360,14 @@
             <div style="margin-top:12px;">{{ $reports->links() }}</div>
         @endif
     </div>
-
+    <script>
+        function switchStokTab(tabId, event) {
+            document.querySelectorAll('.stok-tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.stok-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            if (event) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+    </script>
 </x-layouts.user>
