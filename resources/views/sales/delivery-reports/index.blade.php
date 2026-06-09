@@ -124,47 +124,142 @@
         @media (max-width: 767px) {
             .desktop-only { display: none !important; }
             .mobile-only { display: block !important; }
-            .stok-list {
-                display: flex;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                gap: 10px;
-                padding-bottom: 8px;
-            }
-            .stok-item {
-                flex-shrink: 0;
-                min-width: 170px;
-            }
         }
 
         /* ── Stok Tabs ───────────────────────── */
         .stok-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
+            display: inline-flex;
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 20px;
         }
         .stok-tab-btn {
             background: none;
             border: none;
-            padding: 6px 14px;
+            padding: 8px 16px;
             font-size: 12.5px;
             font-weight: 700;
             color: var(--muted);
             cursor: pointer;
             border-radius: 6px;
-            transition: all 0.15s;
+            transition: all 0.2s ease;
         }
         .stok-tab-btn:hover {
             color: var(--text);
-            background: var(--cream);
         }
         .stok-tab-btn.active {
+            background: #ffffff;
             color: var(--brown);
-            background: var(--cream);
+            box-shadow: 0 1px 3px rgba(42, 23, 14, 0.08);
+        }
+
+        /* ── Stok Grid & Cards ────────────────── */
+        .stok-meta-summary {
+            font-size: 12.5px;
+            color: var(--muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        .stok-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .stok-card-item {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
             border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+        .stok-card-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.04);
+            transform: translateY(-1px);
+        }
+        .stok-card-qty-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 68px;
+            padding-right: 14px;
+            border-right: 1.5px dashed var(--border);
+            text-align: center;
+        }
+        .stok-card-qty {
+            font-size: 24px;
+            font-weight: 850;
+            color: var(--brown);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .stok-card-qty-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 3px;
+        }
+        .stok-card-info {
+            flex: 1;
+            padding-left: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .stok-card-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .stok-card-meta {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+        .stok-card-package {
+            border-top: 2.5px solid var(--brown);
+        }
+        .stok-badge-package {
+            display: inline-block;
+            background: var(--brown-light);
+            color: var(--brown);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            align-self: flex-start;
+        }
+        .stok-card-items-list {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @media (max-width: 767px) {
+            .stok-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 
@@ -194,8 +289,15 @@
     @endphp
 
     <div class="stok-card">
-        <div class="stok-card-header">
-            <span class="stok-card-title">Stok Anda Saat Ini</span>
+        <div class="stok-card-header" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span class="stok-card-title">Stok Anda Saat Ini</span>
+                @if(!$allEmpty)
+                    <div class="stok-meta-summary">
+                        Produk: <strong>{{ $myStocks->count() }} jenis</strong> · Paket: <strong>{{ $myPackageStocks->count() }} jenis</strong>
+                    </div>
+                @endif
+            </div>
             @if($allEmpty)
                 <a href="{{ route('sales.orders.create') }}" class="sales-action-pill">
                     <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Barang
@@ -214,15 +316,18 @@
             <!-- Tab Produk Satuan -->
             <div id="tab-produk" class="stok-tab-content">
                 @if($myStocks->isEmpty())
-                    <p class="stok-empty-note">Anda tidak memiliki stok produk satuan.</p>
+                    <p class="stok-empty-note">Toko/sales belum memiliki stok produk satuan.</p>
                 @else
-                    <div class="stok-list">
+                    <div class="stok-grid">
                         @foreach($myStocks as $s)
-                        <div class="stok-item">
-                            <div class="stok-item-qty">{{ number_format($s->qty, 0, ',', '.') }}</div>
-                            <div class="stok-item-info">
-                                <div class="stok-item-name">{{ $s->product->name }}</div>
-                                <div class="stok-item-unit">{{ $s->product->weight }} Gram · {{ $s->product->unit->code ?? '' }}</div>
+                        <div class="stok-card-item">
+                            <div class="stok-card-qty-box">
+                                <span class="stok-card-qty">{{ number_format($s->qty, 0, ',', '.') }}</span>
+                                <span class="stok-card-qty-label">{{ $s->product->unit->code ?? 'Pcs' }}</span>
+                            </div>
+                            <div class="stok-card-info">
+                                <span class="stok-card-name" title="{{ $s->product->name }}">{{ $s->product->name }}</span>
+                                <span class="stok-card-meta">{{ $s->product->weight }} Gram</span>
                             </div>
                         </div>
                         @endforeach
@@ -233,9 +338,9 @@
             <!-- Tab Paket / Pack -->
             <div id="tab-paket" class="stok-tab-content" style="display: none;">
                 @if($myPackageStocks->isEmpty())
-                    <p class="stok-empty-note">Anda tidak memiliki stok paket.</p>
+                    <p class="stok-empty-note">Belum ada stok paket/pack yang dibawa.</p>
                 @else
-                    <div class="stok-list">
+                    <div class="stok-grid">
                         @foreach($myPackageStocks as $ps)
                         @php
                             $itemsRingkas = $ps->package->items->map(function($item) {
@@ -244,11 +349,16 @@
                                 return "{$qtyFormatted} {$unitName} {$item->product->name}";
                             })->implode(', ');
                         @endphp
-                        <div class="stok-item" title="Isi: {{ $itemsRingkas }}">
-                            <div class="stok-item-qty" style="color: var(--accent);">{{ number_format($ps->qty, 0, ',', '.') }}</div>
-                            <div class="stok-item-info">
-                                <div class="stok-item-name"><span style="background: var(--brown); color: white; padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: 700; margin-right: 4px; vertical-align: middle;">PAKET</span>{{ $ps->package->name }}</div>
-                                <div class="stok-item-unit">Kode: {{ $ps->package->code }} · {{ $ps->package->items->count() }} Item</div>
+                        <div class="stok-card-item stok-card-package" title="Isi: {{ $itemsRingkas }}">
+                            <div class="stok-card-qty-box">
+                                <span class="stok-card-qty" style="color: var(--accent);">{{ number_format($ps->qty, 0, ',', '.') }}</span>
+                                <span class="stok-card-qty-label">pack</span>
+                            </div>
+                            <div class="stok-card-info">
+                                <span class="stok-badge-package">Paket</span>
+                                <span class="stok-card-name" title="{{ $ps->package->name }}">{{ $ps->package->name }}</span>
+                                <span class="stok-card-meta">Kode: {{ $ps->package->code }}</span>
+                                <span class="stok-card-items-list" title="Isi: {{ $itemsRingkas }}">Isi: {{ $itemsRingkas }}</span>
                             </div>
                         </div>
                         @endforeach

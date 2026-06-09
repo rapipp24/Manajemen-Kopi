@@ -520,7 +520,7 @@ class PackageSalesOrderTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Kopi Pack Spesial');
-        $response->assertSee('class="stok-item-qty" style="color: var(--accent);">5</div>', false);
+        $response->assertSee('class="stok-card-qty" style="color: var(--accent);">5</span>', false);
     }
 
     /**
@@ -548,8 +548,8 @@ class PackageSalesOrderTest extends TestCase
 
         $response2->assertStatus(200);
         $response2->assertSee('Kopi Pack Spesial');
-        $response2->assertSee('class="stok-item-qty" style="color: var(--accent);">2</div>', false);
-        $response2->assertDontSee('class="stok-item-qty" style="color: var(--accent);">5</div>', false);
+        $response2->assertSee('class="stok-card-qty" style="color: var(--accent);">2</span>', false);
+        $response2->assertDontSee('class="stok-card-qty" style="color: var(--accent);">5</span>', false);
     }
 
     /**
