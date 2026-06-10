@@ -43,7 +43,7 @@ class ReportController extends Controller
         $profitTercatat = $totalCashIn - $totalCashOut;
 
         // 5. Rekap Piutang dari Delivery Reports (dalam periode terpilih)
-        $deliveryReports = DeliveryReport::with(['sales', 'customer', 'items.product'])
+        $deliveryReports = DeliveryReport::with(['sales', 'customer', 'items.product', 'packageItems'])
             ->whereBetween('delivery_date', [$startDate, $endDate])
             ->get();
 
@@ -229,6 +229,9 @@ class ReportController extends Controller
         foreach ($deliveryReports as $report) {
             foreach ($report->items as $item) {
                 $totalDeliveryHpp += (float)($item->product->cost_price ?? 0.0) * (float)$item->qty;
+            }
+            foreach ($report->packageItems as $pkgItem) {
+                $totalDeliveryHpp += (float)($pkgItem->package_hpp_snapshot ?? 0.0) * (float)$pkgItem->qty;
             }
         }
 

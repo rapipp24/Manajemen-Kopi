@@ -111,13 +111,13 @@
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Kembali ke Riwayat
     </a>
     <h1 class="page-title">Buat Laporan Pengiriman</h1>
-    <p class="page-desc">Catat barang yang Anda kirimkan ke toko. Stok Anda akan berkurang otomatis setelah disimpan.</p>
+    <p class="page-desc">Catat barang atau paket yang Anda kirimkan ke toko. Stok Anda akan berkurang otomatis setelah disimpan.</p>
 
-    @if($salesStocks->isEmpty())
+    @if($salesStocks->isEmpty() && $salesPackageStocks->isEmpty())
         <div class="empty-stok">
             <div class="empty-stok-emoji">📦</div>
             <strong>Stok barang Anda kosong</strong>
-            <p>Anda belum memiliki stok barang untuk dikirimkan. Ajukan permintaan barang ke gudang terlebih dahulu.</p>
+            <p>Anda belum memiliki stok produk maupun stok paket untuk dikirimkan. Ajukan permintaan barang ke gudang terlebih dahulu.</p>
             <a href="{{ route('sales.orders.create') }}" class="empty-stok-link" style="display:inline-flex; align-items:center; gap:6px;">
                 <i data-lucide="plus" style="width:16px;height:16px;"></i> Buat Pengajuan Barang
             </a>
@@ -132,8 +132,22 @@
             'price' => $s->product->price,
             'stok'  => $s->qty,
         ])->values();
+
+        $pkgStockData = $salesPackageStocks->map(function($s) {
+            $itemsSummary = $s->package->items->map(fn($item) => ($item->qty + 0) . ' ' . ($item->product->unit->code ?? 'pcs') . ' ' . $item->product->name)->join(', ');
+            return [
+                'id'    => $s->package_id,
+                'name'  => $s->package->name . ' (' . $s->package->code . ')',
+                'summary' => $itemsSummary,
+                'price' => $s->package->selling_price,
+                'stok'  => $s->qty,
+            ];
+        })->values();
     @endphp
-    <script>const STOK = @json($stockData);</script>
+    <script>
+        const STOK = @json($stockData);
+        const STOK_PKG = @json($pkgStockData);
+    </script>
 
     <form action="{{ route('sales.delivery-reports.store') }}" method="POST" id="form-del">
         @csrf
@@ -232,56 +246,96 @@
                 </div>
             </div>
 
-            {{-- ── Kanan: Produk ────────────────────────────── --}}
-            <div class="card" style="display:flex;flex-direction:column;">
-                <div class="card-header"><h3>Produk yang Dikirim</h3></div>
-                <div style="overflow-x:auto;">
-                    <table class="items-table">
-                        <thead>
-                            <tr>
-                                <th style="width:38%;">Produk</th>
-                                <th style="width:14%;">Stok Anda</th>
-                                <th style="width:14%;">Qty Kirim</th>
-                                <th style="width:15%;">Harga Jual</th>
-                                <th style="width:15%;text-align:right;">Subtotal</th>
-                                <th style="width:4%;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody">
-                            <tr class="baris" data-idx="0">
-                                <td>
-                                    <select name="items[0][product_id]" onchange="onPilih(this,0)" style="width:100%;" required>
-                                        <option value="">— Pilih Produk —</option>
-                                        @foreach($stockData as $s)
-                                            <option value="{{ $s['id'] }}" data-stok="{{ $s['stok'] }}" data-price="{{ $s['price'] }}" data-unit="{{ $s['unit'] }}">{{ $s['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="stok-hint" id="hint-0">—</div>
-                                </td>
-                                <td>
-                                    <input type="number" name="items[0][qty]" id="qty-0" min="1" step="1" placeholder="0" style="width:100%;" oninput="calc(0)" required>
-                                    <div id="warn-0" class="stok-warn-txt" style="display:none;">⚠ Melebihi stok!</div>
-                                </td>
-                                <td>
-                                    <input type="number" name="items[0][price]" id="price-0" style="width:100%;background:#fafaf8;color:#a8a29e;font-weight:600;" readonly>
-                                </td>
-                                <td style="text-align:right;font-weight:700;font-size:13px;color:#1c1917;" id="sub-0">Rp 0</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            {{-- ── Kanan: Produk & Paket ────────────────────────────── --}}
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                {{-- Card Produk --}}
+                <div class="card" style="display:flex;flex-direction:column;">
+                    <div class="card-header"><h3>Produk yang Dikirim</h3></div>
+                    @if($salesStocks->isEmpty())
+                        <div style="padding:20px; text-align:center; color:var(--muted); font-size:13px; font-style:italic;">
+                            Tidak ada stok produk satuan yang tersedia.
+                        </div>
+                    @else
+                        <div style="overflow-x:auto;">
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:38%;">Produk</th>
+                                        <th style="width:14%;">Stok Anda</th>
+                                        <th style="width:14%;">Qty Kirim</th>
+                                        <th style="width:15%;">Harga Jual</th>
+                                        <th style="width:15%;text-align:right;">Subtotal</th>
+                                        <th style="width:4%;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody">
+                                    <tr class="baris" data-idx="0">
+                                        <td>
+                                            <select name="items[0][product_id]" onchange="onPilih(this,0)" style="width:100%;">
+                                                <option value="">— Pilih Produk —</option>
+                                                @foreach($stockData as $s)
+                                                    <option value="{{ $s['id'] }}" data-stok="{{ $s['stok'] }}" data-price="{{ $s['price'] }}" data-unit="{{ $s['unit'] }}">{{ $s['name'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="stok-hint" id="hint-0">—</div>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="items[0][qty]" id="qty-0" min="1" step="1" placeholder="0" style="width:100%;" oninput="calc(0)">
+                                            <div id="warn-0" class="stok-warn-txt" style="display:none;">⚠ Melebihi stok!</div>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="items[0][price]" id="price-0" style="width:100%;background:#fafaf8;color:#a8a29e;font-weight:600;" readonly>
+                                        </td>
+                                        <td style="text-align:right;font-weight:700;font-size:13px;color:#1c1917;" id="sub-0">Rp 0</td>
+                                        <td><button type="button" class="btn-remove" onclick="this.closest('tr').remove();calcTotal();">×</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn-add-row" onclick="addRow()">+ Tambah Baris Produk</button>
+                    @endif
                 </div>
 
-                <button type="button" class="btn-add-row" onclick="addRow()">+ Tambah Baris Produk</button>
-
-                <div class="total-row">
-                    <span class="total-label">Total Nilai</span>
-                    <span class="total-value" id="grand">Rp 0</span>
+                {{-- Card Paket --}}
+                <div class="card" style="display:flex;flex-direction:column;">
+                    <div class="card-header"><h3>Paket / Pack yang Dikirim</h3></div>
+                    @if($salesPackageStocks->isEmpty())
+                        <div style="padding:20px; text-align:center; color:var(--muted); font-size:13px; font-style:italic;">
+                            Belum ada stok paket/pack yang dapat dikirim.
+                        </div>
+                    @else
+                        <div style="overflow-x:auto;">
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:38%;">Nama Paket</th>
+                                        <th style="width:14%;">Stok Anda</th>
+                                        <th style="width:14%;">Qty Kirim</th>
+                                        <th style="width:15%;">Harga Jual</th>
+                                        <th style="width:15%;text-align:right;">Subtotal</th>
+                                        <th style="width:4%;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-pkg">
+                                    {{-- Baris paket akan ditambahkan dinamis --}}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn-add-row" onclick="addPkgRow()">+ Tambah Baris Paket</button>
+                    @endif
                 </div>
-                <div style="padding:0 18px 18px;">
-                    <button type="submit" class="btn-submit" id="btn-sub" disabled>Simpan Laporan Pengiriman</button>
+
+                {{-- Card Total & Submit --}}
+                <div class="card">
+                    <div class="total-row">
+                        <span class="total-label">Total Nilai</span>
+                        <span class="total-value" id="grand">Rp 0</span>
+                    </div>
+                    <div style="padding:18px;">
+                        <button type="submit" class="btn-submit" id="btn-sub" disabled>Simpan Laporan Pengiriman</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -289,6 +343,7 @@
 
     <script>
         let rowCount = 1;
+        let pkgRowCount = 0;
         const fmt = n => 'Rp ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
         /* ── Toggle mode toko ── */
@@ -311,7 +366,7 @@
             switchMode('master');
         @endif
 
-        /* ── Item table logic ── */
+        /* ── Product Table Logic ── */
         function buildOpts() {
             return '<option value="">— Pilih Produk —</option>' +
                 STOK.map(s => `<option value="${s.id}" data-stok="${s.stok}" data-price="${s.price}" data-unit="${s.unit}">${s.name}</option>`).join('');
@@ -350,20 +405,6 @@
             calcTotal();
         }
 
-        function calcTotal() {
-            let total = 0, hasWarn = false, hasItems = false;
-            document.querySelectorAll('.baris').forEach(tr => {
-                const i = tr.dataset.idx;
-                const qty = parseFloat(document.getElementById('qty-'+i)?.value)||0;
-                const price = parseFloat(document.getElementById('price-'+i)?.value)||0;
-                if (qty > 0) hasItems = true;
-                total += qty * price;
-                if (document.getElementById('warn-'+i)?.style.display !== 'none') hasWarn = true;
-            });
-            document.getElementById('grand').textContent = fmt(total);
-            document.getElementById('btn-sub').disabled = hasWarn || !hasItems;
-        }
-
         function addRow() {
             const idx = rowCount++;
             const tr = document.createElement('tr');
@@ -373,9 +414,11 @@
                 <td><select name="items[${idx}][product_id]" onchange="onPilih(this,${idx})" style="width:100%;" required>${buildOpts()}</select></td>
                 <td>
                     <div class="stok-hint" id="hint-${idx}">—</div>
+                </td>
+                <td>
+                    <input type="number" name="items[${idx}][qty]" id="qty-${idx}" min="1" step="1" placeholder="0" style="width:100%;" oninput="calc(${idx})" required>
                     <div id="warn-${idx}" class="stok-warn-txt" style="display:none;">⚠ Melebihi stok!</div>
                 </td>
-                <td><input type="number" name="items[${idx}][qty]" id="qty-${idx}" min="1" step="1" placeholder="0" style="width:100%;" oninput="calc(${idx})" required></td>
                 <td><input type="number" name="items[${idx}][price]" id="price-${idx}" style="width:100%;background:#fafaf8;color:#a8a29e;font-weight:600;" readonly></td>
                 <td style="text-align:right;font-weight:700;font-size:13px;color:#1c1917;" id="sub-${idx}">Rp 0</td>
                 <td><button type="button" class="btn-remove" onclick="this.closest('tr').remove();calcTotal();">×</button></td>
@@ -383,8 +426,97 @@
             document.getElementById('tbody').appendChild(tr);
         }
 
-        /* ── Hitung Jatuh Tempo ── */
+        /* ── Package Table Logic ── */
+        function buildPkgOpts() {
+            return '<option value="">— Pilih Paket —</option>' +
+                STOK_PKG.map(s => `<option value="${s.id}" data-stok="${s.stok}" data-price="${s.price}" data-summary="${s.summary}">${s.name}</option>`).join('');
+        }
 
+        function onPilihPkg(sel, idx) {
+            const opt   = sel.options[sel.selectedIndex];
+            const stok  = parseFloat(opt.dataset.stok)  || 0;
+            const price = parseFloat(opt.dataset.price) || 0;
+            const summary = opt.dataset.summary || '';
+
+            const hintEl = document.getElementById('hint-pkg-' + idx);
+            if (stok > 0) {
+                hintEl.innerHTML = `${stok} Pack<br><small style="color:#64748b; font-weight:normal; display:block; line-height:1.3; margin-top:2px;">${summary}</small>`;
+                hintEl.style.color = '#16a34a';
+            } else {
+                hintEl.textContent = '⚠ Stok 0';
+                hintEl.style.color = '#dc2626';
+            }
+
+            const priceEl = document.getElementById('price-pkg-' + idx);
+            if (priceEl) priceEl.value = price;
+            calcPkg(idx);
+        }
+
+        function calcPkg(idx) {
+            const sel   = document.querySelector(`[name="package_items[${idx}][package_id]"]`);
+            const opt   = sel ? sel.options[sel.selectedIndex] : null;
+            const stok  = opt ? parseFloat(opt.dataset.stok) || 0 : 0;
+            const qty   = parseFloat(document.getElementById('qty-pkg-' + idx)?.value)   || 0;
+            const price = parseFloat(document.getElementById('price-pkg-' + idx)?.value) || 0;
+
+            document.getElementById('sub-pkg-' + idx).textContent = fmt(qty * price);
+            const warn = document.getElementById('warn-pkg-' + idx);
+            if (warn) warn.style.display = (qty > stok && stok > 0) ? '' : 'none';
+            calcTotal();
+        }
+
+        function addPkgRow() {
+            const idx = pkgRowCount++;
+            const tr = document.createElement('tr');
+            tr.className = 'baris-pkg';
+            tr.dataset.idx = idx;
+            tr.innerHTML = `
+                <td><select name="package_items[${idx}][package_id]" onchange="onPilihPkg(this,${idx})" style="width:100%;" required>${buildPkgOpts()}</select></td>
+                <td>
+                    <div class="stok-hint" id="hint-pkg-${idx}">—</div>
+                </td>
+                <td>
+                    <input type="number" name="package_items[${idx}][qty]" id="qty-pkg-${idx}" min="1" step="1" placeholder="0" style="width:100%;" oninput="calcPkg(${idx})" required>
+                    <div id="warn-pkg-${idx}" class="stok-warn-txt" style="display:none;">⚠ Melebihi stok!</div>
+                </td>
+                <td><input type="number" name="package_items[${idx}][price]" id="price-pkg-${idx}" style="width:100%;background:#fafaf8;color:#a8a29e;font-weight:600;" readonly></td>
+                <td style="text-align:right;font-weight:700;font-size:13px;color:#1c1917;" id="sub-pkg-${idx}">Rp 0</td>
+                <td><button type="button" class="btn-remove" onclick="this.closest('tr').remove();calcTotal();">×</button></td>
+            `;
+            document.getElementById('tbody-pkg').appendChild(tr);
+        }
+
+        /* ── Unified Grand Total Logic ── */
+        function calcTotal() {
+            let total = 0, hasWarn = false, hasItems = false;
+            
+            // Produk Satuan
+            document.querySelectorAll('.baris').forEach(tr => {
+                const i = tr.dataset.idx;
+                const sel = document.querySelector(`[name="items[${i}][product_id]"]`);
+                const qty = parseFloat(document.getElementById('qty-'+i)?.value)||0;
+                const price = parseFloat(document.getElementById('price-'+i)?.value)||0;
+                if (sel && sel.value && qty > 0) hasItems = true;
+                total += qty * price;
+                if (document.getElementById('warn-'+i)?.style.display !== 'none') hasWarn = true;
+            });
+
+            // Paket
+            document.querySelectorAll('.baris-pkg').forEach(tr => {
+                const i = tr.dataset.idx;
+                const sel = document.querySelector(`[name="package_items[${i}][package_id]"]`);
+                const qty = parseFloat(document.getElementById('qty-pkg-'+i)?.value)||0;
+                const price = parseFloat(document.getElementById('price-pkg-'+i)?.value)||0;
+                if (sel && sel.value && qty > 0) hasItems = true;
+                total += qty * price;
+                if (document.getElementById('warn-pkg-'+i)?.style.display !== 'none') hasWarn = true;
+            });
+
+            document.getElementById('grand').textContent = fmt(total);
+            document.getElementById('btn-sub').disabled = hasWarn || !hasItems;
+        }
+
+        /* ── Hitung Jatuh Tempo ── */
         function calcDueDate() {
             const term = document.getElementById('payment_term_days').value;
             const deliveryDateStr = document.querySelector('input[name="delivery_date"]').value;
@@ -407,7 +539,6 @@
 
         calcDueDate();
         document.querySelector('input[name="delivery_date"]').addEventListener('change', calcDueDate);
-
     </script>
     @endif
 </x-layouts.user>

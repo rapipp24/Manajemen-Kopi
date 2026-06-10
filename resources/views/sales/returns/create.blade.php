@@ -113,6 +113,15 @@
     <form method="POST" action="{{ route('sales.returns.store') }}" id="returnForm">
         @csrf
 
+        @if($selectedReport->packageItems->isNotEmpty())
+            <div style="background:#fff7ed; border:1px solid #ffedd5; border-radius:8px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                <i data-lucide="alert-triangle" style="width:18px; height:18px; color:#c2410c; flex-shrink:0;"></i>
+                <div style="font-size:12.5px; color:#c2410c; font-weight:600; line-height:1.4;">
+                    Catatan: Return untuk item paket/pack belum tersedia pada fase ini. Item paket yang ada pada laporan kirim tidak akan muncul di daftar item retur.
+                </div>
+            </div>
+        @endif
+
         <input type="hidden" name="delivery_report_id" value="{{ $selectedReport->id }}">
 
         <div class="panel-card">
@@ -230,8 +239,13 @@
     @elseif(isset($selectedReport) && $itemsWithMaxReturn->isEmpty())
         <div style="background:#fefbeb;border:1px solid #fef3c7;border-radius:12px;padding:24px;text-align:center;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);">
             <i data-lucide="alert-triangle" style="width:36px;height:36px;color:var(--accent);margin:0 auto 12px;display:block;"></i>
-            <div style="font-size:14px;font-weight:700;color:var(--text);">Tidak ada item yang bisa direturn dari laporan ini.</div>
-            <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Semua item sudah direturn maksimal, atau belum ada item terdaftar di laporan ini.</div>
+            @if($selectedReport->packageItems->isNotEmpty())
+                <div style="font-size:14px;font-weight:700;color:var(--text);">Return untuk item paket/pack belum tersedia pada fase ini.</div>
+                <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Laporan pengiriman ini hanya berisi item paket/pack. Item paket yang ada pada laporan kirim tidak akan muncul di daftar item retur.</div>
+            @else
+                <div style="font-size:14px;font-weight:700;color:var(--text);">Tidak ada item yang bisa direturn dari laporan ini.</div>
+                <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Semua item sudah direturn maksimal, atau belum ada item terdaftar di laporan ini.</div>
+            @endif
         </div>
     @endif
 

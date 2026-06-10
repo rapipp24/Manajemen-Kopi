@@ -8,6 +8,11 @@ use App\Models\DeliveryReport;
 use App\Models\DeliveryReportItem;
 use App\Models\SalesStock;
 use App\Models\StockMovement;
+use App\Models\SalesPackageStock;
+use App\Models\DeliveryReportPackageItem;
+use App\Models\PackageAssembly;
+use App\Models\PackageItem;
+use App\Models\PackageStockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +49,16 @@ class DeliveryReportController extends Controller
             ->where('qty', '>', 0)
             ->get();
 
-        return view('sales.delivery-reports.create', compact('customers', 'salesStocks'));
+        // Stok paket sales yang qty > 0 dan aktif
+        $salesPackageStocks = SalesPackageStock::where('user_id', Auth::id())
+            ->where('qty', '>', 0)
+            ->whereHas('package', function($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['package.items.product'])
+            ->get();
+
+        return view('sales.delivery-reports.create', compact('customers', 'salesStocks', 'salesPackageStocks'));
     }
 
     /**
@@ -53,6 +67,23 @@ class DeliveryReportController extends Controller
      */
     public function store(Request $request)
     {
+        // Filter items dan package_items sebelum validasi untuk membuang baris kosong/default
+        $productItems = collect($request->input('items', []))
+            ->filter(fn ($item) => filled($item['product_id'] ?? null) && (float)($item['qty'] ?? 0) > 0)
+            ->values()
+            ->toArray();
+
+        $packageItems = collect($request->input('package_items', []))
+            ->filter(fn ($item) => filled($item['package_id'] ?? null) && (int)($item['qty'] ?? 0) > 0)
+            ->values()
+            ->toArray();
+
+        // Overwrite request input dengan data yang sudah di-filter
+        $request->merge([
+            'items' => $productItems,
+            'package_items' => $packageItems,
+        ]);
+
         $request->validate([
             // Toko tujuan: boleh dari master ATAU input manual
             'customer_id'              => 'nullable|exists:customers,id',
@@ -63,24 +94,48 @@ class DeliveryReportController extends Controller
             // Info pengiriman
             'delivery_date'            => 'required|date',
             'note'                     => 'nullable|string',
-            // Pembayaran: tidak diterima dari frontend
-            // payment_status dan down_payment_amount di-force oleh backend
-            // Produk
-            'items'                    => 'required|array|min:1',
+            // Produk satuan (opsional)
+            'items'                    => 'nullable|array',
             'items.*.product_id'       => 'required|exists:products,id',
             'items.*.qty'              => 'required|numeric|min:0.01',
+            // Paket (opsional)
+            'package_items'              => 'nullable|array',
+            'package_items.*.package_id' => 'required|exists:packages,id',
+            'package_items.*.qty'        => 'required|integer|min:1',
         ], [
             'customer_name_manual.required_without'    => 'Nama toko wajib diisi jika tidak memilih dari daftar customer.',
             'customer_address_manual.required_without' => 'Alamat toko wajib diisi jika tidak memilih dari daftar customer.',
             'customer_phone_manual.required_without'   => 'No. telepon toko wajib diisi jika tidak memilih dari daftar customer.',
-            'payment_status.required'                  => 'Status pembayaran wajib dipilih.',
         ]);
+
+        // Validasi minimal 1 produk atau 1 paket
+        $hasProducts = count($productItems) > 0;
+        $hasPackages = count($packageItems) > 0;
+
+        if (!$hasProducts && !$hasPackages) {
+            return back()->withInput()->with('error', 'Laporan pengiriman harus berisi minimal 1 produk atau 1 paket.');
+        }
+
+        // Validasi tidak boleh duplikat produk dalam satu form
+        if ($hasProducts) {
+            $productIds = collect($request->items)->pluck('product_id')->toArray();
+            if (count($productIds) !== count(array_unique($productIds))) {
+                return back()->withInput()->with('error', 'Tidak boleh ada produk yang sama diinput lebih dari sekali.');
+            }
+        }
+
+        // Validasi tidak boleh duplikat paket dalam satu form
+        if ($hasPackages) {
+            $packageIds = collect($request->package_items)->pluck('package_id')->toArray();
+            if (count($packageIds) !== count(array_unique($packageIds))) {
+                return back()->withInput()->with('error', 'Tidak boleh ada paket yang sama diinput lebih dari sekali.');
+            }
+        }
 
         DB::beginTransaction();
 
         try {
             // Semua Delivery Report baru selalu dimulai belum_bayar.
-            // Pembayaran DP/Lunas harus melalui Setoran Uang (sales_deposits) + verifikasi Admin.
             $dpAmount = 0;
 
             // Hitung due_date otomatis jika tempo ada
@@ -115,63 +170,143 @@ class DeliveryReportController extends Controller
             ]);
 
             $totalAmount = 0;
-            $tokoName = $report->toko_name; // Dari accessor: customer->name atau customer_name_manual
+            $tokoName = $report->toko_name;
 
-            foreach ($request->items as $item) {
-                // Lock stok sales untuk cegah race condition
-                $salesStock = SalesStock::lockForUpdate()
-                    ->where('user_id', Auth::id())
-                    ->where('product_id', $item['product_id'])
-                    ->first();
+            // A. Proses Produk Satuan
+            if ($hasProducts) {
+                foreach ($request->items as $item) {
+                    // Lock stok sales untuk cegah race condition
+                    $salesStock = SalesStock::lockForUpdate()
+                        ->where('user_id', Auth::id())
+                        ->where('product_id', $item['product_id'])
+                        ->first();
 
-                // Validasi: stok harus ada dan cukup
-                if (!$salesStock) {
-                    throw new Exception("Produk tidak ditemukan di stok Anda.");
+                    // Validasi: stok harus ada dan cukup
+                    if (!$salesStock) {
+                        throw new Exception("Produk tidak ditemukan di stok Anda.");
+                    }
+
+                    if ($salesStock->qty < $item['qty']) {
+                        $nm = $salesStock->product->name ?? 'Produk';
+                        throw new Exception("Stok '{$nm}' tidak cukup. Stok Anda: {$salesStock->qty}");
+                    }
+
+                    // Ambil harga asli dari master produk
+                    $actualPrice = $salesStock->product->price;
+                    $subtotal = $item['qty'] * $actualPrice;
+
+                    // Simpan item laporan
+                    DeliveryReportItem::create([
+                        'delivery_report_id' => $report->id,
+                        'product_id'         => $item['product_id'],
+                        'qty'                => $item['qty'],
+                        'price'              => $actualPrice,
+                        'subtotal'           => $subtotal,
+                    ]);
+
+                    // Kurangi stok sales
+                    $stockBefore = $salesStock->qty;
+                    $salesStock->decrement('qty', $item['qty']);
+                    $salesStock->refresh();
+
+                    // Catat stock movement — OUT dari stok sales ke toko
+                    StockMovement::create([
+                        'item_type'      => 'product',
+                        'item_id'        => $item['product_id'],
+                        'movement_type'  => 'out',
+                        'reference_type' => DeliveryReport::class,
+                        'reference_id'   => $report->id,
+                        'qty'            => $item['qty'],
+                        'stock_before'   => $stockBefore,
+                        'stock_after'    => $salesStock->qty,
+                        'note'           => "Keluar stok sales → {$tokoName} ({$reportNumber})",
+                        'user_id'        => Auth::id(),
+                    ]);
+
+                    $totalAmount += $subtotal;
                 }
-
-                if ($salesStock->qty < $item['qty']) {
-                    $nm = $salesStock->product->name ?? 'Produk';
-                    throw new Exception("Stok '{$nm}' tidak cukup. Stok Anda: {$salesStock->qty}");
-                }
-
-                // Ambil harga asli dari master produk
-                $actualPrice = $salesStock->product->price;
-                $subtotal = $item['qty'] * $actualPrice;
-
-                // Simpan item laporan
-                DeliveryReportItem::create([
-                    'delivery_report_id' => $report->id,
-                    'product_id'         => $item['product_id'],
-                    'qty'                => $item['qty'],
-                    'price'              => $actualPrice,
-                    'subtotal'           => $subtotal,
-                ]);
-
-                // Kurangi stok sales — stok gudang TIDAK disentuh
-                $stockBefore = $salesStock->qty;
-                $salesStock->decrement('qty', $item['qty']);
-                $salesStock->refresh();
-
-                // Catat stock movement — OUT dari stok sales ke toko
-                // user_id = NOT NULL → movement milik stok sales
-                StockMovement::create([
-                    'item_type'      => 'product',
-                    'item_id'        => $item['product_id'],
-                    'movement_type'  => 'out',
-                    'reference_type' => DeliveryReport::class,
-                    'reference_id'   => $report->id,
-                    'qty'            => $item['qty'],
-                    'stock_before'   => $stockBefore,
-                    'stock_after'    => $salesStock->qty,
-                    'note'           => "Keluar stok sales → {$tokoName} ({$reportNumber})",
-                    'user_id'        => Auth::id(),
-                ]);
-
-                $totalAmount += $subtotal;
             }
 
-            // down_payment_amount tetap 0 untuk laporan baru.
-            // Pembayaran dicatat terpisah via sales_deposits.
+            // B. Proses Paket / Pack
+            if ($hasPackages) {
+                foreach ($request->package_items as $item) {
+                    $packageId = $item['package_id'];
+                    $qtyKirim = (int)$item['qty'];
+
+                    // Lock stok paket sales
+                    $salesPackageStock = SalesPackageStock::lockForUpdate()
+                        ->where('user_id', Auth::id())
+                        ->where('package_id', $packageId)
+                        ->first();
+
+                    if (!$salesPackageStock) {
+                        throw new Exception("Paket tidak ditemukan di stok Anda.");
+                    }
+
+                    if ($salesPackageStock->qty < $qtyKirim) {
+                        $nm = $salesPackageStock->package->name ?? 'Paket';
+                        throw new Exception("Stok paket '{$nm}' tidak cukup. Stok Anda: {$salesPackageStock->qty} pack.");
+                    }
+
+                    $package = $salesPackageStock->package;
+                    if (!$package) {
+                        throw new Exception("Data master paket tidak ditemukan.");
+                    }
+
+                    $actualPrice = (float)$package->selling_price;
+                    $subtotal = $qtyKirim * $actualPrice;
+
+                    // Hitung HPP Snapshot (Fase 4A belum batch-aware)
+                    $hppPerPackage = 0.00;
+                    $latestAssembly = PackageAssembly::where('package_id', $packageId)
+                        ->latest()
+                        ->first();
+
+                    if ($latestAssembly) {
+                        $hppPerPackage = (float)$latestAssembly->hpp_per_package_snapshot;
+                    } else {
+                        // Fallback: hitung dari komponen jika data assembly tidak ditemukan
+                        $packageItems = PackageItem::with('product')->where('package_id', $packageId)->get();
+                        foreach ($packageItems as $pkgItem) {
+                            $productCost = $pkgItem->product ? (float)$pkgItem->product->cost_price : 0.00;
+                            $hppPerPackage += (float)$pkgItem->qty * $productCost;
+                        }
+                    }
+
+                    // Simpan rincian paket
+                    DeliveryReportPackageItem::create([
+                        'delivery_report_id'    => $report->id,
+                        'package_id'            => $packageId,
+                        'qty'                   => $qtyKirim,
+                        'price'                 => $actualPrice,
+                        'subtotal'              => $subtotal,
+                        'package_name_snapshot' => $package->name,
+                        'package_code_snapshot' => $package->code,
+                        'package_hpp_snapshot'  => $hppPerPackage,
+                    ]);
+
+                    // Kurangi stok paket sales
+                    $stockBefore = $salesPackageStock->qty;
+                    $salesPackageStock->decrement('qty', $qtyKirim);
+                    $salesPackageStock->refresh();
+
+                    // Catat mutasi stok paket (movement_type = 'sale')
+                    PackageStockMovement::create([
+                        'package_id'     => $packageId,
+                        'user_id'        => Auth::id(),
+                        'movement_type'  => 'sale',
+                        'qty'            => $qtyKirim,
+                        'stock_before'   => $stockBefore,
+                        'stock_after'    => $salesPackageStock->qty,
+                        'reference_type' => DeliveryReport::class,
+                        'reference_id'   => $report->id,
+                        'note'           => "Keluar stok sales → {$tokoName} ({$reportNumber})",
+                        'created_by'     => Auth::id(),
+                    ]);
+
+                    $totalAmount += $subtotal;
+                }
+            }
 
             // Update nilai final di laporan
             $report->update([
@@ -179,16 +314,14 @@ class DeliveryReportController extends Controller
                 'down_payment_amount' => $dpAmount,
             ]);
 
-            // Guard pencegahan untuk memastikan data tersimpan dengan benar dan menghindari total_amount = 0
             $report->refresh();
 
-            // Guard 1: Jika totalAmount <= 0 padahal ada item
-            if (count($request->items) > 0 && $totalAmount <= 0) {
+            // Guard pencegahan untuk memastikan data tersimpan dengan benar dan menghindari total_amount = 0
+            if ($totalAmount <= 0) {
                 throw new Exception("Total laporan tidak valid. Silakan coba simpan ulang.");
             }
 
-            // Guard 2: Jika delivery_reports.total_amount gagal tersimpan atau tetap 0/tidak sinkron padahal totalAmount > 0
-            if ($totalAmount > 0 && ((float)$report->total_amount <= 0 || abs((float)$report->total_amount - $totalAmount) > 0.01)) {
+            if (abs((float)$report->total_amount - $totalAmount) > 0.01) {
                 throw new Exception("Total laporan tidak valid. Silakan coba simpan ulang.");
             }
 
@@ -213,7 +346,7 @@ class DeliveryReportController extends Controller
             abort(403);
         }
 
-        $deliveryReport->load(['customer', 'items.product.unit']);
+        $deliveryReport->load(['customer', 'items.product.unit', 'packageItems.package.items.product']);
         return view('sales.delivery-reports.show', compact('deliveryReport'));
     }
 }

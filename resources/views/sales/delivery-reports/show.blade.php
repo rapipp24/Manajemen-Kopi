@@ -1,9 +1,7 @@
-git <x-layouts.user>
+<x-layouts.user>
     <x-slot name="title">Laporan {{ $deliveryReport->report_number }}</x-slot>
 
     <style>
-
-
         /* ── Page heading ──────────────────── */
         .report-heading { display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap; }
         .report-number  { font-size:17px;font-weight:700;color:var(--text);font-family:monospace;letter-spacing:0.02em; }
@@ -46,7 +44,6 @@ git <x-layouts.user>
             transition:background 0.15s; width:100%; box-sizing:border-box; text-decoration:none;
         }
         .btn-primary:hover { background:var(--brown-hover); }
-
 
         /* ── Desktop/Mobile Dual Layout ──────── */
         .desktop-only { display: block; }
@@ -197,24 +194,25 @@ git <x-layouts.user>
     </div>
 
     <div class="layout">
-        {{-- Kiri: Produk yang Dikirim --}}
+        {{-- Kiri: Barang & Paket yang Dikirim --}}
         <div class="card">
             <div class="card-header">
-                <h3>Produk yang Dikirim</h3>
+                <h3>Rincian Pengiriman</h3>
             </div>
             
             <div class="table-scroll-container desktop-only">
                 <table>
                     <thead>
                         <tr>
-                            <th>Produk</th>
-                            <th>Kemasan</th>
+                            <th>Item / Nama Barang</th>
+                            <th>Tipe / Kemasan</th>
                             <th style="text-align:center;">Qty</th>
                             <th style="text-align:right;">Harga Jual</th>
                             <th style="text-align:right;">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {{-- Render Produk Satuan --}}
                         @foreach($deliveryReport->items as $item)
                         <tr>
                             <td style="font-weight:700;color:var(--text);">{{ $item->product->name }}</td>
@@ -228,6 +226,26 @@ git <x-layouts.user>
                             <td style="text-align:right;font-weight:800;color:var(--text);">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                         </tr>
                         @endforeach
+
+                        {{-- Render Paket --}}
+                        @foreach($deliveryReport->packageItems as $pkgItem)
+                        <tr>
+                            <td style="font-weight:700;color:var(--text);">
+                                {{ $pkgItem->package_name_snapshot }}
+                                <small style="color:var(--muted); display:block; font-weight:normal; margin-top:3px; line-height:1.3;">
+                                    Resep: {{ $pkgItem->package ? $pkgItem->package->items->map(fn($item) => ($item->qty + 0) . ' ' . ($item->product->unit->code ?? 'pcs') . ' ' . $item->product->name)->join(', ') : '—' }}
+                                </small>
+                            </td>
+                            <td>
+                                <span style="background:#fef3c7;border:1px solid #fde68a;color:#d97706;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;">
+                                    Paket ({{ $pkgItem->package_code_snapshot }})
+                                </span>
+                            </td>
+                            <td style="text-align:center;font-weight:700;color:var(--text);">{{ number_format($pkgItem->qty, 0, ',', '.') }} pack</td>
+                            <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($pkgItem->price, 0, ',', '.') }}</td>
+                            <td style="text-align:right;font-weight:800;color:var(--text);">Rp {{ number_format($pkgItem->subtotal, 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
                     </tbody>
                     <tfoot>
                         <tr style="background:var(--cream); font-weight:800; border-top:1px solid var(--border);">
@@ -235,7 +253,7 @@ git <x-layouts.user>
                                 Total Nilai
                             </td>
                             <td style="text-align:right;font-size:17px;font-weight:800;color:var(--brown);letter-spacing:-0.02em;">
-                                Rp {{ number_format($deliveryReport->items->sum('subtotal'), 0, ',', '.') }}
+                                Rp {{ number_format($deliveryReport->total_amount, 0, ',', '.') }}
                             </td>
                         </tr>
                     </tfoot>
@@ -243,6 +261,7 @@ git <x-layouts.user>
             </div>
 
             <div class="mobile-only">
+                {{-- Render Produk Satuan Mobile --}}
                 @foreach($deliveryReport->items as $item)
                 <div class="mobile-item">
                     <div class="mobile-item-top">
@@ -255,9 +274,29 @@ git <x-layouts.user>
                     </div>
                 </div>
                 @endforeach
+
+                {{-- Render Paket Mobile --}}
+                @foreach($deliveryReport->packageItems as $pkgItem)
+                <div class="mobile-item">
+                    <div class="mobile-item-top">
+                        <div class="mobile-item-title">
+                            {{ $pkgItem->package_name_snapshot }}
+                            <small style="color:var(--muted); display:block; font-weight:normal; margin-top:2px; line-height:1.3;">
+                                Resep: {{ $pkgItem->package ? $pkgItem->package->items->map(fn($item) => ($item->qty + 0) . ' ' . ($item->product->unit->code ?? 'pcs') . ' ' . $item->product->name)->join(', ') : '—' }}
+                            </small>
+                        </div>
+                        <div class="mobile-item-qty">{{ number_format($pkgItem->qty, 0, ',', '.') }} pack</div>
+                    </div>
+                    <div class="mobile-item-bot">
+                        <span class="mobile-item-weight" style="background:#fef3c7; color:#d97706; border-color:#fde68a;">Paket ({{ $pkgItem->package_code_snapshot }})</span>
+                        <span class="mobile-item-subtotal">Rp {{ number_format($pkgItem->subtotal, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+                @endforeach
+
                 <div class="mobile-total-row">
                     <div class="mobile-total-label">Total Nilai</div>
-                    <div class="mobile-total-val">Rp {{ number_format($deliveryReport->items->sum('subtotal'), 0, ',', '.') }}</div>
+                    <div class="mobile-total-val">Rp {{ number_format($deliveryReport->total_amount, 0, ',', '.') }}</div>
                 </div>
             </div>
         </div>

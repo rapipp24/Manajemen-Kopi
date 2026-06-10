@@ -112,30 +112,47 @@
 
     <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;">
 
-        {{-- Kiri: Tabel Produk --}}
+        {{-- Kiri: Tabel Produk & Paket --}}
         <div style="background:white;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
             <div style="padding:14px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
-                <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Produk yang Dikirim</h3>
+                <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Rincian Pengiriman</h3>
             </div>
             <table style="width:100%;border-collapse:collapse;">
                 <thead>
                     <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;">
-                        <th style="padding:11px 20px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Produk</th>
+                        <th style="padding:11px 20px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Item / Nama Barang</th>
                         <th style="padding:11px 20px;text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Qty</th>
                         <th style="padding:11px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Harga</th>
                         <th style="padding:11px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{-- Render Produk Satuan --}}
                     @foreach($deliveryReport->items as $item)
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:14px 20px;">
                             <div style="font-weight:600;color:#0f172a;">{{ $item->product->name }}</div>
                             <div style="font-size:11px;color:#94a3b8;">Kemasan: {{ $item->product->weight }}gr</div>
                         </td>
-                        <td style="padding:14px 20px;text-align:center;font-weight:700;">{{ number_format($item->qty, 0, ',', '.') }}</td>
+                        <td style="padding:14px 20px;text-align:center;font-weight:700;">{{ number_format($item->qty, 0, ',', '.') }} pcs</td>
                         <td style="padding:14px 20px;text-align:right;color:#475569;">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                         <td style="padding:14px 20px;text-align:right;font-weight:700;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+
+                    {{-- Render Paket --}}
+                    @foreach($deliveryReport->packageItems as $pkgItem)
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:14px 20px;">
+                            <div style="font-weight:600;color:#0f172a;">{{ $pkgItem->package_name_snapshot }}</div>
+                            <div style="font-size:11px;color:#94a3b8;">Kode: {{ $pkgItem->package_code_snapshot }} | Paket</div>
+                            <div style="font-size:11px;color:#64748b;margin-top:2px;">
+                                Resep: {{ $pkgItem->package ? $pkgItem->package->items->map(fn($item) => ($item->qty + 0) . ' ' . ($item->product->unit->code ?? 'pcs') . ' ' . $item->product->name)->join(', ') : '—' }}
+                            </div>
+                        </td>
+                        <td style="padding:14px 20px;text-align:center;font-weight:700;">{{ number_format($pkgItem->qty, 0, ',', '.') }} pack</td>
+                        <td style="padding:14px 20px;text-align:right;color:#475569;">Rp {{ number_format($pkgItem->price, 0, ',', '.') }}</td>
+                        <td style="padding:14px 20px;text-align:right;font-weight:700;">Rp {{ number_format($pkgItem->subtotal, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -143,11 +160,11 @@
                     <tr style="background:#f8fafc;">
                         <td style="padding:14px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Total</td>
                         <td style="padding:14px 20px;text-align:center;font-size:14px;font-weight:800;color:#0f172a;">
-                            {{ number_format($deliveryReport->items->sum('qty'), 0, ',', '.') }}
+                            {{ number_format($deliveryReport->items->sum('qty'), 0, ',', '.') }} pcs / {{ number_format($deliveryReport->packageItems->sum('qty'), 0, ',', '.') }} pack
                         </td>
                         <td style="padding:14px 20px;"></td>
                         <td style="padding:14px 20px;text-align:right;font-size:18px;font-weight:800;color:#0f172a;">
-                            Rp {{ number_format($deliveryReport->items->sum('subtotal'), 0, ',', '.') }}
+                            Rp {{ number_format($deliveryReport->total_amount, 0, ',', '.') }}
                         </td>
                     </tr>
                 </tfoot>

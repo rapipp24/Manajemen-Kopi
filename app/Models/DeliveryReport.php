@@ -189,6 +189,12 @@ class DeliveryReport extends Model
         return $this->hasMany(DeliveryReportItem::class);
     }
 
+    /** Detail paket yang dikirim */
+    public function packageItems(): HasMany
+    {
+        return $this->hasMany(DeliveryReportPackageItem::class);
+    }
+
     /** Return barang yang diajukan dari laporan ini */
     public function salesReturns(): HasMany
     {

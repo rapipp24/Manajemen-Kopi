@@ -45,7 +45,7 @@ class SalesReturnController extends Controller
 
         if ($request->filled('delivery_report_id')) {
             $selectedReport = DeliveryReport::where('sales_id', Auth::id())
-                ->with('items.product')
+                ->with(['items.product', 'packageItems'])
                 ->findOrFail($request->delivery_report_id);
 
             // Hitung qty maksimal yang bisa direturn per item

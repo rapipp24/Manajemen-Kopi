@@ -112,7 +112,7 @@ class DeliveryReportController extends Controller
      */
     public function show(DeliveryReport $deliveryReport)
     {
-        $deliveryReport->load(['sales', 'customer', 'items.product.unit', 'creator', 'overpaymentResolver']);
+        $deliveryReport->load(['sales', 'customer', 'items.product.unit', 'packageItems.package.items.product', 'creator', 'overpaymentResolver']);
         return view('admin.delivery-reports.show', compact('deliveryReport'));
     }
 

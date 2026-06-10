@@ -45,7 +45,7 @@ class SalesReturnController extends Controller
      */
     public function show(SalesReturn $return)
     {
-        $return->load(['sales', 'deliveryReport.items.product', 'items.product', 'approver']);
+        $return->load(['sales', 'deliveryReport.items.product', 'deliveryReport.packageItems', 'items.product', 'approver']);
 
         return view('admin.returns.show', compact('return'));
     }
