@@ -393,7 +393,8 @@ class PackageDeliveryReportTest extends TestCase
         $response->assertSee($this->product->name);
 
         // Verify package item is NOT listed (and verify warning text)
-        $response->assertSee('Catatan: Return untuk item paket/pack belum tersedia pada fase ini.');
+        $response->assertSee('Catatan: Item paket/pack belum dapat diretur melalui sistem pada fase ini. Jika toko mengembalikan paket, silakan koordinasikan dengan admin untuk pencatatan manual.');
+        $response->assertDontSee($this->package->name);
     }
 
     /**
