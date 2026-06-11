@@ -284,7 +284,14 @@
                     @elseif($deliveryReport->payment_status === 'dp')
                         <span style="font-size:10px;font-weight:800;background:#fef08a;color:#854d0e;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">DP</span>
                     @else
-                        <span style="font-size:10px;font-weight:800;background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">BELUM BAYAR</span>
+                        @php
+                            $hasPendingDeposit = $deliveryReport->deposits()->where('status', 'menunggu_verifikasi')->exists();
+                        @endphp
+                        @if(!$deliveryReport->payment_term_days && $hasPendingDeposit)
+                            <span style="font-size:10px;font-weight:800;background:#ffedd5;color:#c2410c;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">MENUNGGU VERIFIKASI SETORAN</span>
+                        @else
+                            <span style="font-size:10px;font-weight:800;background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:10px;letter-spacing:0.05em;">BELUM BAYAR</span>
+                        @endif
                     @endif
                 </div>
                 <div style="padding:0;">

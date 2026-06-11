@@ -230,12 +230,22 @@
 
                         <div class="field">
                             <label>Tempo Pembayaran <span class="opt-label">(opsional)</span></label>
-                            <select name="payment_term_days" id="payment_term_days" onchange="calcDueDate()">
+                            <select name="payment_term_days" id="payment_term_days" onchange="calcDueDate(); togglePaymentFields();">
                                 <option value="">— Langsung / Cash —</option>
                                 <option value="15" {{ old('payment_term_days')=='15' ? 'selected':'' }}>15 Hari</option>
                                 <option value="30" {{ old('payment_term_days')=='30' ? 'selected':'' }}>30 Hari</option>
                             </select>
                             <div class="stok-hint" id="due_date_hint" style="display:none; margin-top:4px;">Jatuh Tempo: <span></span></div>
+                        </div>
+
+                        <div class="field" id="cash_payment_section">
+                            <label>Nominal Tunai Diterima *</label>
+                            <div style="position:relative; display:flex; align-items:center;">
+                                <span style="position:absolute; left:12px; font-weight:700; color:var(--text); font-size:13.5px;">Rp</span>
+                                <input type="number" name="cash_amount" id="cash_amount" class="form-control" style="padding-left:36px;" value="{{ old('cash_amount') }}" placeholder="Harus sama dengan total tagihan" step="0.01">
+                            </div>
+                            <div class="stok-hint" style="color:#0284c7; margin-top:4px;">Pembayaran cash wajib disetor penuh dan akan diverifikasi oleh Admin.</div>
+                            @error('cash_amount')<div class="err">{{ $message }}</div>@enderror
                         </div>
 
                         <div class="field">
@@ -514,6 +524,46 @@
 
             document.getElementById('grand').textContent = fmt(total);
             document.getElementById('btn-sub').disabled = hasWarn || !hasItems;
+
+            // Auto-fill cash_amount if Cash is selected
+            const term = document.getElementById('payment_term_days').value;
+            if (!term) {
+                document.getElementById('cash_amount').value = total;
+            }
+        }
+
+        /* ── Toggle Payment Fields ── */
+        function togglePaymentFields() {
+            const term = document.getElementById('payment_term_days').value;
+            const cashSection = document.getElementById('cash_payment_section');
+            const cashInput = document.getElementById('cash_amount');
+            
+            if (term) {
+                cashSection.style.display = 'none';
+                cashInput.value = '';
+                cashInput.required = false;
+            } else {
+                cashSection.style.display = 'block';
+                cashInput.required = true;
+                
+                // Recalculate total to auto-fill
+                let total = 0;
+                document.querySelectorAll('.baris').forEach(tr => {
+                    const i = tr.dataset.idx;
+                    const sel = document.querySelector(`[name="items[${i}][product_id]"]`);
+                    const qty = parseFloat(document.getElementById('qty-'+i)?.value)||0;
+                    const price = parseFloat(document.getElementById('price-'+i)?.value)||0;
+                    if (sel && sel.value && qty > 0) total += qty * price;
+                });
+                document.querySelectorAll('.baris-pkg').forEach(tr => {
+                    const i = tr.dataset.idx;
+                    const sel = document.querySelector(`[name="package_items[${i}][package_id]"]`);
+                    const qty = parseFloat(document.getElementById('qty-pkg-'+i)?.value)||0;
+                    const price = parseFloat(document.getElementById('price-pkg-'+i)?.value)||0;
+                    if (sel && sel.value && qty > 0) total += qty * price;
+                });
+                cashInput.value = total;
+            }
         }
 
         /* ── Hitung Jatuh Tempo ── */
@@ -537,7 +587,40 @@
             }
         }
 
+        // Form Submit Validation for Cash
+        document.getElementById('form-dr')?.addEventListener('submit', function(e) {
+            const term = document.getElementById('payment_term_days').value;
+            if (!term) {
+                const cashInput = document.getElementById('cash_amount');
+                const cashVal = parseFloat(cashInput.value) || 0;
+                
+                // Calculate current total
+                let total = 0;
+                document.querySelectorAll('.baris').forEach(tr => {
+                    const i = tr.dataset.idx;
+                    const sel = document.querySelector(`[name="items[${i}][product_id]"]`);
+                    const qty = parseFloat(document.getElementById('qty-'+i)?.value)||0;
+                    const price = parseFloat(document.getElementById('price-'+i)?.value)||0;
+                    if (sel && sel.value && qty > 0) total += qty * price;
+                });
+                document.querySelectorAll('.baris-pkg').forEach(tr => {
+                    const i = tr.dataset.idx;
+                    const sel = document.querySelector(`[name="package_items[${i}][package_id]"]`);
+                    const qty = parseFloat(document.getElementById('qty-pkg-'+i)?.value)||0;
+                    const price = parseFloat(document.getElementById('price-pkg-'+i)?.value)||0;
+                    if (sel && sel.value && qty > 0) total += qty * price;
+                });
+                
+                if (Math.abs(cashVal - total) > 0.01) {
+                    e.preventDefault();
+                    alert('Untuk pembayaran Cash / Langsung, nominal tunai diterima harus sama dengan total tagihan (' + fmt(total) + ').');
+                    return false;
+                }
+            }
+        });
+
         calcDueDate();
+        togglePaymentFields();
         document.querySelector('input[name="delivery_date"]').addEventListener('change', calcDueDate);
     </script>
     @endif

@@ -107,6 +107,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'cash_amount' => 100000,
                 'package_items' => [
                     [
                         'package_id' => $this->package->id,
@@ -167,6 +168,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'cash_amount' => 145000,
                 'items' => [
                     [
                         'product_id' => $this->product->id,
@@ -211,6 +213,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'cash_amount' => 100000,
                 'package_items' => [
                     [
                         'package_id' => $this->package->id,
@@ -241,6 +244,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'cash_amount' => 150000,
                 'package_items' => [
                     [
                         'package_id' => $this->package->id,
@@ -266,6 +270,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'payment_term_days' => 15,
                 'items' => [],
                 'package_items' => []
             ]);
@@ -413,6 +418,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'cash_amount' => 100000,
                 'items' => [
                     [
                         'product_id' => '',
@@ -450,6 +456,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'cash_amount' => 30000,
                 'items' => [
                     [
                         'product_id' => $this->product->id,
@@ -479,6 +486,7 @@ class PackageDeliveryReportTest extends TestCase
             ->post(route('sales.delivery-reports.store'), [
                 'customer_id' => $this->customer->id,
                 'delivery_date' => date('Y-m-d'),
+                'payment_term_days' => 15,
                 'items' => [
                     [
                         'product_id' => '',

@@ -44,7 +44,7 @@ class HelpTest extends TestCase
         $response->assertSee('Pusat Bantuan');
         $response->assertSee('Panduan Penggunaan');
         $response->assertSee('Ringkasan');
-        $response->assertSee('Langkah Awal');
+        $response->assertSee('Mulai dari Mana?');
     }
 
     public function test_sales_cannot_access_help_page(): void

@@ -91,6 +91,7 @@ class DeliveryReportController extends Controller
             'customer_address_manual'  => 'required_without:customer_id|nullable|string|max:500',
             'customer_phone_manual'    => 'required_without:customer_id|nullable|string|max:20',
             'payment_term_days'        => 'nullable|integer|in:15,30',
+            'cash_amount'              => 'required_without:payment_term_days|nullable|numeric|min:0.01',
             // Info pengiriman
             'delivery_date'            => 'required|date',
             'note'                     => 'nullable|string',
@@ -106,6 +107,9 @@ class DeliveryReportController extends Controller
             'customer_name_manual.required_without'    => 'Nama toko wajib diisi jika tidak memilih dari daftar customer.',
             'customer_address_manual.required_without' => 'Alamat toko wajib diisi jika tidak memilih dari daftar customer.',
             'customer_phone_manual.required_without'   => 'No. telepon toko wajib diisi jika tidak memilih dari daftar customer.',
+            'cash_amount.required_without'             => 'Nominal tunai diterima wajib diisi jika memilih pembayaran Langsung / Cash.',
+            'cash_amount.numeric'                      => 'Nominal tunai diterima harus berupa angka.',
+            'cash_amount.min'                          => 'Nominal tunai diterima harus lebih besar dari 0.',
         ]);
 
         // Validasi minimal 1 produk atau 1 paket
@@ -308,6 +312,14 @@ class DeliveryReportController extends Controller
                 }
             }
 
+            // Validasi nominal cash harus sama dengan total tagihan
+            if (!$request->filled('payment_term_days')) {
+                $cashAmount = (float)$request->input('cash_amount');
+                if (abs($cashAmount - $totalAmount) > 0.01) {
+                    throw new Exception("Nominal tunai diterima (Rp " . number_format($cashAmount, 0, ',', '.') . ") harus sama dengan total Laporan Pengiriman (Rp " . number_format($totalAmount, 0, ',', '.') . ").");
+                }
+            }
+
             // Update nilai final di laporan
             $report->update([
                 'total_amount'        => $totalAmount,
@@ -323,6 +335,21 @@ class DeliveryReportController extends Controller
 
             if (abs((float)$report->total_amount - $totalAmount) > 0.01) {
                 throw new Exception("Total laporan tidak valid. Silakan coba simpan ulang.");
+            }
+
+            // Jika sales memilih Langsung / Cash, otomatis buat SalesDeposit pending
+            if (!$request->filled('payment_term_days')) {
+                $depositNumber = 'DEP-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(6));
+                \App\Models\SalesDeposit::create([
+                    'deposit_number'     => $depositNumber,
+                    'delivery_report_id' => $report->id,
+                    'sales_id'           => Auth::id(),
+                    'amount'             => $totalAmount,
+                    'payment_date'       => $request->delivery_date,
+                    'payment_method'     => 'Tunai',
+                    'note'               => "Setoran otomatis dari Laporan Pengiriman Cash {$reportNumber}",
+                    'status'             => 'menunggu_verifikasi',
+                ]);
             }
 
             DB::commit();

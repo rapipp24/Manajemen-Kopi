@@ -350,6 +350,14 @@
                         'belum_bayar' => ['badge-canceled', 'Belum Bayar'],
                     ];
                     [$payCls, $payLbl] = $statusPaymentMap[$deliveryReport->payment_status] ?? ['badge-pending', $deliveryReport->payment_status];
+
+                    if ($deliveryReport->payment_status === 'belum_bayar' && !$deliveryReport->payment_term_days) {
+                        $hasPendingDeposit = $deliveryReport->deposits()->where('status', 'menunggu_verifikasi')->exists();
+                        if ($hasPendingDeposit) {
+                            $payLbl = 'Belum Bayar (Menunggu Verifikasi Setoran)';
+                            $payCls = 'badge-pending';
+                        }
+                    }
                 @endphp
 
                 <div class="info-row">

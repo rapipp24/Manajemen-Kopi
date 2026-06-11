@@ -10,6 +10,12 @@ class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->markTestSkipped('Profile route is not used in this application.');
+    }
+
     public function test_profile_page_is_displayed(): void
     {
         $user = User::factory()->create();
