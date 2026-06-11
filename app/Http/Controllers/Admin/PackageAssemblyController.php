@@ -23,7 +23,7 @@ class PackageAssemblyController extends Controller
      */
     public function index()
     {
-        $assemblies = PackageAssembly::with(['package', 'creator'])
+        $assemblies = PackageAssembly::with(['package.stock', 'creator'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 

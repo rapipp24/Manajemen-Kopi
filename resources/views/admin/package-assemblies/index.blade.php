@@ -8,10 +8,15 @@
         $totalColumns = $showHppColumns ? 8 : 6;
     @endphp
 
-    <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
-        <p style="color: var(--text-muted); font-size: 14px;">Catatan pembuatan stok paket fisik di gudang utama.</p>
+    <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+        <p style="color: var(--text-muted); font-size: 13.5px; line-height: 1.5; margin: 0; max-width: 70%;">
+            Catatan pembuatan stok paket fisik di gudang utama.<br>
+            <span style="font-size: 12px; color: var(--brown-500); display: block; margin-top: 4px;">
+                <strong>Note:</strong> <em>Jumlah Dibuat</em> menunjukkan total pack yang dibuat pada transaksi tersebut. <em>Stok Gudang Saat Ini</em> menunjukkan sisa stok paket yang masih tersedia di gudang sekarang.
+            </span>
+        </p>
         <a href="{{ route('admin.package-assemblies.create') }}" 
-           style="background: var(--brown-500); color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; transition: background 0.15s; box-shadow: 0 4px 12px rgba(146, 64, 14, 0.15);"
+           style="background: var(--brown-500); color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; transition: background 0.15s; box-shadow: 0 4px 12px rgba(146, 64, 14, 0.15); display: inline-block; white-space: nowrap;"
            onmouseover="this.style.background='var(--brown-700)'" onmouseout="this.style.background='var(--brown-500)'">
             + Buat Stok Paket Baru
         </a>
@@ -37,7 +42,7 @@
                         <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Waktu</th>
                         <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">No. Pembuatan</th>
                         <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Paket</th>
-                        <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Jumlah</th>
+                        <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Jumlah Dibuat</th>
                         @if($showHppColumns)
                         <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">HPP Saat Dibuat</th>
                         <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">Total HPP</th>
@@ -59,8 +64,13 @@
                             <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">
                                 {{ $assembly->package->name ?? 'Paket Terhapus' }}
                             </div>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                 <code>{{ $assembly->package->code ?? '-' }}</code>
+                                @if(isset($assembly->package))
+                                <span style="font-size: 11px; color: #166534; font-weight: 700; background: #f0fdf4; padding: 2px 8px; border-radius: 6px; border: 1px solid #bbf7d0; display: inline-block; white-space: nowrap;">
+                                    Stok Gudang Saat Ini: {{ number_format($assembly->package->stock->qty ?? 0, 0, ',', '.') }} pack
+                                </span>
+                                @endif
                             </div>
                         </td>
                         <td style="padding: 16px 20px; font-size: 13.5px; color: var(--text-mid); text-align: center; font-weight: 700;">
