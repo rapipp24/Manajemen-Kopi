@@ -74,6 +74,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Sales Orders (Pengajuan Barang dari Sales)
     Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');
     Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
+    Route::get('/sales-orders/{salesOrder}/pickup-note', [SalesOrderController::class, 'printPickupNote'])->name('sales-orders.pickup-note');
     Route::patch('/sales-orders/{salesOrder}/status', [SalesOrderController::class, 'updateStatus'])->name('sales-orders.update-status');
 
     // Laporan Pengiriman Sales (Admin: read-only)

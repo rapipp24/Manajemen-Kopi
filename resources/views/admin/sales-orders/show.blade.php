@@ -484,6 +484,24 @@
                 </div>
             </div>
 
+            @if(in_array($salesOrder->status, ['diproses', 'selesai']))
+            <div class="so-card">
+                <div class="so-card-header">
+                    <h3>Cetak Dokumen</h3>
+                </div>
+                <div style="padding:20px 24px;">
+                    <a href="{{ route('admin.sales-orders.pickup-note', $salesOrder) }}" 
+                       target="_blank" 
+                       style="background:#0284c7; color:white; width:100%; padding:11px 18px; border:none; border-radius:10px; font-size:13.5px; font-weight:700; cursor:pointer; text-decoration:none; display:flex; justify-content:center; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(2,132,199,0.15); text-align:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:16px;height:16px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.821V21h10.56v-7.179m-12 0a2.25 2.25 0 012.25-2.25h9a2.25 2.25 0 012.25 2.25m-13.5 0v3.75m13.5-3.75v3.75M6.75 6.75h10.5m-10.5 3h10.5m-10.5-6h10.5" />
+                        </svg>
+                        Cetak Nota Pengambilan
+                    </a>
+                </div>
+            </div>
+            @endif
+
             {{-- Approval Action --}}
             @if($salesOrder->status === 'menunggu' || $salesOrder->status === 'diproses')
             <div class="so-card" style="margin-bottom:0;">

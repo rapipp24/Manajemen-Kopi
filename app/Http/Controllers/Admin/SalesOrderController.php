@@ -216,4 +216,24 @@ class SalesOrderController extends Controller
             return back()->with('error', 'Gagal memproses pengajuan: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Cetak Nota Pengambilan Barang Sales untuk Arsip Gudang
+     */
+    public function printPickupNote(SalesOrder $salesOrder)
+    {
+        // Validasi status harus approved (diproses / selesai)
+        if (!in_array($salesOrder->status, ['diproses', 'selesai'])) {
+            abort(403, 'Nota pengambilan hanya dapat dicetak untuk pengajuan yang sudah disetujui.');
+        }
+
+        $salesOrder->load([
+            'sales',
+            'customer',
+            'items.product.unit',
+            'packageItems.package'
+        ]);
+
+        return view('admin.sales-orders.pickup-note', compact('salesOrder'));
+    }
 }
