@@ -338,7 +338,7 @@ class PackageDeliveryReportTest extends TestCase
     /**
      * 7. test_return_page_does_not_offer_package_items
      */
-    public function test_return_page_does_not_offer_package_items()
+    public function test_return_page_offers_package_items()
     {
         // Give stocks
         SalesStock::create([
@@ -392,9 +392,9 @@ class PackageDeliveryReportTest extends TestCase
         // Verify product item is listed
         $response->assertSee($this->product->name);
 
-        // Verify package item is NOT listed (and verify warning text)
-        $response->assertSee('Catatan: Item paket/pack belum dapat diretur melalui sistem pada fase ini. Jika toko mengembalikan paket, silakan koordinasikan dengan admin untuk pencatatan manual.');
-        $response->assertDontSee($this->package->name);
+        // Verify package item is listed (and verify warning text)
+        $response->assertSee('Return paket hanya dapat dilakukan untuk paket utuh/full pack. Return sebagian isi paket belum tersedia.');
+        $response->assertSee($this->package->name);
     }
 
     /**

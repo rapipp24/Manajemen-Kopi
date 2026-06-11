@@ -127,9 +127,13 @@
         {{-- Kiri: Item yang direturn --}}
         <div class="card">
             <div class="card-header">
-                <h3>Produk yang Dikembalikan</h3>
+                <h3>Item yang Dikembalikan</h3>
             </div>
             
+            @if($return->items->isNotEmpty())
+            <div style="padding: 14px 18px 0; font-weight: 700; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                Produk Satuan
+            </div>
             <div class="table-scroll-container desktop-only">
                 <table>
                     <thead>
@@ -155,15 +159,6 @@
                         </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
-                        <tr style="background:var(--cream); font-weight: 800; border-top: 1px solid var(--border);">
-                            <td colspan="3" style="text-align:right;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">Total Nilai Return</td>
-                            <td style="text-align:right;font-size:16px;font-weight:800;color:var(--brown);">
-                                Rp {{ number_format($return->total_return, 0, ',', '.') }}
-                            </td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
 
@@ -183,6 +178,85 @@
                     @endif
                 </div>
                 @endforeach
+            </div>
+            @endif
+
+            @if($return->packageItems->isNotEmpty())
+            <div style="padding: 16px 18px 0; font-weight: 700; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; {{ $return->items->isNotEmpty() ? 'border-top: 1px solid var(--border);' : '' }}">
+                Paket / Pack
+            </div>
+            <div class="table-scroll-container desktop-only">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paket</th>
+                            <th style="text-align:center;">Qty Return</th>
+                            <th style="text-align:right;">Harga/pack</th>
+                            <th style="text-align:right;">Subtotal</th>
+                            <th>Kondisi</th>
+                            <th>Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($return->packageItems as $item)
+                        <tr>
+                            <td>
+                                <div style="font-weight:700;color:var(--text);font-size:13.5px;">{{ $item->package_name_snapshot }}</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px;">Kode: {{ $item->package_code_snapshot }}</div>
+                            </td>
+                            <td style="text-align:center;font-weight:700;color:var(--text);">{{ number_format($item->qty, 0, ',', '.') }} pack</td>
+                            <td style="text-align:right;color:var(--muted);font-weight:500;">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                            <td style="text-align:right;font-weight:800;color:var(--text);">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            <td>
+                                @if($item->condition === 'layak_jual')
+                                    <span class="badge badge-approved" style="font-size:10px; padding:2px 6px;">Layak Jual</span>
+                                @elseif($item->condition === 'tidak_layak_jual')
+                                    <span class="badge badge-canceled" style="font-size:10px; padding:2px 6px;">Tidak Layak Jual</span>
+                                @else
+                                    <span class="badge badge-pending" style="font-size:10px; padding:2px 6px;">Perlu Proses Ulang</span>
+                                @endif
+                            </td>
+                            <td style="color:var(--muted);font-size:12.5px;">{{ $item->replacement_note ?? '—' }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-only">
+                @foreach($return->packageItems as $item)
+                <div class="mobile-item">
+                    <div class="mobile-item-top">
+                        <div class="mobile-item-title">{{ $item->package_name_snapshot }}</div>
+                        <div class="mobile-item-qty">{{ number_format($item->qty, 0, ',', '.') }} pack</div>
+                    </div>
+                    <div class="mobile-item-bot" style="margin-top: 4px;">
+                        <span class="mobile-item-weight" style="font-size: 11px;">
+                            @if($item->condition === 'layak_jual')
+                                Layak Jual
+                            @elseif($item->condition === 'tidak_layak_jual')
+                                Tidak Layak Jual
+                            @else
+                                Perlu Proses Ulang
+                            @endif
+                        </span>
+                        <span class="mobile-item-subtotal">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                    </div>
+                    @if($item->replacement_note)
+                    <div class="mobile-item-reason">Catatan: {{ $item->replacement_note }}</div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <div class="desktop-only" style="background:var(--cream); padding: 14px 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">Total Nilai Return</span>
+                <span style="font-size:16px;font-weight:800;color:var(--brown);">
+                    Rp {{ number_format($return->total_return, 0, ',', '.') }}
+                </span>
+            </div>
+            <div class="mobile-only" style="border-top: 1px solid var(--border);">
                 <div class="mobile-total-row">
                     <div class="mobile-total-label">Total Return</div>
                     <div class="mobile-total-val">Rp {{ number_format($return->total_return, 0, ',', '.') }}</div>

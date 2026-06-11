@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class DeliveryReportPackageItem extends Model
+class SalesReturnPackageItem extends Model
 {
     protected $fillable = [
-        'delivery_report_id',
+        'sales_return_id',
+        'delivery_report_package_item_id',
         'package_id',
         'qty',
         'price',
@@ -17,6 +17,9 @@ class DeliveryReportPackageItem extends Model
         'package_name_snapshot',
         'package_code_snapshot',
         'package_hpp_snapshot',
+        'condition',
+        'replacement_note',
+        'admin_note',
     ];
 
     protected $casts = [
@@ -26,18 +29,18 @@ class DeliveryReportPackageItem extends Model
         'package_hpp_snapshot' => 'decimal:2',
     ];
 
-    public function deliveryReport(): BelongsTo
+    public function salesReturn(): BelongsTo
     {
-        return $this->belongsTo(DeliveryReport::class);
+        return $this->belongsTo(SalesReturn::class);
+    }
+
+    public function deliveryReportPackageItem(): BelongsTo
+    {
+        return $this->belongsTo(DeliveryReportPackageItem::class);
     }
 
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class)->withTrashed();
-    }
-
-    public function returnPackageItems(): HasMany
-    {
-        return $this->hasMany(SalesReturnPackageItem::class);
     }
 }

@@ -109,7 +109,7 @@
     </div>
 
     {{-- STEP 2: Form Item Return (hanya muncul setelah laporan dipilih) --}}
-    @if(isset($selectedReport) && $itemsWithMaxReturn->isNotEmpty())
+    @if(isset($selectedReport) && ($itemsWithMaxReturn->isNotEmpty() || $packageItemsWithMaxReturn->isNotEmpty()))
     <form method="POST" action="{{ route('sales.returns.store') }}" id="returnForm">
         @csrf
 
@@ -117,10 +117,18 @@
             <div style="background:#fff7ed; border:1px solid #ffedd5; border-radius:8px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
                 <i data-lucide="alert-triangle" style="width:18px; height:18px; color:#c2410c; flex-shrink:0;"></i>
                 <div style="font-size:12.5px; color:#c2410c; font-weight:600; line-height:1.4;">
-                    Catatan: Item paket/pack belum dapat diretur melalui sistem pada fase ini. Jika toko mengembalikan paket, silakan koordinasikan dengan admin untuk pencatatan manual.
+                    Return paket hanya dapat dilakukan untuk paket utuh/full pack. Return sebagian isi paket belum tersedia.
                 </div>
             </div>
         @endif
+
+        {{-- Info penting status pending --}}
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+            <i data-lucide="info" style="width:18px; height:18px; color:#1e40af; flex-shrink:0;"></i>
+            <div style="font-size:12.5px; color:#1e40af; font-weight:600; line-height:1.4;">
+                Stok dan tagihan belum berubah saat pengajuan return. Perubahan diproses setelah admin approve.
+            </div>
+        </div>
 
         <input type="hidden" name="delivery_report_id" value="{{ $selectedReport->id }}">
 
@@ -168,10 +176,11 @@
             </div>
         </div>
 
-        {{-- Tabel Item Return --}}
-        <div class="panel-card" style="padding:0; overflow:hidden;">
+        {{-- Tabel Item Produk Return --}}
+        @if($itemsWithMaxReturn->isNotEmpty())
+        <div class="panel-card" style="padding:0; overflow:hidden; margin-bottom: 20px;">
             <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--cream);">
-                <h3 class="panel-title">3. Produk yang Dikembalikan</h3>
+                <h3 class="panel-title">3. Produk Satuan yang Dikembalikan</h3>
                 <p class="panel-subtitle">Isi jumlah barang yang direturn. Kosongkan (0) jika tidak ada return untuk produk tersebut.</p>
             </div>
 
@@ -225,6 +234,75 @@
                 </table>
             </div>
         </div>
+        @endif
+
+        {{-- Tabel Item Paket Return --}}
+        @if($packageItemsWithMaxReturn->isNotEmpty())
+        <div class="panel-card" style="padding:0; overflow:hidden; margin-bottom: 20px;">
+            <div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--cream);">
+                <h3 class="panel-title">4. Paket / Pack yang Dikembalikan</h3>
+                <p class="panel-subtitle">Pilih jumlah paket utuh yang direturn dan kondisinya. Kosongkan (0) jika tidak ada return untuk paket tersebut.</p>
+            </div>
+
+            <div class="swipe-hint" style="margin: 12px 16px 4px;">
+                <i data-lucide="info" style="width:14px;height:14px;"></i>
+                <span>Geser tabel ke samping untuk melihat seluruh kolom input</span>
+            </div>
+
+            <div class="table-scroll-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama Paket / Pack</th>
+                            <th style="text-align:center;">Qty Kirim</th>
+                            <th style="text-align:center;">Maks Return</th>
+                            <th style="text-align:right;">Harga/pack</th>
+                            <th style="text-align:center;">Qty Return</th>
+                            <th>Kondisi Paket</th>
+                            <th>Alasan / Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($packageItemsWithMaxReturn as $i => $item)
+                        <tr>
+                            <td>
+                                <input type="hidden" name="package_items[{{ $i }}][delivery_report_package_item_id]" value="{{ $item->id }}">
+                                <div style="font-weight:700;color:var(--text);font-size:13.5px;">{{ $item->package_name_snapshot }}</div>
+                                <div style="font-size:11px;color:var(--muted);margin-top:2px;">Kode: {{ $item->package_code_snapshot }}</div>
+                            </td>
+                            <td style="text-align:center;font-weight:600;color:var(--muted);">{{ number_format($item->qty, 0, ',', '.') }} pack</td>
+                            <td style="text-align:center;">
+                                <span class="qty-badge">
+                                    Maks {{ number_format($item->max_return, 0, ',', '.') }} pack
+                                </span>
+                            </td>
+                            <td style="text-align:right;color:var(--muted);font-weight:500;">
+                                Rp {{ number_format($item->price, 0, ',', '.') }}
+                            </td>
+                            <td style="text-align:center;">
+                                <input type="number" name="package_items[{{ $i }}][qty]"
+                                       value="{{ old('package_items.' . $i . '.qty', 0) }}"
+                                       min="0" max="{{ $item->max_return }}" class="input-qty">
+                            </td>
+                            <td>
+                                <select name="package_items[{{ $i }}][condition]" class="form-control" style="width: 150px; font-size:12px; padding: 6px 8px;">
+                                    <option value="layak_jual" {{ old('package_items.' . $i . '.condition') === 'layak_jual' ? 'selected' : '' }}>Layak Jual</option>
+                                    <option value="tidak_layak_jual" {{ old('package_items.' . $i . '.condition') === 'tidak_layak_jual' ? 'selected' : '' }}>Tidak Layak Jual</option>
+                                    <option value="perlu_proses_ulang" {{ old('package_items.' . $i . '.condition') === 'perlu_proses_ulang' ? 'selected' : '' }}>Perlu Proses Ulang</option>
+                                </select>
+                            </td>
+                            <td style="padding-right: 18px;">
+                                <input type="text" name="package_items[{{ $i }}][reason]"
+                                       value="{{ old('package_items.' . $i . '.reason') }}"
+                                       placeholder="Misal: Dus penyok, retur tukar" class="input-text">
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
 
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:30px;">
             <a href="{{ route('sales.returns.index') }}" class="sales-ghost-button">
@@ -236,26 +314,25 @@
         </div>
     </form>
 
-    @elseif(isset($selectedReport) && $itemsWithMaxReturn->isEmpty())
+    @elseif(isset($selectedReport) && $itemsWithMaxReturn->isEmpty() && $packageItemsWithMaxReturn->isEmpty())
         <div style="background:#fefbeb;border:1px solid #fef3c7;border-radius:12px;padding:24px;text-align:center;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);">
             <i data-lucide="alert-triangle" style="width:36px;height:36px;color:var(--accent);margin:0 auto 12px;display:block;"></i>
-            @if($selectedReport->packageItems->isNotEmpty())
-                <div style="font-size:14px;font-weight:700;color:var(--text);">Item paket/pack belum dapat diretur melalui sistem pada fase ini.</div>
-                <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Jika toko mengembalikan paket, silakan koordinasikan dengan admin untuk pencatatan manual.</div>
-            @else
-                <div style="font-size:14px;font-weight:700;color:var(--text);">Tidak ada item yang bisa direturn dari laporan ini.</div>
-                <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Semua item sudah direturn maksimal, atau belum ada item terdaftar di laporan ini.</div>
-            @endif
+            <div style="font-size:14px;font-weight:700;color:var(--text);">Tidak ada item yang bisa direturn dari laporan ini.</div>
+            <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Semua item (baik produk maupun paket) sudah direturn maksimal, atau tidak ada item terdaftar di laporan ini.</div>
         </div>
     @endif
 
     <script>
         document.getElementById('returnForm')?.addEventListener('submit', function(e) {
-            const qtys = document.querySelectorAll('input[name*="[qty_return]"]');
-            const hasQty = Array.from(qtys).some(input => parseInt(input.value) > 0);
-            if (!hasQty) {
+            const productQtys = document.querySelectorAll('input[name*="[qty_return]"]');
+            const packageQtys = document.querySelectorAll('input[name^="package_items"][name*="[qty]"]');
+            
+            const hasProductQty = Array.from(productQtys).some(input => parseInt(input.value) > 0);
+            const hasPackageQty = Array.from(packageQtys).some(input => parseInt(input.value) > 0);
+            
+            if (!hasProductQty && !hasPackageQty) {
                 e.preventDefault();
-                alert('Minimal satu produk harus memiliki qty return lebih dari 0.');
+                alert('Minimal satu produk atau paket harus memiliki qty return lebih dari 0.');
             }
         });
     </script>

@@ -45,7 +45,7 @@ class SalesReturnController extends Controller
      */
     public function show(SalesReturn $return)
     {
-        $return->load(['sales', 'deliveryReport.items.product', 'deliveryReport.packageItems', 'items.product', 'approver']);
+        $return->load(['sales', 'deliveryReport.items.product', 'deliveryReport.packageItems', 'items.product', 'packageItems.package', 'packageItems.deliveryReportPackageItem', 'approver']);
 
         return view('admin.returns.show', compact('return'));
     }
@@ -78,9 +78,9 @@ class SalesReturnController extends Controller
                 throw new Exception('Return ini sudah diproses sebelumnya (status: ' . $return->status . ').');
             }
 
-            $return->load('items');
+            $return->load(['items', 'packageItems']);
 
-            // Jika layak jual, proses penambahan stok ke gudang
+            // Jika layak jual, proses penambahan stok ke gudang (Produk Satuan)
             if ($request->return_condition === 'layak_jual') {
                 // Proses setiap item: tambah stok gudang + buat stock movement
                 foreach ($return->items as $item) {
@@ -103,6 +103,41 @@ class SalesReturnController extends Controller
                         'stock_after'    => $product->current_stock,
                         'note'           => 'Return dari toko (Laporan: ' . $return->deliveryReport->report_number . ') - Layak Jual',
                         'user_id'        => null, // null = stok gudang
+                    ]);
+                }
+            }
+
+            // Proses setiap item paket (Paket)
+            foreach ($return->packageItems as $pkgReturnItem) {
+                if ($pkgReturnItem->condition === 'layak_jual') {
+                    // Lock package stock
+                    $packageStock = \App\Models\PackageStock::lockForUpdate()
+                        ->where('package_id', $pkgReturnItem->package_id)
+                        ->first();
+                    
+                    if (!$packageStock) {
+                        $packageStock = \App\Models\PackageStock::create([
+                            'package_id' => $pkgReturnItem->package_id,
+                            'qty'        => 0.00
+                        ]);
+                    }
+
+                    $stockBefore = $packageStock->qty;
+                    $packageStock->qty += $pkgReturnItem->qty;
+                    $packageStock->save();
+
+                    // Catat mutasi stok paket (movement_type = 'return')
+                    \App\Models\PackageStockMovement::create([
+                        'package_id'     => $pkgReturnItem->package_id,
+                        'user_id'        => null, // null = gudang
+                        'movement_type'  => 'return',
+                        'qty'            => $pkgReturnItem->qty,
+                        'stock_before'   => $stockBefore,
+                        'stock_after'    => $packageStock->qty,
+                        'reference_type' => SalesReturn::class,
+                        'reference_id'   => $return->id,
+                        'note'           => "Return paket dari toko " . $return->deliveryReport->toko_name . " via " . $return->return_number,
+                        'created_by'     => Auth::id(),
                     ]);
                 }
             }

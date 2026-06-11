@@ -31,6 +31,8 @@
 
         {{-- Kiri: Tabel Item --}}
         <div>
+            {{-- Produk Satuan yang Dikembalikan --}}
+            @if($return->items->isNotEmpty())
             <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:16px;">
                 <div style="padding:14px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
                     <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Produk yang Dikembalikan</h3>
@@ -52,33 +54,78 @@
                                 <div style="font-weight:600;color:#0f172a;">{{ $item->product->name }}</div>
                                 <div style="font-size:11px;color:#94a3b8;">{{ $item->product->weight ?? '' }}gr</div>
                             </td>
-                            <td style="padding:13px 20px;text-align:center;font-weight:700;font-size:15px;">{{ number_format($item->qty_return, 0, ',', '.') }}</td>
+                            <td style="padding:13px 20px;text-align:center;font-weight:700;font-size:15px;">{{ number_format($item->qty_return, 0, ',', '.') }} pcs</td>
                             <td style="padding:13px 20px;text-align:right;color:#475569;">Rp {{ number_format($item->price_snapshot, 0, ',', '.') }}</td>
                             <td style="padding:13px 20px;text-align:right;font-weight:700;">Rp {{ number_format($item->subtotal_return, 0, ',', '.') }}</td>
                             <td style="padding:13px 20px;color:#64748b;font-size:12px;">{{ $item->reason ?? '—' }}</td>
                         </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
-                        <tr style="background:#f8fafc;">
-                            <td colspan="3" style="padding:13px 20px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Total Nilai Return</td>
-                            <td style="padding:13px 20px;text-align:right;font-size:18px;font-weight:800;color:#92400e;">
-                                Rp {{ number_format($return->total_return, 0, ',', '.') }}
-                            </td>
-                            <td></td>
+                </table>
+            </div>
+            @endif
+
+            {{-- Paket yang Dikembalikan --}}
+            @if($return->packageItems->isNotEmpty())
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:16px;">
+                <div style="padding:14px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+                    <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0;">Paket / Pack yang Dikembalikan</h3>
+                </div>
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;">
+                            <th style="padding:10px 20px;text-align:left;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;">Nama Paket</th>
+                            <th style="padding:10px 20px;text-align:center;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;">Qty Return</th>
+                            <th style="padding:10px 20px;text-align:right;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;">Harga (Snapshot)</th>
+                            <th style="padding:10px 20px;text-align:right;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;">Subtotal Return</th>
+                            <th style="padding:10px 20px;text-align:center;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;">Kondisi</th>
+                            <th style="padding:10px 20px;text-align:left;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;">Catatan Sales</th>
                         </tr>
-                    </tfoot>
+                    </thead>
+                    <tbody>
+                        @foreach($return->packageItems as $item)
+                        <tr style="border-bottom:1px solid #f1f5f9;">
+                            <td style="padding:13px 20px;">
+                                <div style="font-weight:600;color:#0f172a;">{{ $item->package_name_snapshot }}</div>
+                                <div style="font-size:11px;color:#94a3b8;">Kode: {{ $item->package_code_snapshot }}</div>
+                            </td>
+                            <td style="padding:13px 20px;text-align:center;font-weight:700;font-size:15px;">{{ number_format($item->qty, 0, ',', '.') }} pack</td>
+                            <td style="padding:13px 20px;text-align:right;color:#475569;">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                            <td style="padding:13px 20px;text-align:right;font-weight:700;">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            <td style="padding:13px 20px;text-align:center;">
+                                @if($item->condition === 'layak_jual')
+                                    <span style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">Layak Jual</span>
+                                @elseif($item->condition === 'tidak_layak_jual')
+                                    <span style="background:#fee2e2;color:#991b1b;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">Tidak Layak Jual</span>
+                                @else
+                                    <span style="background:#fef08a;color:#854d0e;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;">Perlu Proses Ulang</span>
+                                @endif
+                            </td>
+                            <td style="padding:13px 20px;color:#64748b;font-size:12px;">{{ $item->replacement_note ?? '—' }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
 
-            @if($return->deliveryReport && $return->deliveryReport->packageItems->isNotEmpty())
-                <div style="background:#fff7ed; border:1px solid #ffedd5; border-radius:12px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    <div style="font-size:12.5px; color:#c2410c; font-weight:600; line-height:1.4;">
-                        Catatan: Item paket/pack belum dapat diretur melalui sistem pada fase ini. Jika toko mengembalikan paket, silakan koordinasikan dengan admin untuk pencatatan manual.
-                    </div>
-                </div>
+            <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:12px;padding:16px;margin-bottom:16px;font-size:12.5px;color:#334155;line-height:1.6;">
+                <h4 style="font-size:13.5px;font-weight:700;color:#0f172a;margin:0 0 10px;display:flex;align-items:center;gap:6px;">
+                    <i data-lucide="info" style="width:16px;height:16px;color:#2563eb;"></i>
+                    Informasi Penting Return Paket untuk Admin:
+                </h4>
+                <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;">
+                    <li><strong>Jika Layak Jual:</strong> stok paket gudang akan bertambah saat approve.</li>
+                    <li><strong>Jika Tidak Layak Jual / Perlu Proses Ulang:</strong> stok paket gudang tidak otomatis bertambah dan proses fisik dilakukan manual.</li>
+                    <li><strong>Jika Tukar Barang:</strong> tagihan tidak berkurang; pengganti adalah paket yang sama dan qty yang sama, diproses manual.</li>
+                </ul>
+            </div>
             @endif
+
+            {{-- Grand Total --}}
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:16px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:11.5px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Total Nilai Return</span>
+                <span style="font-size:18px;font-weight:800;color:#92400e;">Rp {{ number_format($return->total_return, 0, ',', '.') }}</span>
+            </div>
 
             {{-- Info Laporan Pengiriman terkait --}}
             <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">

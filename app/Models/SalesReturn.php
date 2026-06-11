@@ -61,11 +61,19 @@ class SalesReturn extends Model
         return $this->hasMany(SalesReturnItem::class);
     }
 
+    /** Item-item paket yang dikembalikan */
+    public function packageItems(): HasMany
+    {
+        return $this->hasMany(SalesReturnPackageItem::class);
+    }
+
     /**
-     * Total nilai return ini (penjumlahan semua subtotal item).
+     * Total nilai return ini (penjumlahan semua subtotal item produk dan paket).
      */
     public function getTotalReturnAttribute(): float
     {
-        return (float) $this->items->sum('subtotal_return');
+        $productTotal = (float) $this->items->sum('subtotal_return');
+        $packageTotal = (float) $this->packageItems->sum('subtotal');
+        return $productTotal + $packageTotal;
     }
 }
