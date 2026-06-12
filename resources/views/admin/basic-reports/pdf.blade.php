@@ -298,13 +298,24 @@
             </thead>
             <tbody>
                 @foreach($rawMaterialsStock as $r)
-                    @php $isCritical = $r->current_stock <= $r->minimum_stock; @endphp
+                    @php
+                        if ($r->current_stock <= 0) {
+                            $statusColor = '#dc2626';
+                            $statusText = 'HABIS';
+                        } elseif ($r->current_stock <= $r->minimum_stock) {
+                            $statusColor = '#d97706';
+                            $statusText = 'HAMPIR HABIS';
+                        } else {
+                            $statusColor = '#059669';
+                            $statusText = 'AMAN';
+                        }
+                    @endphp
                     <tr>
                         <td>Bahan Baku</td>
                         <td><strong>{{ $r->name }}</strong></td>
                         <td style="text-align: right;">{{ number_format($r->current_stock, 0, ',', '.') }} {{ $r->unit->code ?? '' }}</td>
-                        <td style="text-align: center; font-weight: bold; color: {{ $isCritical ? '#dc2626' : '#059669' }}">
-                            {{ $isCritical ? 'HAMPIR HABIS' : 'AMAN' }}
+                        <td style="text-align: center; font-weight: bold; color: {{ $statusColor }}">
+                            {{ $statusText }}
                         </td>
                     </tr>
                 @endforeach
@@ -378,6 +389,9 @@
                         <td style="font-size: 11px;">
                             @foreach($order->items as $item)
                                 • {{ $item->product->name ?? '—' }}: {{ number_format($item->qty, 0, ',', '.') }} pcs<br>
+                            @endforeach
+                            @foreach($order->packageItems as $pkgItem)
+                                • [PAKET] {{ $pkgItem->package->name ?? '—' }}: {{ number_format($pkgItem->qty, 0, ',', '.') }} pack<br>
                             @endforeach
                         </td>
                         <td style="text-align: center; font-weight: bold;">

@@ -508,17 +508,24 @@
                     <tbody>
                         <!-- Raw Materials List -->
                         @foreach($rawMaterialsStock as $r)
-                            @php $isCritical = $r->current_stock <= $r->minimum_stock; @endphp
+                            @php
+                                if ($r->current_stock <= 0) {
+                                    $statusClass = 'status-danger';
+                                    $statusText = 'Habis';
+                                } elseif ($r->current_stock <= $r->minimum_stock) {
+                                    $statusClass = 'status-warning';
+                                    $statusText = 'Hampir Habis';
+                                } else {
+                                    $statusClass = 'status-success';
+                                    $statusText = 'Aman';
+                                }
+                            @endphp
                             <tr>
                                 <td><span style="font-size: 11px; font-weight: 800; color: #9e7c62; background: #fdfaf6; padding: 3px 8px; border-radius: 6px; border: 1px solid #e8d8c4; text-transform: uppercase;">Bahan Baku</span></td>
                                 <td><span style="font-weight: 600; color: #2c1a0e;">{{ $r->name }}</span></td>
                                 <td style="text-align: right; font-weight: 700;">{{ number_format($r->current_stock, 0, ',', '.') }} {{ $r->unit->code ?? '' }}</td>
                                 <td style="text-align: center;">
-                                    @if($isCritical)
-                                        <span class="status-badge status-danger">Hampir Habis</span>
-                                    @else
-                                        <span class="status-badge status-success">Aman</span>
-                                    @endif
+                                    <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
                                 </td>
                             </tr>
                         @endforeach
@@ -608,6 +615,11 @@
                                     @foreach($order->items as $item)
                                         <div style="margin-bottom: 2px;">
                                             • {{ $item->product->name ?? '—' }}: <strong>{{ number_format($item->qty, 0, ',', '.') }} pcs</strong>
+                                        </div>
+                                    @endforeach
+                                    @foreach($order->packageItems as $pkgItem)
+                                        <div style="margin-bottom: 2px;">
+                                            • [PAKET] {{ $pkgItem->package->name ?? '—' }}: <strong>{{ number_format($pkgItem->qty, 0, ',', '.') }} pack</strong>
                                         </div>
                                     @endforeach
                                 </td>

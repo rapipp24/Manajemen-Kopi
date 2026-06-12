@@ -97,7 +97,7 @@ class BasicReportController extends Controller
 
         // 5. Order
         $orders = SalesOrder::whereBetween('created_at', [$startDate, $endDate])
-            ->with(['sales', 'items.product'])
+            ->with(['sales', 'items.product', 'packageItems.package'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -232,7 +232,13 @@ class BasicReportController extends Controller
                         fputcsv($file, ['Tidak ada data pada periode ini', '', '', '', ''], ';');
                     } else {
                         foreach ($raws as $r) {
-                            $status = $r->current_stock <= $r->minimum_stock ? 'Kritis / Hampir Habis' : 'Aman';
+                            if ($r->current_stock <= 0) {
+                                $status = 'HABIS';
+                            } elseif ($r->current_stock <= $r->minimum_stock) {
+                                $status = 'HAMPIR HABIS';
+                            } else {
+                                $status = 'AMAN';
+                            }
                             fputcsv($file, [
                                 'Bahan Baku',
                                 $r->name,
@@ -243,7 +249,7 @@ class BasicReportController extends Controller
                         }
 
                         foreach ($prods as $p) {
-                            $status = $p->current_stock <= 0 ? 'Habis' : 'Tersedia';
+                            $status = $p->current_stock <= 0 ? 'HABIS' : 'TERSEDIA';
                             fputcsv($file, [
                                 'Barang Jadi',
                                 $p->name,
@@ -291,7 +297,7 @@ class BasicReportController extends Controller
                     fputcsv($file, ['Tanggal', 'User', 'Produk', 'Status', 'Total'], ';');
 
                     $orders = SalesOrder::whereBetween('created_at', [$startDate, $endDate])
-                        ->with(['sales', 'items.product'])
+                        ->with(['sales', 'items.product', 'packageItems.package'])
                         ->orderBy('created_at', 'desc')
                         ->get();
 
@@ -299,9 +305,14 @@ class BasicReportController extends Controller
                         fputcsv($file, ['Tidak ada data pada periode ini', '', '', '', ''], ';');
                     } else {
                         foreach ($orders as $order) {
-                            $productsStr = $order->items->map(function ($item) {
-                                return ($item->product->name ?? '—') . ' (' . number_format($item->qty, 0, ',', '.') . ' pcs)';
-                            })->implode(', ');
+                            $itemParts = [];
+                            foreach ($order->items as $item) {
+                                $itemParts[] = ($item->product->name ?? '—') . ': ' . number_format($item->qty, 0, ',', '.') . ' pcs';
+                            }
+                            foreach ($order->packageItems as $pkgItem) {
+                                $itemParts[] = '[PAKET] ' . ($pkgItem->package->name ?? '—') . ': ' . number_format($pkgItem->qty, 0, ',', '.') . ' pack';
+                            }
+                            $productsStr = implode('; ', $itemParts);
 
                             fputcsv($file, [
                                 Carbon::parse($order->created_at)->format('d-m-Y'),
@@ -380,7 +391,7 @@ class BasicReportController extends Controller
 
             case 'order':
                 $orders = SalesOrder::whereBetween('created_at', [$startDate, $endDate])
-                    ->with(['sales', 'items.product'])
+                    ->with(['sales', 'items.product', 'packageItems.package'])
                     ->orderBy('created_at', 'desc')
                     ->get();
                 $title = "Laporan Pengajuan Barang Sales";
