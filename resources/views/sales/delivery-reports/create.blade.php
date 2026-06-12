@@ -101,6 +101,54 @@
         .btn-submit:hover:not(:disabled) { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
         .btn-submit:disabled { background:#e7e5e4;color:#a8a29e;cursor:not-allowed;box-shadow:none; }
 
+        /* Input Group styling for Nominal Tunai Diterima */
+        .input-group {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+        }
+        .input-group-addon {
+            display: flex;
+            align-items: center;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            background: var(--brown-light);
+            border: 1px solid var(--border);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            white-space: nowrap;
+        }
+        .input-group input[type="number"] {
+            flex: 1;
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            font-family: inherit;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(197,160,89,0.12);
+        }
+
+        /* Hide spinner for input with class no-spinner */
+        .no-spinner::-webkit-outer-spin-button,
+        .no-spinner::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .no-spinner {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
         @media (max-width: 767px) {
             .layout { grid-template-columns: 1fr; }
             .items-table { min-width: 650px; } /* Prevent squishing and allow smooth thumb scroll on mobile! */
@@ -240,11 +288,11 @@
 
                         <div class="field" id="cash_payment_section">
                             <label>Nominal Tunai Diterima *</label>
-                            <div style="position:relative; display:flex; align-items:center;">
-                                <span style="position:absolute; left:12px; font-weight:700; color:var(--text); font-size:13.5px;">Rp</span>
-                                <input type="number" name="cash_amount" id="cash_amount" class="form-control" style="padding-left:36px;" value="{{ old('cash_amount') }}" placeholder="Harus sama dengan total tagihan" step="0.01">
+                            <div class="input-group">
+                                <span class="input-group-addon">Rp</span>
+                                <input type="number" name="cash_amount" id="cash_amount" class="no-spinner" min="0" step="0.01" autocomplete="off" value="{{ old('cash_amount') }}" placeholder="Harus sama dengan total tagihan">
                             </div>
-                            <div class="stok-hint" style="color:#0284c7; margin-top:4px;">Pembayaran cash wajib disetor penuh dan akan diverifikasi oleh Admin.</div>
+                            <div style="font-size:11.5px; color:#6b7280; margin-top:6px; font-weight:400; line-height:1.4;">Pembayaran cash wajib disetor penuh dan akan diverifikasi oleh Admin.</div>
                             @error('cash_amount')<div class="err">{{ $message }}</div>@enderror
                         </div>
 
