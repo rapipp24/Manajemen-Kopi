@@ -248,6 +248,14 @@
                     </tr>
                 @endforelse
             </tbody>
+            @if($rawMaterials->isNotEmpty())
+                <tfoot>
+                    <tr style="background: #f5f5f5; font-weight: bold; border-top: 1.5px solid #333;">
+                        <td colspan="4" style="padding: 10px 12px; font-weight: bold;">TOTAL PEMBELIAN</td>
+                        <td style="text-align: right; padding: 10px 12px; font-weight: bold;">Rp {{ number_format($rawMaterials->sum('subtotal'), 0, ',', '.') }}</td>
+                    </tr>
+                </tfoot>
+            @endif
         </table>
     @endif
 
@@ -282,6 +290,15 @@
                     </tr>
                 @endforelse
             </tbody>
+            @if($productions->isNotEmpty())
+                <tfoot>
+                    <tr style="background: #f5f5f5; font-weight: bold; border-top: 1.5px solid #333;">
+                        <td colspan="3" style="padding: 10px 12px; font-weight: bold;">TOTAL PRODUKSI</td>
+                        <td style="text-align: right; padding: 10px 12px; font-weight: bold;">{{ number_format($productions->sum('total_output'), 0, ',', '.') }} gr</td>
+                        <td style="text-align: right; padding: 10px 12px; font-weight: bold;">{{ number_format($productions->sum('shrinkage'), 0, ',', '.') }} gr</td>
+                    </tr>
+                </tfoot>
+            @endif
         </table>
     @endif
 
@@ -366,6 +383,14 @@
                     </tr>
                 @endforelse
             </tbody>
+            @if($sales->isNotEmpty())
+                <tfoot>
+                    <tr style="background: #f5f5f5; font-weight: bold; border-top: 1.5px solid #333;">
+                        <td colspan="3" style="padding: 10px 12px; font-weight: bold;">TOTAL PENJUALAN</td>
+                        <td style="text-align: right; padding: 10px 12px; font-weight: bold;">Rp {{ number_format($sales->sum('total_amount'), 0, ',', '.') }}</td>
+                    </tr>
+                </tfoot>
+            @endif
         </table>
     @endif
 
@@ -395,7 +420,13 @@
                             @endforeach
                         </td>
                         <td style="text-align: center; font-weight: bold;">
-                            {{ strtoupper($order->status) }}
+                            @if($order->status === 'diproses' || $order->status === 'selesai')
+                                <span style="color: #059669;">DISETUJUI</span>
+                            @elseif($order->status === 'dibatalkan')
+                                <span style="color: #dc2626;">DITOLAK</span>
+                            @else
+                                <span style="color: #d97706;">MENUNGGU</span>
+                            @endif
                         </td>
                         <td style="text-align: right; font-weight: 700;">Rp {{ number_format($order->total, 0, ',', '.') }}</td>
                     </tr>
@@ -405,6 +436,14 @@
                     </tr>
                 @endforelse
             </tbody>
+            @if($orders->isNotEmpty())
+                <tfoot>
+                    <tr style="background: #f5f5f5; font-weight: bold; border-top: 1.5px solid #333;">
+                        <td colspan="4" style="padding: 10px 12px; font-weight: bold;">TOTAL NILAI PENGAJUAN</td>
+                        <td style="text-align: right; padding: 10px 12px; font-weight: bold;">Rp {{ number_format($orders->sum('total'), 0, ',', '.') }}</td>
+                    </tr>
+                </tfoot>
+            @endif
         </table>
     @endif
 

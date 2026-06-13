@@ -159,9 +159,9 @@
                 <td class="separator">:</td>
                 <td class="value">{{ $salesOrder->processed_at ? $salesOrder->processed_at->format('d-m-Y H:i') : '-' }}</td>
                 
-                <td class="label">Status</td>
-                <td class="separator">:</td>
-                <td class="value" style="text-transform: uppercase;">{{ $salesOrder->status }}</td>
+                <td class="label"></td>
+                <td class="separator"></td>
+                <td class="value"></td>
             </tr>
         </table>
 

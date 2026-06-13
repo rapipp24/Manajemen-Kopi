@@ -29,6 +29,31 @@
             margin: 4px 0 0 0;
         }
 
+        .btn-minimalist-recap {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: var(--brown-500);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            margin-left: 10px;
+            vertical-align: middle;
+            box-shadow: 0 4px 12px rgba(146, 64, 14, 0.15);
+            line-height: 1.2;
+            cursor: pointer;
+        }
+        .btn-minimalist-recap:hover {
+            background-color: var(--brown-700);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(146, 64, 14, 0.25);
+        }
+
         /* Date Picker Card - Premium Minimalist */
         .date-picker-card {
             background: #fff;
@@ -633,7 +658,7 @@
         <div class="page-header">
             <div class="page-title-block">
                 <h1>Absensi Karyawan Gudang</h1>
-                <p>Pencatatan kehadiran harian karyawan gudang. <a href="{{ route('admin.reports.attendance') }}" style="color: var(--brown-500); font-weight: 700; text-decoration: underline; margin-left: 6px;">Lihat Rekap Bulanan ➔</a></p>
+                <p>Pencatatan kehadiran harian karyawan gudang. <a href="{{ route('admin.reports.attendance') }}" class="btn-minimalist-recap">Lihat Rekap Bulanan</a></p>
             </div>
             
             <form action="{{ route('admin.attendances.index') }}" method="GET" id="date-form">

@@ -62,7 +62,7 @@ class BasicReportTest extends TestCase
             ->get(route('admin.basic-reports.index'));
 
         $response->assertOk();
-        $response->assertSee('Laporan Dasar');
+        $response->assertSee('Laporan Operasional');
         $response->assertSee('Belum ada data pada periode ini.');
     }
 
@@ -264,5 +264,68 @@ class BasicReportTest extends TestCase
         $csvContent = $responseCsv->streamedContent();
         $this->assertStringContainsString('Kopi Robusta: 1 pcs', $csvContent);
         $this->assertStringContainsString('[PAKET] Kopi Pack Spesial: 1 pack', $csvContent);
+    }
+
+    public function test_basic_reports_refined_to_operational_reports_with_totals(): void
+    {
+        // Setup Unit and Product
+        $unit = Unit::create(['name' => 'Pcs', 'code' => 'PCS', 'type' => 'produk']);
+        $product = Product::create([
+            'code' => 'PRD01',
+            'name' => 'Kopi Robusta',
+            'variant' => 'Original',
+            'weight' => 250,
+            'unit_id' => $unit->id,
+            'cost_price' => 10000,
+            'price' => 15000,
+            'is_active' => true
+        ]);
+        $customer = Customer::create([
+            'name' => 'Toko Harapan',
+            'address' => 'Jl. Harapan',
+            'phone' => '0812345678'
+        ]);
+
+        $order = SalesOrder::create([
+            'order_number' => 'SO-0001',
+            'sales_id' => $this->salesUser->id,
+            'customer_id' => $customer->id,
+            'status' => 'diproses',
+            'catatan' => 'Test',
+            'total' => 15000,
+        ]);
+
+        SalesOrderItem::create([
+            'sales_order_id' => $order->id,
+            'product_id' => $product->id,
+            'qty' => 1,
+            'harga' => 15000,
+            'subtotal' => 15000,
+        ]);
+
+        // Test HTML view displays Laporan Operasional and not Laporan Dasar, and does not show Absensi Bulanan
+        $response = $this
+            ->actingAs($this->admin)
+            ->get(route('admin.basic-reports.index', ['type' => 'order']));
+        
+        $response->assertOk();
+        $response->assertSee('Laporan Operasional');
+        $response->assertDontSee('Absensi Bulanan');
+        $response->assertSee('TOTAL NILAI PENGAJUAN');
+        $response->assertSee('Rp 15.000');
+        $response->assertSee('Disetujui'); // Since status is diproses
+
+        // Test CSV displays total row
+        $responseCsv = $this
+            ->actingAs($this->admin)
+            ->get(route('admin.basic-reports.export-excel', [
+                'type' => 'order',
+                'start_date' => now()->startOfDay()->format('Y-m-d'),
+                'end_date' => now()->endOfDay()->format('Y-m-d'),
+            ]));
+
+        $responseCsv->assertOk();
+        $csvContent = $responseCsv->streamedContent();
+        $this->assertStringContainsString('"TOTAL NILAI PENGAJUAN";;;;15000', $csvContent);
     }
 }

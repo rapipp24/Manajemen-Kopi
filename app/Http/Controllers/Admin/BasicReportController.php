@@ -13,8 +13,6 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
 
-use App\Services\AttendanceRecapService;
-
 class BasicReportController extends Controller
 {
     /**
@@ -43,29 +41,6 @@ class BasicReportController extends Controller
         }
 
         $activeTab = $request->input('type', 'raw_material');
-
-        $month = (int)$request->input('month', date('n'));
-        $year = (int)$request->input('year', date('Y'));
-
-        // Daftar nama bulan dalam Bahasa Indonesia
-        $months = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-        ];
-
-        // Daftar pilihan tahun (dari 2024 sampai tahun berjalan + 1)
-        $startYear = 2024;
-        $endYear = (int)date('Y') + 1;
-        $years = range($startYear, $endYear);
-
-        $recap = [];
-        $totals = [];
-        $daysInMonth = 0;
-
-        if ($activeTab === 'attendance') {
-            list($employees, $recap, $totals, $daysInMonth) = app(AttendanceRecapService::class)->getRecapData($month, $year);
-        }
 
         // Fetch data based on active tab or fetch all to display on page tabs
         // To make page loading incredibly responsive, we only fetch what is needed or fetch all.
@@ -110,14 +85,7 @@ class BasicReportController extends Controller
             'rawMaterialsStock',
             'productsStock',
             'sales',
-            'orders',
-            'month',
-            'year',
-            'months',
-            'years',
-            'recap',
-            'totals',
-            'daysInMonth'
+            'orders'
         ));
     }
 
@@ -181,6 +149,8 @@ class BasicReportController extends Controller
                                 $item->subtotal // Nominal angka mentah
                             ], ';');
                         }
+                        // Total Row
+                        fputcsv($file, ['TOTAL PEMBELIAN', '', '', '', '', $items->sum('subtotal')], ';');
                     }
 
                     // Metadata/Catatan di bawah tabel
@@ -214,6 +184,8 @@ class BasicReportController extends Controller
                                 $batch->shrinkage // Susut mentah (gr)
                             ], ';');
                         }
+                        // Total Row
+                        fputcsv($file, ['TOTAL PRODUKSI', '', '', $batches->sum('total_output'), '', $batches->sum('shrinkage')], ';');
                     }
 
                     // Metadata/Catatan di bawah tabel
@@ -285,6 +257,8 @@ class BasicReportController extends Controller
                                 $sale->total_amount // Nominal mentah
                             ], ';');
                         }
+                        // Total Row
+                        fputcsv($file, ['TOTAL PENJUALAN', '', '', $sales->sum('total_amount')], ';');
                     }
 
                     // Metadata/Catatan di bawah tabel
@@ -314,14 +288,23 @@ class BasicReportController extends Controller
                             }
                             $productsStr = implode('; ', $itemParts);
 
+                            $statusStr = 'Menunggu';
+                            if ($order->status === 'diproses' || $order->status === 'selesai') {
+                                $statusStr = 'Disetujui';
+                            } elseif ($order->status === 'dibatalkan') {
+                                $statusStr = 'Ditolak';
+                            }
+
                             fputcsv($file, [
                                 Carbon::parse($order->created_at)->format('d-m-Y'),
                                 $order->sales->name ?? '—',
                                 $productsStr,
-                                ucfirst($order->status),
+                                $statusStr,
                                 $order->total // Nominal mentah
                             ], ';');
                         }
+                        // Total Row
+                        fputcsv($file, ['TOTAL NILAI PENGAJUAN', '', '', '', $orders->sum('total')], ';');
                     }
 
                     // Metadata/Catatan di bawah tabel

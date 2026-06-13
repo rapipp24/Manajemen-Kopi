@@ -1,5 +1,5 @@
 <x-layouts.admin>
-    <x-slot name="title">Laporan Dasar</x-slot>
+    <x-slot name="title">Laporan Operasional</x-slot>
 
     <!-- Flatpickr for Date Selection -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -269,31 +269,11 @@
         <!-- Header & Date Filter Card -->
         <div class="report-header-card">
             <div>
-                <h1 style="font-size: 20px; font-weight: 800; color: #1c0f05; margin-bottom: 4px;">Laporan Dasar</h1>
+                <h1 style="font-size: 20px; font-weight: 800; color: #1c0f05; margin-bottom: 4px;">Laporan Operasional</h1>
                 <p style="font-size: 13.5px; color: #9e7c62;">Analisis data operasional, stok, dan penjualan retail</p>
             </div>
 
-            @if($activeTab === 'attendance')
-            <form method="GET" action="{{ route('admin.basic-reports.index') }}">
-                <input type="hidden" name="type" value="attendance">
-                
-                <div class="filter-group">
-                    <select name="month" class="filter-select" style="background: #fffdfa; border: 1.5px solid #e8d8c4; border-radius: 12px; padding: 10px 16px; font-size: 13.5px; color: #2c1a0e; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
-                        @foreach($months as $num => $name)
-                            <option value="{{ $num }}" {{ $month === $num ? 'selected' : '' }}>{{ $name }}</option>
-                        @endforeach
-                    </select>
-
-                    <select name="year" class="filter-select" style="background: #fffdfa; border: 1.5px solid #e8d8c4; border-radius: 12px; padding: 10px 16px; font-size: 13.5px; color: #2c1a0e; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
-                        @foreach($years as $y)
-                            <option value="{{ $y }}" {{ $year === $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endforeach
-                    </select>
-
-                    <button type="submit" class="btn-filter-submit" style="padding: 12px 24px; border-radius: 12px;">Filter</button>
-                </div>
-            </form>
-            @elseif($activeTab !== 'stock' && $activeTab !== 'stok')
+            @if($activeTab !== 'stock' && $activeTab !== 'stok')
             <form id="filter-form" method="GET" action="{{ route('admin.basic-reports.index') }}">
                 <input type="hidden" name="type" value="{{ $activeTab }}">
                 
@@ -340,10 +320,6 @@
                class="tab-btn {{ $activeTab === 'order' ? 'active' : '' }}">
                 Pengajuan Sales
             </a>
-            <a href="{{ route('admin.basic-reports.index', ['type' => 'attendance', 'month' => $month, 'year' => $year]) }}" 
-               class="tab-btn {{ $activeTab === 'attendance' ? 'active' : '' }}">
-                Absensi Bulanan
-            </a>
         </div>
 
         <!-- Helper Text Laporan Stok -->
@@ -357,63 +333,22 @@
         <!-- Action Buttons (Export) -->
         <div class="report-actions" style="flex-direction: column; align-items: flex-end;">
             <div style="display: flex; gap: 12px;">
-                @if($activeTab === 'attendance')
-                    <a href="{{ route('admin.reports.attendance.export', ['month' => $month, 'year' => $year]) }}" class="btn-action-outline">
-                        <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export CSV (.csv)
-                    </a>
-                    <a href="{{ route('admin.reports.attendance.print', ['month' => $month, 'year' => $year]) }}" target="_blank" class="btn-action-outline">
-                        <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
-                        Cetak / Print
-                    </a>
-                @else
-                    <a href="{{ route('admin.basic-reports.export-excel', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-                       class="btn-action-outline">
-                        <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export Excel (.csv)
-                    </a>
-                    <a href="{{ route('admin.basic-reports.export-pdf', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
-                       target="_blank"
-                       class="btn-action-outline">
-                        <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
-                        Export PDF (Cetak)
-                    </a>
-                @endif
+                <a href="{{ route('admin.basic-reports.export-excel', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
+                   class="btn-action-outline">
+                    <svg style="width: 16px; height: 16px; color: #2d6a4f;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export Excel (.csv)
+                </a>
+                <a href="{{ route('admin.basic-reports.export-pdf', ['type' => $activeTab, 'start_date' => $startDate->format('Y-m-d'), 'end_date' => $endDate->format('Y-m-d')]) }}" 
+                   target="_blank"
+                   class="btn-action-outline">
+                    <svg style="width: 16px; height: 16px; color: #92400e;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4"></path></svg>
+                    Export PDF (Cetak)
+                </a>
             </div>
             <span style="font-size: 11.5px; color: #847162; font-weight: 500; text-align: right; margin-top: 8px; display: block; line-height: 1.4;">
-                @if($activeTab === 'attendance')
-                    * Pengunduhan rekap menggunakan format CSV (UTF-8 BOM). Cetak menggunakan layout print browser.
-                @else
-                    * Export Excel menggunakan format CSV. Untuk hasil PDF bersih, nonaktifkan <em>Headers and footers</em> saat mencetak.
-                @endif
+                * Export Excel menggunakan format CSV. Untuk hasil PDF bersih, nonaktifkan <em>Headers and footers</em> saat mencetak.
             </span>
         </div>
-
-        @if($activeTab === 'attendance')
-        <!-- Summary Grid for Attendance -->
-        <div class="summary-grid" style="margin-bottom: 24px;">
-            <div class="summary-card theme-hadir">
-                <span class="card-label">Total Hadir</span>
-                <span class="card-val">{{ $totals['hadir'] ?? 0 }}</span>
-            </div>
-            <div class="summary-card theme-izin">
-                <span class="card-label">Total Izin</span>
-                <span class="card-val">{{ $totals['izin'] ?? 0 }}</span>
-            </div>
-            <div class="summary-card theme-sakit">
-                <span class="card-label">Total Sakit</span>
-                <span class="card-val">{{ $totals['sakit'] ?? 0 }}</span>
-            </div>
-            <div class="summary-card theme-alfa">
-                <span class="card-label">Total Alfa</span>
-                <span class="card-val">{{ $totals['alfa'] ?? 0 }}</span>
-            </div>
-            <div class="summary-card theme-belum">
-                <span class="card-label">Belum Dicatat</span>
-                <span class="card-val">{{ $totals['belum_dicatat'] ?? 0 }}</span>
-            </div>
-        </div>
-        @endif
 
         <!-- Table Display Area -->
         <div class="report-table-card">
@@ -442,14 +377,22 @@
                         @empty
                             <tr>
                                 <td colspan="5">
-                                    <div class="empty-state">
-                                        <svg style="width: 48px; height: 48px; opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"></path></svg>
-                                        <p style="font-size: 14px; font-weight: 600;">Belum ada data pada periode ini.</p>
-                                    </div>
+                                     <div class="empty-state">
+                                         <svg style="width: 48px; height: 48px; opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"></path></svg>
+                                         <p style="font-size: 14px; font-weight: 600;">Belum ada data pada periode ini.</p>
+                                     </div>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
+                    @if($rawMaterials->isNotEmpty())
+                        <tfoot>
+                            <tr style="background: #fffdfa; font-weight: 700; border-top: 2px solid #e8d8c4;">
+                                <td colspan="4" style="text-align: left; padding: 18px 24px; font-weight: 800; color: #1c0f05;">TOTAL PEMBELIAN</td>
+                                <td style="text-align: right; padding: 18px 24px; font-weight: 800; color: #2d6a4f;">Rp {{ number_format($rawMaterials->sum('subtotal'), 0, ',', '.') }}</td>
+                            </tr>
+                        </tfoot>
+                    @endif
                 </table>
             @endif
 
@@ -491,6 +434,15 @@
                             </tr>
                         @endforelse
                     </tbody>
+                    @if($productions->isNotEmpty())
+                        <tfoot>
+                            <tr style="background: #fffdfa; font-weight: 700; border-top: 2px solid #e8d8c4;">
+                                <td colspan="3" style="text-align: left; padding: 18px 24px; font-weight: 800; color: #1c0f05;">TOTAL PRODUKSI</td>
+                                <td style="text-align: right; padding: 18px 24px; font-weight: 800; color: #92400e;">{{ number_format($productions->sum('total_output'), 0, ',', '.') }} gr</td>
+                                <td style="text-align: right; padding: 18px 24px; font-weight: 800; color: #dc2626;">{{ number_format($productions->sum('shrinkage'), 0, ',', '.') }} gr</td>
+                            </tr>
+                        </tfoot>
+                    @endif
                 </table>
             @endif
 
@@ -591,6 +543,14 @@
                             </tr>
                         @endforelse
                     </tbody>
+                    @if($sales->isNotEmpty())
+                        <tfoot>
+                            <tr style="background: #fffdfa; font-weight: 700; border-top: 2px solid #e8d8c4;">
+                                <td colspan="3" style="text-align: left; padding: 18px 24px; font-weight: 800; color: #1c0f05;">TOTAL PENJUALAN</td>
+                                <td style="text-align: right; padding: 18px 24px; font-weight: 800; color: #2d6a4f;">Rp {{ number_format($sales->sum('total_amount'), 0, ',', '.') }}</td>
+                            </tr>
+                        </tfoot>
+                    @endif
                 </table>
             @endif
 
@@ -624,9 +584,9 @@
                                     @endforeach
                                 </td>
                                 <td style="text-align: center;">
-                                    @if($order->status === 'disetujui')
+                                    @if($order->status === 'diproses' || $order->status === 'selesai')
                                         <span class="status-badge status-success">Disetujui</span>
-                                    @elseif($order->status === 'ditolak')
+                                    @elseif($order->status === 'dibatalkan')
                                         <span class="status-badge status-danger">Ditolak</span>
                                     @else
                                         <span class="status-badge status-warning">Menunggu</span>
@@ -645,67 +605,14 @@
                             </tr>
                         @endforelse
                     </tbody>
-                </table>
-            @endif
-
-            <!-- 6. ABSENSI BULANAN -->
-            @if($activeTab === 'attendance')
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">No</th>
-                            <th>Nama Karyawan</th>
-                            <th>Status Karyawan</th>
-                            <th style="text-align: center; width: 100px;">Hadir</th>
-                            <th style="text-align: center; width: 100px;">Izin</th>
-                            <th style="text-align: center; width: 100px;">Sakit</th>
-                            <th style="text-align: center; width: 100px;">Alfa</th>
-                            <th style="text-align: center; width: 120px;">Belum Dicatat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php $no = 1; @endphp
-                        @forelse($recap as $row)
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>
-                                    <span style="font-weight: 700; color: #1c0f05;">{{ $row['employee']->name }}</span>
-                                </td>
-                                <td>
-                                    @if($row['employee']->is_active)
-                                        <span class="status-badge status-success">Aktif</span>
-                                    @else
-                                        <span class="status-badge status-danger" style="font-style: italic;">Nonaktif</span>
-                                    @endif
-                                </td>
-                                <td style="text-align: center; font-weight: 600; color: #166534;">{{ $row['hadir'] }}</td>
-                                <td style="text-align: center; font-weight: 600; color: #b45309;">{{ $row['izin'] }}</td>
-                                <td style="text-align: center; font-weight: 600; color: #0891b2;">{{ $row['sakit'] }}</td>
-                                <td style="text-align: center; font-weight: 600; color: #be123c;">{{ $row['alfa'] }}</td>
-                                <td style="text-align: center; font-weight: 600; color: #9e7c62;">{{ $row['belum_dicatat'] }}</td>
+                    @if($orders->isNotEmpty())
+                        <tfoot>
+                            <tr style="background: #fffdfa; font-weight: 700; border-top: 2px solid #e8d8c4;">
+                                <td colspan="4" style="text-align: left; padding: 18px 24px; font-weight: 800; color: #1c0f05;">TOTAL NILAI PENGAJUAN</td>
+                                <td style="text-align: right; padding: 18px 24px; font-weight: 800; color: #92400e;">Rp {{ number_format($orders->sum('total'), 0, ',', '.') }}</td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8">
-                                    <div class="empty-state">
-                                        <svg style="width: 48px; height: 48px; opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                        <p style="font-size: 14px; font-weight: 600;">Tidak ada data absensi untuk periode ini.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-
-                        @if(count($recap) > 0)
-                            <tr class="total-row" style="background: #fffdfa; font-weight: 700; border-top: 2px solid #e8d8c4;">
-                                <td colspan="3" style="font-weight: 700; color: #1c0f05;">TOTAL KESELURUHAN</td>
-                                <td style="text-align: center; font-weight: 700; color: #166534;">{{ $totals['hadir'] }}</td>
-                                <td style="text-align: center; font-weight: 700; color: #b45309;">{{ $totals['izin'] }}</td>
-                                <td style="text-align: center; font-weight: 700; color: #0891b2;">{{ $totals['sakit'] }}</td>
-                                <td style="text-align: center; font-weight: 700; color: #be123c;">{{ $totals['alfa'] }}</td>
-                                <td style="text-align: center; font-weight: 700; color: #9e7c62;">{{ $totals['belum_dicatat'] }}</td>
-                            </tr>
-                        @endif
-                    </tbody>
+                        </tfoot>
+                    @endif
                 </table>
             @endif
 
