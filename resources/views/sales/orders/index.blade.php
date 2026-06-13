@@ -9,32 +9,34 @@
 
         .btn-primary {
             background:var(--brown);color:#fff;
-            padding:9.5px 18px;border-radius:8px;
+            padding:10px 18px;border-radius:10px;
             text-decoration:none;font-size:13px;font-weight:700;
             display:inline-flex;align-items:center;gap:8px;
-            transition:all 0.15s ease-in-out;white-space:nowrap;
-            box-shadow:0 2px 4px rgba(42,23,14,0.1);
+            transition:all 0.2s ease;white-space:nowrap;
+            box-shadow:0 4px 12px rgba(42,23,14,0.12);
         }
-        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
+        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 6px 16px rgba(42,23,14,0.18); transform: translateY(-1px); }
 
         /* ── Summary Cards ───────────────────── */
-        .summary-row { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px; }
+        .summary-row { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px; }
         .summary-card {
-            background:#fff;border:1px solid var(--border);border-radius:8px;
-            padding:12px 14px;display:flex;flex-direction:column;gap:4px;
-            box-shadow: 0 1px 2px rgba(42, 23, 14, 0.01);
+            background:#fff;border:1px solid var(--border);border-radius:12px;
+            padding:16px;display:flex;flex-direction:column;gap:6px;
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.02);
+            transition: all 0.2s ease;
         }
-        .summary-value { font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1; }
-        .summary-label { font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em; }
+        .summary-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+        .summary-value { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1; }
+        .summary-label { font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em; }
 
         /* ── Table Card ──────────────────────── */
-        .table-card { background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
-        .table-title { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);background:var(--cream); }
+        .table-card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 4px 12px rgba(42, 23, 14, 0.02); }
+        .table-title { padding:12px 16px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
 
         table { width:100%;border-collapse:collapse; }
         thead tr { background:var(--cream);border-bottom:1px solid var(--border); }
-        th { padding:8px 12px;text-align:left;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
-        td { padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle; }
+        th { padding:10px 14px;text-align:left;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
+        td { padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle; }
         tr:last-child td { border-bottom:none; }
         tr:hover td { background:#faf8f5; }
 
@@ -56,9 +58,78 @@
         }
         .btn-link:hover { color:var(--accent); text-decoration:underline; }
 
-        /* ── Empty ───────────────────────────── */
-        .empty-wrap { padding:32px 20px;text-align:center; background:#fff; border-radius:8px; border:1px solid var(--border); }
-        .empty-title { font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:4px; }
+        /* ── Empty State Premium ──────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 56px 24px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(42, 23, 14, 0.03);
+            margin: 16px 0;
+        }
+        .empty-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, rgba(197, 160, 89, 0.02) 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        .empty-icon-circle i {
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            stroke-width: 1.5;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .empty-desc {
+            font-size: 13.5px;
+            color: var(--muted);
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--brown);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.15);
+            min-height: 46px;
+            cursor: pointer;
+        }
+        .empty-btn:hover {
+            background: var(--brown-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(42, 23, 14, 0.2);
+            color: #ffffff;
+        }
+        .empty-btn:active {
+            transform: translateY(0);
+        }
 
         /* ── Desktop/Mobile Dual Layout ──────── */
         .desktop-only { display: block; }
@@ -114,11 +185,11 @@
         @media (max-width: 767px) {
             .desktop-only { display: none !important; }
             .mobile-only { display: block !important; }
-            .summary-row { grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 16px; }
-            .summary-card { padding: 8px 10px; flex-direction: column; justify-content: center; text-align: center; gap: 2px; }
-            .summary-value { order: 1; font-size: 15px; }
-            .summary-label { order: 2; margin: 0; font-size: 9px; line-height: 1.1; text-align: center; }
-            .btn-primary { padding: 8px 14px; font-size: 12px; }
+            .summary-row { gap: 8px; margin-bottom: 20px; }
+            .summary-card { padding: 12px 10px; text-align: center; border-radius: 10px; }
+            .summary-value { font-size: 18px; }
+            .summary-label { font-size: 9.5px; line-height: 1.2; }
+            .btn-primary { padding: 9px 16px; font-size: 12.5px; border-radius: 8px; }
         }
     </style>
 
@@ -198,13 +269,14 @@
                 @empty
                 <tr>
                     <td colspan="5">
-                        <div class="empty-wrap" style="border:none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                            </svg>
-                            <div class="empty-title">Belum ada pengajuan barang</div>
-                            <a href="{{ route('sales.orders.create') }}" class="sales-action-pill" style="margin-top: 8px;">
-                                <i data-lucide="plus" style="width:14px;height:14px;"></i> Buat Pengajuan Sekarang
+                        <div class="empty-state">
+                            <div class="empty-icon-circle">
+                                <i data-lucide="clipboard-list"></i>
+                            </div>
+                            <div class="empty-title">Belum ada pengajuan</div>
+                            <div class="empty-desc">Ajukan barang dari gudang agar stok sales siap digunakan.</div>
+                            <a href="{{ route('sales.orders.create') }}" class="empty-btn">
+                                <i data-lucide="plus"></i> Buat Pengajuan Sekarang
                             </a>
                         </div>
                     </td>
@@ -243,13 +315,14 @@
                 </div>
             </div>
         @empty
-            <div class="empty-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                </svg>
-                <div class="empty-title">Belum ada pengajuan barang</div>
-                <a href="{{ route('sales.orders.create') }}" class="sales-action-pill" style="margin-top: 8px;">
-                    <i data-lucide="plus" style="width:14px;height:14px;"></i> Buat Pengajuan Sekarang
+            <div class="empty-state">
+                <div class="empty-icon-circle">
+                    <i data-lucide="clipboard-list"></i>
+                </div>
+                <div class="empty-title">Belum ada pengajuan</div>
+                <div class="empty-desc">Ajukan barang dari gudang agar stok sales siap digunakan.</div>
+                <a href="{{ route('sales.orders.create') }}" class="empty-btn">
+                    <i data-lucide="plus"></i> Buat Pengajuan Sekarang
                 </a>
             </div>
         @endforelse

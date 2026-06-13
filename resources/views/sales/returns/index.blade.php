@@ -9,48 +9,119 @@
 
         .btn-primary {
             background:var(--brown);color:#fff;
-            padding:9.5px 18px;border-radius:8px;
+            padding:10px 18px;border-radius:10px;
             text-decoration:none;font-size:13px;font-weight:700;
             display:inline-flex;align-items:center;gap:8px;
-            transition:all 0.15s ease-in-out;white-space:nowrap;
-            box-shadow:0 2px 4px rgba(42,23,14,0.1);
+            transition:all 0.2s ease;white-space:nowrap;
+            box-shadow:0 4px 12px rgba(42,23,14,0.12);
         }
-        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
+        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 6px 16px rgba(42,23,14,0.18); transform: translateY(-1px); }
 
         /* ── Summary Cards ───────────────────── */
-        .summary-row { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+        .summary-row { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px; }
         .summary-card {
             background:#fff;border:1px solid var(--border);border-radius:12px;
-            padding:16px 18px;display:flex;flex-direction:column;gap:6px;
-            box-shadow: 0 1px 2px rgba(42, 23, 14, 0.01);
+            padding:16px;display:flex;flex-direction:column;gap:6px;
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.02);
+            transition: all 0.2s ease;
         }
-        .summary-value { font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1; }
-        .summary-label { font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em; }
+        .summary-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+        .summary-value { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1; }
+        .summary-label { font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em; }
 
         /* ── Table Card ──────────────────────── */
-        .table-card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01); }
-        .table-title { padding:14px 18px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
+        .table-card { background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow: 0 4px 12px rgba(42, 23, 14, 0.02); }
+        .table-title { padding:12px 16px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700;color:var(--text);background:var(--cream); }
 
         table { width:100%;border-collapse:collapse; }
         thead tr { background:var(--cream);border-bottom:1px solid var(--border); }
-        th { padding:12px 18px;text-align:left;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em; }
-        td { padding:14px 18px;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text);vertical-align:middle; }
+        th { padding:10px 14px;text-align:left;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em; }
+        td { padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle; }
         tr:last-child td { border-bottom:none; }
-        tr:hover td { background:var(--cream); }
+        tr:hover td { background:#faf8f5; }
 
         /* ── Status Badge ────────────────────── */
-        .badge { display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;line-height:1.3;text-transform:uppercase;letter-spacing:0.04em; }
-        .badge-pending  { background:#fffbeb;color:#b45309;border:1px solid #fef3c7; }
-        .badge-approved { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
-        .badge-canceled { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
+        .badge {
+            display:inline-flex;align-items:center;justify-content:center;
+            padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;
+            line-height:1.2;text-transform:uppercase;letter-spacing:0.04em;
+        }
+        .badge-pending  { background:#fffbeb;color:#d97706;border:1px solid #fde68a; }
+        .badge-approved { background:#ecfdf5;color:#047857;border:1px solid #a7f3d0; }
+        .badge-canceled { background:#fef2f2;color:#b91c1c;border:1px solid #fecaca; }
 
-
-        /* ── Empty ───────────────────────────── */
-        .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border-radius:12px; border:1px solid var(--border); }
-        .empty-emoji { font-size:36px;margin-bottom:10px;opacity:0.3; }
-        .empty-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px; }
-        .empty-cta { font-size:13px;color:var(--accent);font-weight:700;text-decoration:none; }
-        .empty-cta:hover { text-decoration:underline; }
+        /* ── Empty State Premium ──────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 56px 24px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(42, 23, 14, 0.03);
+            margin: 16px 0;
+        }
+        .empty-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, rgba(197, 160, 89, 0.02) 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        .empty-icon-circle i {
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            stroke-width: 1.5;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .empty-desc {
+            font-size: 13.5px;
+            color: var(--muted);
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--brown);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.15);
+            min-height: 46px;
+            cursor: pointer;
+        }
+        .empty-btn:hover {
+            background: var(--brown-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(42, 23, 14, 0.2);
+            color: #ffffff;
+        }
+        .empty-btn:active {
+            transform: translateY(0);
+        }
 
         /* ── Desktop/Mobile Dual Layout ──────── */
         .desktop-only { display: block; }
@@ -59,28 +130,32 @@
         .mobile-card {
             background: #fff;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
+            transition: border-color 0.15s;
+        }
+        .mobile-card:hover {
+            border-color: var(--accent);
         }
         .mobile-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
         .mobile-card-num {
             font-family: monospace;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text);
         }
         .mobile-card-row {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 6px;
+            font-size: 12px;
+            margin-bottom: 3px;
         }
         .mobile-card-label {
             color: var(--muted);
@@ -91,21 +166,22 @@
             color: var(--text);
         }
         .mobile-card-actions {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-            text-align: right;
-            opacity: 0.9;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(234, 227, 210, 0.5);
+            display: flex;
+            justify-content: flex-end;
         }
 
         /* ── Responsive ──────────────────────── */
         @media (max-width: 767px) {
             .desktop-only { display: none !important; }
             .mobile-only { display: block !important; }
-            .summary-row { grid-template-columns: 1fr; gap: 8px; }
-            .summary-card { padding: 12px 14px; flex-direction: row; justify-content: space-between; align-items: center; }
-            .summary-value { order: 2; font-size: 20px; }
-            .summary-label { order: 1; margin: 0; }
+            .summary-row { grid-template-columns: 1fr; gap: 8px; margin-bottom: 20px; }
+            .summary-card { padding: 14px 16px; flex-direction: row; justify-content: space-between; align-items: center; border-radius: 10px; }
+            .summary-value { order: 2; font-size: 18px; }
+            .summary-label { order: 1; margin: 0; font-size: 11px; }
+            .btn-primary { padding: 9px 16px; font-size: 12.5px; border-radius: 8px; }
         }
     </style>
 
@@ -197,13 +273,14 @@
                 @empty
                 <tr>
                     <td colspan="6">
-                        <div class="empty-wrap" style="border:none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                            </svg>
-                            <div class="empty-title">Belum ada pengajuan return</div>
-                            <a href="{{ route('sales.returns.create') }}" class="sales-action-pill" style="margin-top: 8px;">
-                                <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Return Pertama
+                        <div class="empty-state">
+                            <div class="empty-icon-circle">
+                                <i data-lucide="rotate-ccw"></i>
+                            </div>
+                            <div class="empty-title">Belum ada return</div>
+                            <div class="empty-desc">Pengajuan return barang ke gudang akan tampil di sini.</div>
+                            <a href="{{ route('sales.returns.create') }}" class="empty-btn">
+                                <i data-lucide="plus"></i> Ajukan Return Pertama
                             </a>
                         </div>
                     </td>
@@ -248,13 +325,14 @@
                 </div>
             </div>
         @empty
-            <div class="empty-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                </svg>
-                <div class="empty-title">Belum ada pengajuan return</div>
-                <a href="{{ route('sales.returns.create') }}" class="sales-action-pill" style="margin-top: 8px;">
-                    <i data-lucide="plus" style="width:14px;height:14px;"></i> Ajukan Return Pertama
+            <div class="empty-state">
+                <div class="empty-icon-circle">
+                    <i data-lucide="rotate-ccw"></i>
+                </div>
+                <div class="empty-title">Belum ada return</div>
+                <div class="empty-desc">Pengajuan return barang ke gudang akan tampil di sini.</div>
+                <a href="{{ route('sales.returns.create') }}" class="empty-btn">
+                    <i data-lucide="plus"></i> Ajukan Return Pertama
                 </a>
             </div>
         @endforelse

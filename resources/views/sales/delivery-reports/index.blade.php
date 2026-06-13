@@ -7,14 +7,7 @@
         .page-title  { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em; }
         .page-desc   { font-size:13.5px;color:var(--muted);margin-top:4px; }
 
-        .btn-primary {
-            background:var(--brown);color:#fff;padding:9.5px 18px;border-radius:8px;
-            text-decoration:none;font-size:13px;font-weight:700;
-            display:inline-flex;align-items:center;gap:8px;
-            transition:all 0.15s ease-in-out;white-space:nowrap;
-            box-shadow:0 2px 4px rgba(42,23,14,0.1);
-        }
-        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
+
 
         /* ── Stok Card ───────────────────────── */
         .stok-card {
@@ -66,14 +59,87 @@
         .badge-lunas { background:#f0fdf4;color:#166534;border:1px solid #bbf7d0; }
         .badge-dp { background:#fffbeb;color:#b45309;border:1px solid #fef3c7; }
         .badge-piutang { background:#fef2f2;color:#991b1b;border:1px solid #fecaca; }
+        /* ── Empty State Premium ──────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 56px 24px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(42, 23, 14, 0.03);
+            margin: 16px 0;
+        }
+        .empty-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, rgba(197, 160, 89, 0.02) 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        .empty-icon-circle i {
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            stroke-width: 1.5;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .empty-desc {
+            font-size: 13.5px;
+            color: var(--muted);
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--brown);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.15);
+            min-height: 46px;
+            cursor: pointer;
+        }
+        .empty-btn:hover {
+            background: var(--brown-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(42, 23, 14, 0.2);
+            color: #ffffff;
+        }
+        .empty-btn:active {
+            transform: translateY(0);
+        }
 
-        /* ── Empty ───────────────────────────── */
-        .empty-wrap { padding:56px 20px;text-align:center; background:#fff; border:1px solid var(--border); border-radius:12px; }
-        .empty-emoji { font-size:36px;margin-bottom:10px;opacity:0.3; }
-        .empty-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px; }
-        .empty-cta { font-size:13px;color:var(--accent);font-weight:700;text-decoration:none; }
-        .empty-cta:hover { text-decoration:underline; }
-
+        .btn-primary {
+            background:var(--brown);color:#fff;padding:10px 18px;border-radius:10px;
+            text-decoration:none;font-size:13px;font-weight:700;
+            display:inline-flex;align-items:center;gap:8px;
+            transition:all 0.2s ease;white-space:nowrap;
+            box-shadow:0 4px 12px rgba(42,23,14,0.12);
+        }
+        .btn-primary:hover { background:var(--brown-hover);box-shadow:0 6px 16px rgba(42,23,14,0.18); transform: translateY(-1px); }
         /* ── Desktop/Mobile Dual Layout ──────── */
         .desktop-only { display: block; }
         .mobile-only { display: none; }
@@ -407,13 +473,14 @@
                 @empty
                 <tr>
                     <td colspan="5">
-                        <div class="empty-wrap" style="border:none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                            </svg>
+                        <div class="empty-state">
+                            <div class="empty-icon-circle">
+                                <i data-lucide="truck"></i>
+                            </div>
                             <div class="empty-title">Belum ada laporan pengiriman</div>
-                            <a href="{{ route('sales.delivery-reports.create') }}" class="sales-action-pill" style="margin-top: 8px;">
-                                <i data-lucide="plus" style="width:14px;height:14px;"></i> Buat Laporan Pertama
+                            <div class="empty-desc">Laporan pengiriman ke toko akan muncul di sini.</div>
+                            <a href="{{ route('sales.delivery-reports.create') }}" class="empty-btn">
+                                <i data-lucide="plus"></i> Buat Laporan Pertama
                             </a>
                         </div>
                     </td>
@@ -455,13 +522,14 @@
                 </div>
             </div>
         @empty
-            <div class="empty-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                </svg>
+            <div class="empty-state">
+                <div class="empty-icon-circle">
+                    <i data-lucide="truck"></i>
+                </div>
                 <div class="empty-title">Belum ada laporan pengiriman</div>
-                <a href="{{ route('sales.delivery-reports.create') }}" class="sales-action-pill" style="margin-top: 8px;">
-                    <i data-lucide="plus" style="width:14px;height:14px;"></i> Buat Laporan Pertama
+                <div class="empty-desc">Laporan pengiriman ke toko akan muncul di sini.</div>
+                <a href="{{ route('sales.delivery-reports.create') }}" class="empty-btn">
+                    <i data-lucide="plus"></i> Buat Laporan Pertama
                 </a>
             </div>
         @endforelse

@@ -213,17 +213,51 @@
         .stock-low  { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
         .stock-none { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
-        /* ── Empty ───────────────────────────── */
-        .empty-wrap {
+        /* ── Empty State Premium ──────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 32px 20px;
+            padding: 56px 24px;
             background: #ffffff;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(42, 23, 14, 0.03);
+            margin: 16px 0;
         }
-        .empty-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-        .empty-desc  { font-size: 12.5px; color: var(--muted); }
+        .empty-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, rgba(197, 160, 89, 0.02) 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        .empty-icon-circle i {
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            stroke-width: 1.5;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .empty-desc {
+            font-size: 13.5px;
+            color: var(--muted);
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
 
         /* ── Responsive ──────────────────────── */
         @media (max-width: 768px) {
@@ -248,12 +282,12 @@
     </div>
 
     @if($products->isEmpty() && $packages->isEmpty())
-        <div class="empty-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 44px; height: 44px; color: var(--muted); margin: 0 auto 12px; display: block;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-            </svg>
-            <div class="empty-title">Belum ada produk atau paket tersedia</div>
-            <div class="empty-desc">Hubungi admin untuk menambahkan produk atau paket.</div>
+        <div class="empty-state">
+            <div class="empty-icon-circle">
+                <i data-lucide="shopping-bag"></i>
+            </div>
+            <div class="empty-title">Katalog masih kosong</div>
+            <div class="empty-desc">Produk dan paket yang tersedia akan muncul di sini.</div>
         </div>
     @else
         <!-- Search & Filter Controls -->

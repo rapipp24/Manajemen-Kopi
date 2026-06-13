@@ -4,20 +4,78 @@
     <style>
         .page-title { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px; }
         .page-desc  { font-size:13.5px;color:var(--muted);margin-bottom:24px; }
-
-        .empty-stok {
-            background:#fff;border:1px solid var(--border);border-radius:12px;
-            padding:32px 24px;text-align:center;box-shadow: 0 1px 3px rgba(42, 23, 14, 0.01);
+        /* ── Empty State Premium ──────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 56px 24px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(42, 23, 14, 0.03);
+            margin: 16px 0;
         }
-        .empty-stok-emoji { font-size:38px;opacity:0.3;margin-bottom:12px; }
-        .empty-stok strong { display:block;font-size:15px;color:var(--text);margin-bottom:6px; }
-        .empty-stok p { font-size:13.5px;color:var(--muted);max-width:350px;margin:0 auto 18px;line-height:1.5; }
-        .empty-stok-link {
-            display:inline-block;background:var(--brown);color:#fff;font-weight:700;font-size:13px;
-            padding:9.5px 18px;border-radius:8px;text-decoration:none;transition:all 0.15s ease-in-out;
-            box-shadow:0 2px 4px rgba(42,23,14,0.1);
+        .empty-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, rgba(197, 160, 89, 0.02) 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
         }
-        .empty-stok-link:hover { background:var(--brown-hover);box-shadow:0 4px 12px rgba(42,23,14,0.15); }
+        .empty-icon-circle i {
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            stroke-width: 1.5;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .empty-desc {
+            font-size: 13.5px;
+            color: var(--muted);
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--brown);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(42, 23, 14, 0.15);
+            min-height: 46px;
+            cursor: pointer;
+        }
+        .empty-btn:hover {
+            background: var(--brown-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(42, 23, 14, 0.2);
+            color: #ffffff;
+        }
+        .empty-btn:active {
+            transform: translateY(0);
+        }
 
         /* ── Layout ──────────────────────── */
         .layout { display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start; }
@@ -162,12 +220,14 @@
     <p class="page-desc">Catat barang atau paket yang Anda kirimkan ke toko. Stok Anda akan berkurang otomatis setelah disimpan.</p>
 
     @if($salesStocks->isEmpty() && $salesPackageStocks->isEmpty())
-        <div class="empty-stok">
-            <div class="empty-stok-emoji">📦</div>
-            <strong>Stok barang Anda kosong</strong>
-            <p>Anda belum memiliki stok produk maupun stok paket untuk dikirimkan. Ajukan permintaan barang ke gudang terlebih dahulu.</p>
-            <a href="{{ route('sales.orders.create') }}" class="empty-stok-link" style="display:inline-flex; align-items:center; gap:6px;">
-                <i data-lucide="plus" style="width:16px;height:16px;"></i> Buat Pengajuan Barang
+        <div class="empty-state">
+            <div class="empty-icon-circle">
+                <i data-lucide="package-open"></i>
+            </div>
+            <div class="empty-title">Stok sales masih kosong</div>
+            <div class="empty-desc">Ajukan barang terlebih dahulu sebelum membuat laporan pengiriman.</div>
+            <a href="{{ route('sales.orders.create') }}" class="empty-btn">
+                <i data-lucide="plus"></i> Ajukan Barang
             </a>
         </div>
     @else
